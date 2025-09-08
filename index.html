@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Character</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .pill {
+      display: inline-block;
+      background: #ddd;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin: 2px;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .half {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="creation-form">
+      <h1>Create Your Character</h1>
+      <div class="section">
+        <label>Name:</label>
+        <input type="text" id="name">
+
+        <label>Race:</label>
+        <input type="text" id="race">
+
+        <label>Position:</label>
+        <select id="position" onchange="applyDefaultAffinities()">
+          <option value="Guide">Guide</option>
+          <option value="Fisherman">Fisherman</option>
+          <option value="Spear Bearer">Spear Bearer</option>
+          <option value="Wave Controller">Wave Controller</option>
+          <option value="Light Bearer">Light Bearer</option>
+          <option value="Anima">Anima</option>
+        </select>
+
+        <label>Floor:</label>
+        <input type="number" id="floor" min="1" max="200">
+      </div>
+
+      <div class="section">
+        <label>Primary Stats:</label>
+        <select id="primary-select" onchange="addToList('primary')">
+          <option value="">-- Select Stat --</option>
+        </select>
+        <div id="primary-list"></div>
+
+        <label>Secondary Stats:</label>
+        <select id="secondary-select" onchange="addToList('secondary')">
+          <option value="">-- Select Stat --</option>
+        </select>
+        <div id="secondary-list"></div>
+
+        <label>Tertiary Stats:</label>
+        <select id="tertiary-select" onchange="addToList('tertiary')">
+          <option value="">-- Select Stat --</option>
+        </select>
+        <div id="tertiary-list"></div>
+      </div>
+
+      <div class="section">
+        <label>Level:</label>
+        <input type="number" id="level" min="1" max="200">
+      </div>
+
+      <button onclick="generateCharacterSheet()">Generate Character Sheet</button>
+    </div>
+
+    <div id="sheet" class="hidden"></div>
+  </div>
+
+  <script>
+    const allStats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
+
+    const defaultAffinities = {
+      "Guide": {
+        primary: ["Perception", "Insight"],
+        secondary: ["Willpower", "Shinsu Control", "Shinsu Endurance"],
+        tertiary: ["Strength", "Technique", "Authority"]
+      },
+      "Fisherman": {
+        primary: ["Strength", "Technique", "Perception"],
+        secondary: ["Shinsu Endurance", "Insight"],
+        tertiary: ["Willpower", "Shinsu Control", "Authority"]
+      },
+      "Spear Bearer": {
+        primary: ["Strength", "Perception"],
+        secondary: ["Technique", "Insight", "Shinsu Endurance"],
+        tertiary: ["Willpower", "Shinsu Control", "Authority"]
+      },
+      "Wave Controller": {
+        primary: ["Shinsu Control", "Shinsu Endurance"],
+        secondary: ["Willpower", "Insight", "Technique"],
+        tertiary: ["Strength", "Perception", "Authority"]
+      },
+      "Light Bearer": {
+        primary: ["Insight", "Authority"],
+        secondary: ["Perception", "Shinsu Control", "Willpower"],
+        tertiary: ["Strength", "Technique", "Shinsu Endurance"]
+      },
+      "Anima": {
+        primary: ["Authority"],
+        secondary: ["Shinsu Control", "Insight", "Willpower", "Shinsu Endurance"],
+        tertiary: ["Strength", "Perception", "Technique"]
+      }
+    };
+
+    function healthMultiplier(level) {
+      if (level <= 10) return 2;
+      if (level <= 25) return 3;
+      if (level <= 50) return 4;
+      if (level <= 80) return 5;
+      if (level <= 110) return 6;
+      if (level <= 140) return 7;
+      if (level <= 170) return 8;
+      return 9;
+    }
+
+    function getTotalHealthMultiplier(level) {
+      let total = 0;
+      for (let i = 1; i <= level; i++) {
+        total += healthMultiplier(i);
+      }
+      return total;
+    }
+
+    function populateDropdowns() {
+      const selects = ["primary-select", "secondary-select", "tertiary-select"];
+      selects.forEach(id => {
+        const select = document.getElementById(id);
+        allStats.forEach(stat => {
+          const opt = document.createElement("option");
+          opt.value = stat;
+          opt.textContent = stat;
+          select.appendChild(opt);
+        });
+      });
+    }
+
+    function addToList(type) {
+      const select = document.getElementById(`${type}-select`);
+      const list = document.getElementById(`${type}-list`);
+      const val = select.value;
+      if (val && !Array.from(list.children).some(el => el.textContent === val)) {
+        const span = document.createElement("span");
+        span.className = "pill";
+        span.textContent = val;
+        span.onclick = () => span.remove();
+        list.appendChild(span);
+      }
+      select.value = "";
+    }
+
+    function applyDefaultAffinities() {
+      const pos = document.getElementById("position").value;
+      const def = defaultAffinities[pos];
+      ["primary", "secondary", "tertiary"].forEach(type => {
+        const list = document.getElementById(`${type}-list`);
+        list.innerHTML = "";
+        def[type].forEach(stat => {
+          const span = document.createElement("span");
+          span.className = "pill";
+          span.textContent = stat;
+          span.onclick = () => span.remove();
+          list.appendChild(span);
+        });
+      });
+    }
+
+    function generateCharacterSheet() {
+      const name = document.getElementById("name").value;
+      const race = document.getElementById("race").value;
+      const position = document.getElementById("position").value;
+      const level = parseInt(document.getElementById("level").value);
+      const floor = parseInt(document.getElementById("floor").value);
+      if (!name || !race || !position || isNaN(level) || isNaN(floor)) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const getAffinities = type => Array.from(document.getElementById(`${type}-list`).children).map(x => x.textContent);
+
+      const stats = {};
+      allStats.forEach(stat => stats[stat] = 0);
+
+      const allocStat = (arr, value) => arr.forEach(stat => stats[stat] += value);
+
+      const levelRanges = [
+        [1, 10, 1, 0.5, 0.5, 2],
+        [11, 25, 1.5, 1, 0.5, 3],
+        [26, 50, 1.5, 1, 0.5, 4],
+        [51, 80, 2, 1.5, 1, 5],
+        [81, 110, 2.5, 2, 1, 6],
+        [111, 140, 3, 2, 1.5, 7],
+        [141, 170, 3, 2.5, 2, 8],
+        [171, 200, 4, 3, 3, 10],
+      ];
+
+      let totalPoints = 0;
+      for (let i = 1; i <= level; i++) {
+        const range = levelRanges.find(([min, max]) => i >= min && i <= max);
+        if (!range) continue;
+        const [_, __, prim, sec, tert, free] = range;
+        allocStat(getAffinities("primary"), prim);
+        allocStat(getAffinities("secondary"), sec);
+        allocStat(getAffinities("tertiary"), tert);
+        totalPoints += free;
+      }
+
+      const se = stats["Shinsu Endurance"];
+      const str = stats["Strength"];
+      const wp = stats["Willpower"];
+
+      const hp = Math.floor(3 * se + 2 * str + 1.5 * wp + getTotalHealthMultiplier(level));
+      const movePenalty = Math.max(0, 2 * floor - se);
+      const moveSpeed = 6 + level - movePenalty;
+
+      document.getElementById("creation-form").classList.add("hidden");
+      const sheet = document.getElementById("sheet");
+      sheet.classList.remove("hidden");
+
+      sheet.innerHTML = `
+        <h2>${name} the ${race} (${position})</h2>
+        <p><b>Level:</b> ${level}</p>
+        <p><b>Floor:</b> <input type="number" id="floor-update" value="${floor}" onchange="updateHPAndSpeed(${level}, ${se})"></p>
+        <p id="hp-display"><b>HP:</b> ${hp}</p>
+        <p id="move-display"><b>Movement Speed:</b> ${moveSpeed}</p>
+        <div class="stats-grid">
+          ${allStats.map(stat => `<div><b>${stat}:</b> ${stats[stat]}</div>`).join("")}
+        </div>
+      `;
+    }
+
+    function updateHPAndSpeed(level, se) {
+      const floor = parseInt(document.getElementById("floor-update").value);
+      const movePenalty = Math.max(0, 2 * floor - se);
+      const moveSpeed = 6 + level - movePenalty;
+      const hp = Math.floor(3 * se + 2 * 0 + 1.5 * 0 + getTotalHealthMultiplier(level));
+      document.getElementById("move-display").innerHTML = `<b>Movement Speed:</b> ${moveSpeed}`;
+      document.getElementById("hp-display").innerHTML = `<b>HP:</b> ${hp}`;
+    }
+
+    window.onload = populateDropdowns;
+  </script>
+</body>
+</html>
