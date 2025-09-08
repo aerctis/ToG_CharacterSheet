@@ -279,9 +279,9 @@
 
       for (let i = 1; i <= level; i++) {
         const rates = getGrowthRatesForLevel(pos, i);
-        priList.forEach(stat => state.statValues[stat] += rates.primary / priList.length);
-        secList.forEach(stat => state.statValues[stat] += rates.secondary / secList.length);
-        terList.forEach(stat => state.statValues[stat] += rates.tertiary / terList.length);
+        priList.forEach(stat => state.statValues[stat] += rates.primary);
+        secList.forEach(stat => state.statValues[stat] += rates.secondary);
+        terList.forEach(stat => state.statValues[stat] += rates.tertiary);
       }
 
       state.availableStatPoints = level - 1;
