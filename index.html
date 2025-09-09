@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+  
   <title>Character Sheet</title>
+  
+    <div style="margin-bottom: 10px;">
+    <button onclick="signInWithGoogle()">Sign In with Google</button>
+    <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+    <button onclick="saveCharacter()">Save Character</button>
+    <span id="user-info" style="margin-left: 10px;"></span>
+    </div>
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -381,5 +390,110 @@
     updateFromTextbox();
     renderSkills();
   </script>
+   <!-- 1. Firebase SDK Scripts (put just before </body>) -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js"></script>
+  
+  
+  <script>
+  // 2. Your Firebase Project Configuration (from Project Settings > General)
+  const firebaseConfig = {
+  apiKey: "AIzaSyCr08RHyYpKBy3omDUtSmYYr3KkXxx30E4",
+  authDomain: "tog-charactersheet.firebaseapp.com",
+  projectId: "tog-charactersheet",
+  storageBucket: "tog-charactersheet.firebasestorage.app",
+  messagingSenderId: "915406998560",
+  appId: "1:915406998560:web:4edbb2e3deb9d70c0a4045",
+  measurementId: "G-ZMQF30F2FC"
+  };
+  
+  
+  // 3. Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  
+  
+  // 4. Auth UI Logic
+  function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+  .then(result => {
+  const user = result.user;
+  document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
+  document.getElementById("logoutBtn").style.display = 'inline-block';
+  loadCharacter(); // Auto-load on login
+  })
+  .catch(error => console.error("Login error", error));
+  }
+  
+  
+  function signOut() {
+  auth.signOut().then(() => {
+  document.getElementById("user-info").textContent = "Logged out.";
+  document.getElementById("logoutBtn").style.display = 'none';
+  });
+  }
+  
+  
+  auth.onAuthStateChanged(user => {
+  if (user) {
+  document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
+  document.getElementById("logoutBtn").style.display = 'inline-block';
+  loadCharacter();
+  }
+  });
+  
+  
+  // 5. Save & Load Character
+  function getCurrentCharacterData() {
+  return {
+  level: document.getElementById("char-level").value,
+  floor: document.getElementById("char-floor").value,
+  name: document.getElementById("char-name").value,
+  race: document.getElementById("char-race").value,
+  position: document.getElementById("char-position").value,
+  affinities: state.affinities,
+  stats: state.statValues,
+  skills: state.skillSlots
+  };
+  }
+  
+  
+  function saveCharacter() {
+  const user = auth.currentUser;
+  if (user) {
+  db.collection("characters").doc(user.uid).set(getCurrentCharacterData())
+  .then(() => alert("Character saved!"))
+  .catch(err => console.error("Save failed:", err));
+  }
+  }
+  
+  
+  function loadCharacter() {
+  const user = auth.currentUser;
+  if (user) {
+  db.collection("characters").doc(user.uid).get()
+  .then(doc => {
+  if (doc.exists) {
+  const data = doc.data();
+  document.getElementById("char-name").value = data.name;
+  document.getElementById("char-race").value = data.race;
+  document.getElementById("char-level").value = data.level;
+  document.getElementById("char-floor").value = data.floor;
+  document.getElementById("char-position").value = data.position;
+  state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
+  state.statValues = data.stats || {};
+  state.skillSlots = data.skills || [];
+  updateFromTextbox();
+  renderSkills();
+  }
+  })
+  .catch(err => console.error("Load failed:", err));
+  }
+  }
+  </script>
+  
 </body>
 </html>
