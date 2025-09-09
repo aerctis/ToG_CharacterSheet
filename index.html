@@ -553,10 +553,7 @@
       manualStatPoints: Object.fromEntries(stats.map(stat => [stat, 0])),
       statHistory: [],
       skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
-      skillModal: {
-        activeTier: null,
-        activeIndex: null
-      },
+      currentSkillEdit: { tier: null, index: null },
       availableStatPoints: 0,
       availableSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
@@ -799,8 +796,7 @@
       if (!state.skillsByTier[tier]) {
         state.skillsByTier[tier] = [];
       }
-      state.skillSlots.push({ tier: tier, name: "" });
-      tate.skillSlots.sort((a, b) => a.tier - b.tier);
+      state.skillsByTier[tier].push({ name: "", image: "" });
       renderSkills();
     }
 
