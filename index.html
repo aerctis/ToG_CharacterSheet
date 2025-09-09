@@ -246,49 +246,67 @@
       pointer-events: none;
     }
 
-    .modal {
+    #skill-library-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: #222;
-      padding: 20px;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
+      background-color: #1e1e1e;
+      border: 2px solid #555;
       border-radius: 8px;
-      width: 400px;
-      max-height: 80vh;
-      overflow-y: auto;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      overflow: auto;
     }
 
-    .skill-option {
-      background: #333;
-      border: 1px solid #555;
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 4px;
+    #skill-library-modal.active {
       display: flex;
+    }
+
+    .skill-library-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      cursor: pointer;
+      margin-bottom: 16px;
     }
 
-    .skill-option img {
-      width: 32px;
-      height: 32px;
+    .skill-library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
     }
 
-    .close {
-      float: right;
-      font-size: 20px;
-      color: #999;
+    .skill-card {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 12px;
       cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .skill-card:hover {
+      background-color: #333;
+    }
+
+    .skill-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .skill-card .skill-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .skill-card .skill-description {
+      font-size: 12px;
+      color: #aaa;
     }
   </style>
 </head>
@@ -386,35 +404,21 @@
       <tbody id="stats-body"></tbody>
     </table>
 
-    <div class="tier-section">
-      <div class="tier-header">
-        <strong>Tier 1</strong>
-        <button onclick="addSkillSlot(1)">Add Skill Slot</button>
-      </div>
-      <div class="skill-slots" id="tier-1-slots">
-        <!-- Dynamically added slots -->
-      </div>
-    </div>
-
-
     <div class="skills-section" id="skills-section">
       <!-- This will be filled by renderSkills() -->
     </div>
 
-    <!-- Skill Modal -->
-    <div id="skill-modal" class="modal" style="display: none">
-      <div class="modal-content">
-        <span class="close" onclick="closeSkillModal()">&times;</span>
-        <h4>Select a Skill</h4>
-        <div id="skill-options" class="skill-options">
-          <!-- Placeholder, to be populated later -->
-          <div class="skill-option" onclick="selectSkill('Flame Slash', 'flame.png')">
-            <img src="flame.png" alt="Flame Slash">
-            <span>Flame Slash</span>
-          </div>
-        </div>
+    <div id="skill-library-modal">
+      <div class="skill-library-header">
+        <h3>Skill Library</h3>
+        <button onclick="closeSkillLibrary()">Close</button>
+      </div>
+
+      <div class="skill-library-grid" id="skill-library-grid">
+        <!-- Skill cards rendered here -->
       </div>
     </div>
+
 
 
 
@@ -554,6 +558,8 @@
       statHistory: [],
       skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
       currentSkillEdit: { tier: null, index: null },
+      skillLibrary: [],
+      skillFilter: { position: "", tier: null, search: "" },
       availableStatPoints: 0,
       availableSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
@@ -817,25 +823,6 @@
       });
     }
 
-
-    // function renderSkills() {
-    //   const tbody = document.getElementById("skills-body");
-    //   tbody.innerHTML = "";
-    //   state.skillSlots.forEach((slot, index) => {
-    //     const tr = document.createElement("tr");
-    //     const td1 = document.createElement("td");
-    //     td1.textContent = `Tier ${slot.tier}`;
-    //     const td2 = document.createElement("td");
-    //     const input = document.createElement("input");
-    //     input.value = slot.name;
-    //     input.onchange = e => state.skillSlots[index].name = e.target.value;
-    //     td2.appendChild(input);
-    //     tr.appendChild(td1);
-    //     tr.appendChild(td2);
-    //     tbody.appendChild(tr);
-    //   });
-    // }
-
     function renderSkills() {
       const section = document.getElementById("skills-section");
       section.innerHTML = "";
@@ -876,66 +863,131 @@
     function renderSkillTiers() {
       const container = document.getElementById("skill-section");
       container.innerHTML = "";
+
       for (let tier = 1; tier <= 5; tier++) {
-        const div = document.createElement("div");
-        div.className = "skill-tier";
+        const tierDiv = document.createElement("div");
+        tierDiv.className = "tier-section";
 
+        // Header
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "tier-header";
 
-        const header = document.createElement("h4");
-        header.textContent = `Tier ${tier}`;
-        div.appendChild(header);
-
-
-        const slots = document.createElement("div");
-        state.skillsByTier[tier].forEach((skill, index) => {
-          const slot = document.createElement("div");
-          slot.className = "skill-slot";
-          if (!skill) {
-            slot.classList.add("empty");
-          } else {
-            slot.style.backgroundImage = `url(${skill.image})`;
-          }
-          slot.onclick = () => openSkillModal(tier, index);
-          slots.appendChild(slot);
-        });
-        div.appendChild(slots);
-
+        const headerTitle = document.createElement("h4");
+        headerTitle.textContent = `Tier ${tier}`;
+        headerDiv.appendChild(headerTitle);
 
         const addBtn = document.createElement("button");
         addBtn.textContent = "Add Skill Slot";
-        addBtn.onclick = () => {
-          state.skillsByTier[tier].push(null);
-          renderSkillTiers();
-        };
-        div.appendChild(addBtn);
+        addBtn.onclick = () => addSkillSlot(tier);
+        headerDiv.appendChild(addBtn);
 
+        tierDiv.appendChild(headerDiv);
 
-        container.appendChild(div);
+        // Slots
+        const slotGrid = document.createElement("div");
+        slotGrid.className = "skill-slots";
+
+        const skills = state.skillsByTier[tier] || [];
+        skills.forEach((skill, index) => {
+          const slot = document.createElement("div");
+          slot.className = "skill-slot";
+          if (!skill || !skill.image) {
+            slot.classList.add("empty");
+          } else {
+            const img = document.createElement("img");
+            img.src = skill.image;
+            img.alt = skill.name;
+            slot.appendChild(img);
+          }
+
+          slot.onclick = () => openSkillLibrary(tier, index);
+          slotGrid.appendChild(slot);
+        });
+
+        tierDiv.appendChild(slotGrid);
+        container.appendChild(tierDiv);
       }
     }
 
-    function openSkillModal(tier, index) {
+    function openSkillLibrary(tier, index) {
       state.currentSkillEdit = { tier, index };
-      document.getElementById("skill-modal").style.display = "flex";
+      document.getElementById("skill-library-modal").classList.add("active");
+      renderSkillLibrary();
     }
 
-
-    function closeSkillModal() {
-      document.getElementById("skill-modal").style.display = "none";
+    function closeSkillLibrary() {
+      document.getElementById("skill-library-modal").classList.remove("active");
     }
 
+    function renderSkillLibrary() {
+      const grid = document.getElementById("skill-library-grid");
+      grid.innerHTML = "";
 
-    function selectSkill(name, image) {
+      const filtered = state.skillLibrary.filter(skill => {
+        const position = state.charPosition;
+        return skill.positionTags.includes(position);
+      });
+
+      filtered.forEach(skill => {
+        const card = document.createElement("div");
+        card.className = "skill-card";
+        card.onclick = () => selectSkill(skill);
+
+        card.innerHTML = `
+      <img src="${skill.icon}" alt="${skill.name}" />
+      <div class="skill-name">${skill.name}</div>
+      <div class="skill-description">${skill.description}</div>
+    `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function selectSkill(skill) {
       const { tier, index } = state.currentSkillEdit;
-      state.skillsByTier[tier][index] = { name, image };
-      closeSkillModal();
-      renderSkillTiers();
+      if (tier && index !== null && state.skillsByTier[tier]) {
+        state.skillsByTier[tier][index] = {
+          name: skill.name,
+          image: skill.icon
+        };
+        renderSkills();
+        closeSkillLibrary();
+      }
     }
+
 
 
     document.addEventListener("DOMContentLoaded", () => {
       renderSkillTiers();
     });
+
+    state.skillLibrary = [
+      {
+        name: "Fireball",
+        icon: "https://dummyimage.com/100x100/ff4444/ffffff&text=F",
+        description: "Launches a fiery orb that explodes on impact.",
+        positionTags: ["Wave Controller", "Anima"],
+        minTier: 1,
+        maxTier: 4
+      },
+      {
+        name: "Scout’s Mark",
+        icon: "https://dummyimage.com/100x100/44ff44/ffffff&text=S",
+        description: "Marks an enemy to reduce defense.",
+        positionTags: ["Light Bearer", "Guide"],
+        minTier: 1,
+        maxTier: 3
+      },
+      {
+        name: "Spear Flurry",
+        icon: "https://dummyimage.com/100x100/8888ff/ffffff&text=SF",
+        description: "Multiple rapid spear thrusts at close range.",
+        positionTags: ["Spear Bearer"],
+        minTier: 1,
+        maxTier: 5
+      }
+    ];
+
 
     // Initialize
     window.onload = () => {
