@@ -179,7 +179,7 @@
     }
 
     /* Skill Sections */
-    .skills-section {
+    .skill-section {
       margin-top: 20px;
       padding: 10px;
       background-color: #1f1f1f;
@@ -404,7 +404,7 @@
       <tbody id="stats-body"></tbody>
     </table>
 
-    <div class="skills-section" id="skills-section">
+    <div class="skill-section" id="skill-section">
       <!-- This will be filled by renderSkills() -->
     </div>
 
@@ -820,7 +820,7 @@
     }
 
     function renderSkills() {
-      const section = document.getElementById("skills-section");
+      const section = document.getElementById("skill-section");
       section.innerHTML = "";
 
       for (let tier = 1; tier <= 5; tier++) {
