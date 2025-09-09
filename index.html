@@ -920,7 +920,7 @@
       grid.innerHTML = "";
 
       const filtered = state.skillLibrary.filter(skill => {
-        const position = state.charPosition;
+        const position = document.getElementById("char-position").value;
         return skill.positionTags.includes(position);
       });
 
@@ -992,6 +992,7 @@
       renderSkills();
       renderEquipment();
       renderSkillTiers();
+    
     };
 
   </script>
