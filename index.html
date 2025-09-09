@@ -252,7 +252,8 @@
   position: document.getElementById("char-position").value,
   affinities: state.affinities,
   stats: state.statValues,
-  skills: state.skillSlots
+  skills: state.skillSlots,
+  manualAdds: state.manualStatPoints
   };
   }
   
@@ -282,6 +283,7 @@
   state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
   state.statValues = data.stats || {};
   state.skillSlots = data.skills || [];
+  state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
   updateFromTextbox();
   renderSkills();
   }
@@ -295,6 +297,7 @@
     const stats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
     const state = {
       statValues: Object.fromEntries(stats.map(stat => [stat, 1])),
+      manualStatPoints: Object.fromEntries(stats.map(stat => [stat, 0])),
       statHistory: [],
       skillSlots: [],
       availableStatPoints: 0,
@@ -406,14 +409,19 @@
       const secList = state.affinities.secondary;
       const terList = state.affinities.tertiary;
 
-      stats.forEach(stat => state.statValues[stat] = 1);
+      stats.forEach(stat => {
+        const base = 1;
+        let total = base;
 
-      for (let i = 1; i <= level; i++) {
-        const rates = getGrowthRatesForLevel(pos, i);
-        priList.forEach(stat => state.statValues[stat] += rates.primary);
-        secList.forEach(stat => state.statValues[stat] += rates.secondary);
-        terList.forEach(stat => state.statValues[stat] += rates.tertiary);
-      }
+        for (let i = 1; i <= level; i++) {
+          const rates = getGrowthRatesForLevel(pos, i);
+          if (priList.includes(stat)) total += rates.primary;
+          if (secList.includes(stat)) total += rates.secondary;
+          if (terList.includes(stat)) total += rates.tertiary;
+        }
+
+        state.statValues[stat] = total + state.manualStatPoints[stat];
+      });
 
       state.availableStatPoints = level - 1;
       state.availableSkillPoints = level - 1;
@@ -427,28 +435,52 @@
     function renderStats() {
       const tbody = document.getElementById("stats-body");
       tbody.innerHTML = "";
+
       const average = stats.reduce((sum, stat) => sum + state.statValues[stat], 0) / stats.length;
       const max = parseFloat(document.getElementById("stat-multiplier").value) * average;
 
       stats.forEach(stat => {
         const tr = document.createElement("tr");
+
         const td1 = document.createElement("td");
         td1.textContent = stat;
+
         const td2 = document.createElement("td");
-        td2.textContent = state.statValues[stat].toFixed(1);
+        td2.innerHTML = `
+          ${state.statValues[stat].toFixed(1)}
+          <div class="stat-breakdown">(Base ${(state.statValues[stat] - state.manualStatPoints[stat]).toFixed(1)} + Manual ${state.manualStatPoints[stat]})</div>
+        `;
+
         const td3 = document.createElement("td");
-        const btn = document.createElement("button");
-        btn.textContent = "+";
-        btn.onclick = () => {
+        const addBtn = document.createElement("button");
+        const removeBtn = document.createElement("button");
+        addBtn.textContent = "+";
+        removeBtn.textContent = "–";
+
+        addBtn.onclick = () => {
           if (state.availableStatPoints > 0 && state.statValues[stat] + 1 <= Math.floor(max)) {
             state.statValues[stat]++;
+            state.manualStatPoints[stat]++;
             state.availableStatPoints--;
-            renderStats();
             document.getElementById("available-stat-points").value = state.availableStatPoints;
+            renderStats();
             renderHpSpeed();
           }
         };
-        td3.appendChild(btn);
+
+        removeBtn.onclick = () => {
+          if (state.manualStatPoints[stat] > 0) {
+            state.statValues[stat]--;
+            state.manualStatPoints[stat]--;
+            state.availableStatPoints++;
+            document.getElementById("available-stat-points").value = state.availableStatPoints;
+            renderStats();
+            renderHpSpeed();
+          }
+        };
+
+        td3.appendChild(addBtn);
+        td3.appendChild(removeBtn);
 
         tr.appendChild(td1);
         tr.appendChild(td2);
@@ -456,6 +488,7 @@
         tbody.appendChild(tr);
       });
     }
+
 
     function renderHpSpeed() {
       const floor = parseInt(document.getElementById("char-floor").value);
@@ -499,6 +532,7 @@
         document.getElementById("char-floor").value = 1;
         state.affinities = { primary: [], secondary: [], tertiary: [] };
         state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
+        state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
         state.skillSlots = [];
         updateFromTextbox();
         renderSkills();
