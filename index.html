@@ -178,8 +178,6 @@
       border-color: #888;
     }
 
-    /* Skills Section */
-
     /* Skill Sections */
     .skills-section {
       margin-top: 20px;
@@ -195,7 +193,7 @@
       padding-top: 10px;
     }
 
-    /* Tier Title and Add Button */
+    /* Tier Header */
     .tier-header {
       display: flex;
       justify-content: space-between;
@@ -222,6 +220,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.2s;
+      position: relative;
     }
 
     .skill-slot:hover {
@@ -234,21 +233,17 @@
       object-fit: contain;
     }
 
-    .skills-container {
-      border-radius: 6px;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-      position: relative;
-    }
-
+    /* Empty Skill Slot Indicator */
     .skill-slot.empty::after {
       content: '+';
-      color: #999;
-      font-size: 32px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
       position: absolute;
-      top: 10px;
-      left: 22px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
     }
 
     .modal {
@@ -399,6 +394,11 @@
       <div class="skill-slots" id="tier-1-slots">
         <!-- Dynamically added slots -->
       </div>
+    </div>
+
+
+    <div class="skills-section" id="skills-section">
+      <!-- This will be filled by renderSkills() -->
     </div>
 
     <!-- Skill Modal -->
@@ -792,6 +792,12 @@
       updateFromTextbox();
     }
 
+    function addSkillSlot(tier) {
+      state.skillSlots.push({ tier: tier, name: "" });
+      state.skillSlots.sort((a, b) => a.tier - b.tier);
+      renderSkills();
+    }
+
 
     function resetCharacter() {
       if (!auth.currentUser) return;
@@ -822,7 +828,7 @@
     //     input.value = slot.name;
     //     input.onchange = e => state.skillSlots[index].name = e.target.value;
     //     td2.appendChild(input);
-    //     tr.appendChild(td1);S
+    //     tr.appendChild(td1);
     //     tr.appendChild(td2);
     //     tbody.appendChild(tr);
     //   });
