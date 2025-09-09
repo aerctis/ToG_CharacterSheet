@@ -843,7 +843,7 @@
         state.skillsByTier[tier].forEach((skill, idx) => {
           const slot = document.createElement("div");
           slot.className = "skill-slot";
-          slot.onclick = () => openSkillModal(tier, idx);
+          slot.onclick = () => openSkillLibrary(tier, idx);
           if (skill && skill.image) {
             const img = document.createElement("img");
             img.src = skill.image;
