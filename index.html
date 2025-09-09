@@ -553,7 +553,10 @@
       manualStatPoints: Object.fromEntries(stats.map(stat => [stat, 0])),
       statHistory: [],
       skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
-      currentSkillEdit: { tier: null, index: null },
+      skillModal: {
+        activeTier: null,
+        activeIndex: null
+      },
       availableStatPoints: 0,
       availableSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
@@ -793,8 +796,11 @@
     }
 
     function addSkillSlot(tier) {
+      if (!state.skillsByTier[tier]) {
+        state.skillsByTier[tier] = [];
+      }
       state.skillSlots.push({ tier: tier, name: "" });
-      state.skillSlots.sort((a, b) => a.tier - b.tier);
+      tate.skillSlots.sort((a, b) => a.tier - b.tier);
       renderSkills();
     }
 
@@ -872,7 +878,7 @@
 
 
     function renderSkillTiers() {
-      const container = document.getElementById("skill-tiers");
+      const container = document.getElementById("skill-section");
       container.innerHTML = "";
       for (let tier = 1; tier <= 5; tier++) {
         const div = document.createElement("div");
