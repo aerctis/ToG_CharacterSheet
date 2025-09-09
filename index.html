@@ -70,6 +70,14 @@
       padding: 4px 8px;
       cursor: pointer;
     }
+    .stat-display {
+      font-size: 1.2em;
+    }
+    .stat-breakdown {
+      font-size: 0.85em;
+      color: #555;
+    }
+
   </style>
 </head>
 <body>
@@ -80,6 +88,7 @@
     <button onclick="signInWithGoogle()">Sign In with Google</button>
     <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
     <button onclick="saveCharacter()">Save Character</button>
+    <button onclick="resetCharacter()">Reset Character</button>
     <span id="user-info" style="margin-left: 10px;"></span>
     </div>
   
@@ -216,13 +225,21 @@
   }
   
   
-  auth.onAuthStateChanged(user => {
+ auth.onAuthStateChanged(user => {
   if (user) {
-  document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
-  document.getElementById("logoutBtn").style.display = 'inline-block';
-  loadCharacter();
+    document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
+    document.getElementById("logoutBtn").style.display = 'inline-block';
+    document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
+    loadCharacter();
+  } else {
+    document.getElementById("user-info").textContent = "Logged out.";
+    document.getElementById("logoutBtn").style.display = 'none';
+    document.querySelectorAll("input, select, button").forEach(el => {
+      if (!el.closest("body > .container > div > button")) el.disabled = true;
+    });
   }
-  });
+});
+
   
   
   // 5. Save & Load Character
@@ -471,6 +488,23 @@
       state.skillSlots.sort((a, b) => a.tier - b.tier);
       renderSkills();
     }
+
+
+    function resetCharacter() {
+      if (!auth.currentUser) return;
+      db.collection("characters").doc(auth.currentUser.uid).delete().then(() => {
+        document.getElementById("char-name").value = "";
+        document.getElementById("char-race").value = "";
+        document.getElementById("char-level").value = 1;
+        document.getElementById("char-floor").value = 1;
+        state.affinities = { primary: [], secondary: [], tertiary: [] };
+        state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
+        state.skillSlots = [];
+        updateFromTextbox();
+        renderSkills();
+      });
+}
+
 
     function renderSkills() {
       const tbody = document.getElementById("skills-body");
