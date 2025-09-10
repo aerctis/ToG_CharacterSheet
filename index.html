@@ -274,6 +274,27 @@
       margin-top: 4px;
     }
 
+    /* --- NEW: Stat Cap Warning Style --- */
+    .stat-capped {
+      color: var(--danger-color);
+      font-weight: 600;
+      animation: pulse-red 1.5s infinite;
+    }
+
+    @keyframes pulse-red {
+      0% {
+        text-shadow: 0 0 3px rgba(255, 50, 50, 0.5);
+      }
+
+      50% {
+        text-shadow: 0 0 10px rgba(255, 50, 50, 1);
+      }
+
+      100% {
+        text-shadow: 0 0 3px rgba(255, 50, 50, 0.5);
+      }
+    }
+
     /* --- Equipment Section (Minor tweaks) --- */
     .equipment-section {
       background-color: var(--bg-inset);
@@ -306,7 +327,7 @@
       position: absolute;
       left: 15px;
       /* Adjusted position */
-      top: 48%;
+      top: 35%;
       transform: translateY(-50%);
       /* Adjusted for vertical centering */
       color: #fff;
@@ -316,7 +337,7 @@
       flex-direction: column;
       /* Key change */
       align-items: center;
-      gap: 4px;
+      gap: 10x;
     }
 
     .derived-stat-formula {
@@ -1073,7 +1094,6 @@
       state.statValues = calculatedStats;
     }
 
-    // *** FIXED FUNCTION ***
     function renderStats() {
       const tbody = document.getElementById("stats-body");
       tbody.innerHTML = "";
@@ -1083,22 +1103,72 @@
 
       stats.forEach(stat => {
         const tr = document.createElement("tr");
-        const baseValue = state.statValues[stat] || 0; // Includes manual points
+        const baseValue = state.statValues[stat] || 0;
         const manual = state.manualStatPoints[stat] || 0;
         const skillBonus = state.skillBonuses[stat]?.add || 0;
         const totalValue = baseValue + skillBonus;
 
+        // Check if the stat is over the cap
+        const isCapped = totalValue > max;
+
         tr.innerHTML = `
-          <td>${stat}</td>
-          <td>
-              ${totalValue.toFixed(1)}
-              <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
-          </td>
-          <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
-        `;
+      <td>${stat}</td>
+      <td class="${isCapped ? 'stat-capped' : ''}">
+          ${totalValue.toFixed(1)}
+          <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
+      </td>
+      <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
+    `;
 
         // Add button logic
         tr.querySelector('.add-stat-btn').onclick = () => {
+          // The disabled logic already prevents going over the cap, but we keep the check here.
+          if (state.availableStatPoints > 0 && totalValue + 1 <= Math.floor(max)) {
+            state.manualStatPoints[stat]++;
+            updateFromTextbox();
+          }
+        };
+
+        tr.querySelector('.remove-stat-btn').onclick = () => {
+          if (state.manualStatPoints[stat] > 0) {
+            state.manualStatPoints[stat]--;
+            updateFromTextbox();
+          }
+        };
+
+        tbody.appendChild(tr);
+      });
+    } 
+    
+    function renderStats() {
+      const tbody = document.getElementById("stats-body");
+      tbody.innerHTML = "";
+
+      const average = stats.reduce((sum, stat) => sum + state.statValues[stat], 0) / stats.length;
+      const max = parseFloat(document.getElementById("stat-multiplier").value) * average;
+
+      stats.forEach(stat => {
+        const tr = document.createElement("tr");
+        const baseValue = state.statValues[stat] || 0;
+        const manual = state.manualStatPoints[stat] || 0;
+        const skillBonus = state.skillBonuses[stat]?.add || 0;
+        const totalValue = baseValue + skillBonus;
+
+        // Check if the stat is over the cap
+        const isCapped = totalValue > max;
+
+        tr.innerHTML = `
+      <td>${stat}</td>
+      <td class="${isCapped ? 'stat-capped' : ''}">
+          ${totalValue.toFixed(1)}
+          <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
+      </td>
+      <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
+    `;
+
+        // Add button logic
+        tr.querySelector('.add-stat-btn').onclick = () => {
+          // The disabled logic already prevents going over the cap, but we keep the check here.
           if (state.availableStatPoints > 0 && totalValue + 1 <= Math.floor(max)) {
             state.manualStatPoints[stat]++;
             updateFromTextbox();
