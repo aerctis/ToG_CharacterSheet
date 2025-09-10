@@ -952,7 +952,7 @@
       let attack = 0;
       if (selected && eq[selected]) {
         const weapon = eq[selected];
-        const base = stats[weapon.stat] || 0;
+        const base = state.statValues[weapon.stat] || 0;
         attack = Math.floor(base / 5) + (weapon.modifier || 0);
       }
 
@@ -960,7 +960,7 @@
       let defense = 0;
       if (eq.armor) {
         const armor = eq.armor;
-        const base = stats[armor.stat] || 0;
+        const base = state.statValues[armor.stat] || 0;
         defense = Math.floor(base / 5) + (armor.modifier || 0);
       }
 
@@ -1190,7 +1190,7 @@
       name: "Iron Sword",
       image: "https://tse1.mm.bing.net/th/id/OIP.j281zEYkp-jonRx-DTxqOwHaHa?r=0&cb=ucfimgc2&rs=1&pid=ImgDetMain&o=7&rm=3",
       type: "weapon",
-      stat: "strength",
+      stat: "Strength",
       modifier: 5
     };
 
@@ -1198,7 +1198,7 @@
       name: "Iron Sword",
       image: "https://tse1.mm.bing.net/th/id/OIP.j281zEYkp-jonRx-DTxqOwHaHa?r=0&cb=ucfimgc2&rs=1&pid=ImgDetMain&o=7&rm=3",
       type: "weapon",
-      stat: "strength",
+      stat: "Strength",
       modifier: 5
     };
 
@@ -1206,7 +1206,7 @@
       name: "Leather Armor",
       image: "https://tse4.mm.bing.net/th/id/OIP.zOLvcGUpeqIx28q4H1M4DwHaHa?r=0&cb=ucfimgc2&rs=1&pid=ImgDetMain&o=7&rm=3",
       type: "armor",
-      stat: "willpower",
+      stat: "Willpower",
       modifier: 3
     };
 
