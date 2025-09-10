@@ -142,41 +142,80 @@
       margin-left: 5px;
     }
 
-    .equipment-section {
-      background-color: #1f1f2a;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 14px;
-    }
-
     .equipment-section h3 {
       color: #ccc;
       text-align: center;
       margin-bottom: 10px;
     }
 
-    .equipment-grid {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
+    .equipment-section {
+      background-color: #1f1f2f;
+      /* keep your dark color */
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      width: 100%;
     }
 
+    .equipment-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .equipment-row {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .equipment-slots-row {
+      display: flex;
+      gap: 14px;
+    }
+
+    .derived-stat {
+      position: absolute;
+      left: 40px;
+      top: 50%;
+      transform: translateY(-180%);
+      color: #fff;
+      font-weight: bold;
+      font-size: 20px;
+      pointer-events: none;
+    }
+
+
     .slot {
-      width: 110px;
-      height: 110px;
-      background-color: #333444;
-      border: 2px dashed #666;
+      width: 100px;
+      height: 100px;
+      background-color: #2a2a2a;
+      border: 2px dashed #555;
       border-radius: 6px;
-      background-size: cover;
-      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: border-color 0.2s;
+      position: relative;
+      transition: background-color 0.2s;
     }
 
     .slot:hover {
-      border-color: #888;
+      background-color: #3a3a3a;
     }
+
+    .slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .selected-weapon {
+      border-color: gold;
+      box-shadow: 0 0 8px gold;
+    }
+
 
     /* Skill Sections */
     .skill-section {
@@ -308,11 +347,6 @@
       font-size: 12px;
       color: #aaa;
     }
-
-    .selected-weapon {
-      outline: 3px solid #f5d442;
-      box-shadow: 0 0 10px #f5d442;
-    }
   </style>
 </head>
 
@@ -386,21 +420,30 @@
 
 
 
-    <!-- Add this inside your .container, after base stats -->
     <div class="equipment-section">
       <h3>Equipment</h3>
-      <div id="derived-stats">
-        <p>Attack: <span id="derived-attack">0</span></p>
-        <p>Defense: <span id="derived-defense">0</span></p>
-      </div>
       <div class="equipment-grid">
-        <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-        <div class="slot" id="armor-slot" title="Armor"></div>
-        <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-        <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-        <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+        <div class="equipment-row">
+          <div class="derived-stat attack"><span id="derived-attack">0</span></div>
+          <div class="equipment-slots-row">
+            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+            <div class="slot" id="armor-slot" title="Armor"></div>
+            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+          </div>
+        </div>
+        <div class="equipment-row">
+          <div class="derived-stat defense"><span id="derived-defense">0</span></div>
+          <div class="equipment-slots-row">
+            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+          </div>
+        </div>
       </div>
     </div>
+
+
+
+
 
 
     <h3>Stats</h3>
@@ -813,7 +856,7 @@
         td3.appendChild(removeBtn);
 
         tr.appendChild(td1);
-        
+
         tr.appendChild(td2);
         tr.appendChild(td3);
         tbody.appendChild(tr);
@@ -1145,6 +1188,13 @@
     ];
 
     state.equipment.weapon1 = {
+      name: "Iron Sword",
+      type: "weapon",
+      stat: "strength",
+      modifier: 5
+    };
+
+    state.equipment.weapon2 = {
       name: "Iron Sword",
       type: "weapon",
       stat: "strength",
