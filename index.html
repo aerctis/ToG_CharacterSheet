@@ -379,9 +379,15 @@
 
     <div id="hp-speed"></div>
 
+
+
     <!-- Add this inside your .container, after base stats -->
     <div class="equipment-section">
       <h3>Equipment</h3>
+      <div class="derived-stats">
+        <div><strong>Attack:</strong> <span id="derived-attack">0</span></div>
+        <div><strong>Defense:</strong> <span id="derived-defense">0</span></div>
+      </div>
       <div class="equipment-grid">
         <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
         <div class="slot" id="armor-slot" title="Armor"></div>
@@ -495,7 +501,6 @@
         position: document.getElementById("char-position").value,
         affinities: state.affinities,
         stats: state.statValues,
-        // skills: state.skillSlots,
         skillsByTier: state.skillsByTier,
         manualAdds: state.manualStatPoints,
         equipment: state.equipment
@@ -529,13 +534,14 @@
               state.statValues = data.stats || {};
               state.skillsByTier = data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] };
               state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
-              state.equipment = data.equipment || {
-                weapon1: null,
-                weapon2: null,
-                armor: null,
-                accessory1: null,
-                accessory2: null
-              };
+              state.derivedStats =
+                state.equipment = data.equipment || {
+                  weapon1: null,
+                  weapon2: null,
+                  armor: null,
+                  accessory1: null,
+                  accessory2: null
+                };
 
               updateFromTextbox();
               renderSkills();
@@ -558,7 +564,9 @@
       skillFilter: { position: "", tier: null, search: "" },
       availableStatPoints: 0,
       availableSkillPoints: 0,
+      usedSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
+      derivedStats: { attack: 0, defense: 0 },
       equipment: {
         weapon1: null,
         weapon2: null,
@@ -700,8 +708,8 @@
         state.statValues[stat] = total + state.manualStatPoints[stat];
       });
 
-      state.availableStatPoints = level - 1;
-      state.availableSkillPoints = level - 1;
+      state.availableStatPoints = level - state.manualStatPoints - 1;
+      state.availableSkillPoints = level - state.usedSkillPoints - 1;
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
       renderStats();
@@ -709,6 +717,12 @@
       renderAffinityControls();
       renderEquipment();
     }
+
+    function renderDerivedStats() {
+      document.getElementById("derived-attack").textContent = state.derivedStats.attack;
+      document.getElementById("derived-defense").textContent = state.derivedStats.defense;
+    }
+
 
     function renderStats() {
       const tbody = document.getElementById("stats-body");
@@ -818,6 +832,83 @@
         renderSkills();
       });
     }
+
+    function applySkillEffects() {
+      // Clear all skill-modified stats first
+      state.derivedStats = {};
+
+      for (let tier = 1; tier <= 5; tier++) {
+        for (const skill of state.skillsByTier[tier]) {
+          if (!skill || skill.level === 0) continue;
+
+          const effect = skill.effects?.[skill.level - 1];
+          if (!effect) continue;
+
+          const { stat, type, value } = effect;
+
+          if (!state.derivedStats[stat]) state.derivedStats[stat] = 0;
+
+          switch (type) {
+            case "add":
+              state.derivedStats[stat] += value;
+              break;
+            case "mul":
+              state.derivedStats[stat] *= value;
+              break;
+            case "limit":
+              state.derivedStats[stat] = Math.min(state.derivedStats[stat], value);
+              break;
+          }
+        }
+      }
+    }
+
+    function calculateUsedSkillPoints() {
+      let total = 0;
+      for (let tier = 1; tier <= 5; tier++) {
+        for (const skill of state.skillsByTier[tier]) {
+          if (skill && skill.costPerLevel && skill.level > 0) {
+            for (let i = 0; i < skill.level; i++) {
+              total += skill.costPerLevel[i] || 1;
+            }
+          }
+        }
+      }
+      state.usedSkillPoints = total;
+      state.availableSkillPoints = (state.level - 1) - total;
+    }
+
+
+    function levelUpSkill() {
+      const { tier, index } = state.currentSkillEdit;
+      const skill = state.skillsByTier[tier][index];
+      if (!skill || skill.level >= skill.maxLevel) return;
+
+      const cost = skill.costPerLevel[skill.level] || 1;
+      if (state.availableSkillPoints < cost) return;
+
+      skill.level++;
+      calculateUsedSkillPoints();
+      renderSkillModal();
+      renderSkillTiers();
+      renderDerivedStats();
+    }
+
+    function refundSkill() {
+      const { tier, index } = state.currentSkillEdit;
+      const skill = state.skillsByTier[tier][index];
+      if (!skill || skill.level <= 0) return;
+
+      skill.level--;
+      calculateUsedSkillPoints();
+      renderSkillModal();
+      renderSkillTiers();
+      renderDerivedStats();
+    }
+
+
+
+
 
     function renderSkills() {
       const section = document.getElementById("skill-section");
@@ -963,25 +1054,16 @@
         icon: "https://dummyimage.com/100x100/ff4444/ffffff&text=F",
         description: "Launches a fiery orb that explodes on impact.",
         positionTags: ["Wave Controller", "Anima"],
-        minTier: 1,
+        level: 0,
+        maxLevel: 10,
+        costPerLevel: [5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        effects: [
+          { stat: "strength", type: "add", value: 5 },
+          { stat: "strength", type: "add", value: 10 },
+          { stat: "strength", type: "add", value: 15 }
+        ],
         maxTier: 4
       },
-      {
-        name: "Scout’s Mark",
-        icon: "https://dummyimage.com/100x100/44ff44/ffffff&text=S",
-        description: "Marks an enemy to reduce defense.",
-        positionTags: ["Light Bearer", "Guide"],
-        minTier: 1,
-        maxTier: 3
-      },
-      {
-        name: "Spear Flurry",
-        icon: "https://dummyimage.com/100x100/8888ff/ffffff&text=SF",
-        description: "Multiple rapid spear thrusts at close range.",
-        positionTags: ["Spear Bearer"],
-        minTier: 1,
-        maxTier: 5
-      }
     ];
 
 
@@ -992,7 +1074,7 @@
       renderSkills();
       renderEquipment();
       renderSkillTiers();
-    
+
     };
 
   </script>
