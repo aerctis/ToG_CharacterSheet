@@ -10,16 +10,20 @@
       background-color: #1e1e2f;
       color: #e0e0e0;
     }
+
     .container {
       background-color: #2a2a40;
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 0 10px #00000080;
     }
-    h2, h3 {
+
+    h2,
+    h3 {
       text-align: center;
       color: #ffffff;
     }
+
     button {
       background-color: #444466;
       cursor: pointer;
@@ -29,105 +33,444 @@
       border-radius: 4px;
       padding: 5px 10px;
     }
+
     button:hover {
       background-color: #555588;
     }
+
     button:disabled {
-        background-color: #2a2a3a;
-        cursor: not-allowed;
-        color: #777;
+      background-color: #2a2a3a;
+      cursor: not-allowed;
+      color: #777;
     }
 
     /* Layout */
-    .row { display: flex; justify-content: space-between; flex-wrap: wrap; }
-    .col { flex: 1 1 45%; margin: 10px; }
-    
+    .row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .col {
+      flex: 1 1 45%;
+      margin: 10px;
+    }
+
     /* Form Elements */
-    input[type="text"], input[type="number"], select, textarea {
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
       background-color: #3a3a55;
       color: #ffffff;
       border: 1px solid #555;
       border-radius: 4px;
       padding: 4px;
     }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: #8888ff;
       box-shadow: 0 0 5px #8888ff50;
     }
-    label { font-weight: bold; display: block; margin-top: 10px; color: #ccc; }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      color: #ccc;
+    }
 
     /* Stats Table */
-    .stats-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .stats-table th, .stats-table td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-    .stat-breakdown { font-size: 0.85em; color: #aaaaaa; margin-left: 5px; }
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .stats-table th,
+    .stats-table td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .stat-breakdown {
+      font-size: 0.85em;
+      color: #aaaaaa;
+      margin-left: 5px;
+    }
 
     /* Equipment Section */
-    .equipment-section { background-color: #1f1f2f; padding: 20px; border-radius: 8px; margin-top: 20px; width: 100%; }
-    .equipment-grid { display: flex; flex-direction: column; gap: 14px; }
-    .equipment-row { position: relative; display: flex; justify-content: center; align-items: center; }
-    .equipment-slots-row { display: flex; gap: 14px; }
-    .derived-stat { position: absolute; left: 40px; top: 50%; transform: translateY(-180%); color: #fff; font-weight: bold; font-size: 20px; pointer-events: none; }
-    .fraction { display: inline-block; text-align: center; font-size: 0.8em; vertical-align: middle; line-height: 1.2; }
-    .fraction .top { display: block; padding: 0 2px; margin-bottom: 4px; position: relative; }
-    .fraction .top::after { content: ""; position: absolute; bottom: -2px; left: 0; right: 0; height: 1px; background: white; }
-    .fraction .bottom { display: block; padding: 0 2px; }
-    #derived-attack, #derived-defense { color: yellow; font-size: 26px; }
+    .equipment-section {
+      background-color: #1f1f2f;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .equipment-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .equipment-row {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .equipment-slots-row {
+      display: flex;
+      gap: 14px;
+    }
+
+    .derived-stat {
+      position: absolute;
+      left: 40px;
+      top: 50%;
+      transform: translateY(-180%);
+      color: #fff;
+      font-weight: bold;
+      font-size: 20px;
+      pointer-events: none;
+    }
+
+    .fraction {
+      display: inline-block;
+      text-align: center;
+      font-size: 0.8em;
+      vertical-align: middle;
+      line-height: 1.2;
+    }
+
+    .fraction .top {
+      display: block;
+      padding: 0 2px;
+      margin-bottom: 4px;
+      position: relative;
+    }
+
+    .fraction .top::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: white;
+    }
+
+    .fraction .bottom {
+      display: block;
+      padding: 0 2px;
+    }
+
+    #derived-attack,
+    #derived-defense {
+      color: yellow;
+      font-size: 26px;
+    }
 
     /* Equipment Slots */
-    .slot { width: 130px; height: 130px; background-color: #2a2a2a; border: 2px dashed #555; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; transition: background-color 0.2s, border-color 0.2s; }
-    .slot:hover { background-color: #3a3a3a; }
-    .slot img.item-image { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-    .slot .change-item-icon { position: absolute; bottom: 5px; right: 5px; width: 24px; height: 24px; background-color: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid #888; transition: background-color 0.2s; }
-    .slot .change-item-icon:hover { background-color: #555588; }
-    .selected-weapon { border-color: gold; box-shadow: 0 0 8px gold; }
-    
+    .slot {
+      width: 130px;
+      height: 130px;
+      background-color: #2a2a2a;
+      border: 2px dashed #555;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .slot:hover {
+      background-color: #3a3a3a;
+    }
+
+    .slot img.item-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .slot .change-item-icon {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #888;
+      transition: background-color 0.2s;
+    }
+
+    .slot .change-item-icon:hover {
+      background-color: #555588;
+    }
+
+    .selected-weapon {
+      border-color: gold;
+      box-shadow: 0 0 8px gold;
+    }
+
     /* Modals (Shared Styles) */
-    .modal-backdrop { position: fixed; top: 5%; left: 5%; width: 90%; height: 90%; background-color: #1e1e2f; border: 2px solid #555; border-radius: 8px; z-index: 999; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
-    .modal-backdrop.active { display: flex; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
-    .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+    .modal-backdrop {
+      position: fixed;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
+      background-color: #1e1e2f;
+      border: 2px solid #555;
+      border-radius: 8px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
 
     /* Item Card Styles (for Library) */
-    .item-card { background-color: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 12px; cursor: pointer; transition: background-color 0.2s; text-align: center; }
-    .item-card:hover { background-color: #333; }
-    .item-card img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 8px; }
-    .item-card .item-name { font-weight: bold; margin-bottom: 4px; }
-    .item-card.undiscovered { filter: grayscale(1) brightness(0.6); cursor: not-allowed; }
+    .item-card {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-align: center;
+    }
+
+    .item-card:hover {
+      background-color: #333;
+    }
+
+    .item-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .item-card .item-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .item-card.undiscovered {
+      filter: grayscale(1) brightness(0.6);
+      cursor: not-allowed;
+    }
 
     /* Tooltip */
-    #tooltip { position: absolute; display: none; background-color: #1e1e2f; border: 1px solid #8888ff; border-radius: 6px; padding: 10px; z-index: 1000; max-width: 300px; pointer-events: none; box-shadow: 0 0 10px #00000080; }
+    #tooltip {
+      position: absolute;
+      display: none;
+      background-color: #1e1e2f;
+      border: 1px solid #8888ff;
+      border-radius: 6px;
+      padding: 10px;
+      z-index: 1000;
+      max-width: 300px;
+      pointer-events: none;
+      box-shadow: 0 0 10px #00000080;
+    }
 
     /* --- SKILL SECTION --- */
-    .skill-section { margin-top: 20px; padding: 10px; background-color: #1f1f1f; border-radius: 8px; }
-    .tier-section { margin-bottom: 15px; border-top: 1px solid #444; padding-top: 10px; }
-    .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .skill-slots { display: flex; flex-wrap: wrap; gap: 8px; }
-    
+    .skill-section {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1f1f1f;
+      border-radius: 8px;
+    }
+
+    .tier-section {
+      margin-bottom: 15px;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+    }
+
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .skill-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     /* Skill Slot */
-    .skill-slot { width: 48px; height: 48px; border: 2px dashed #555; background-color: #2c2c2c; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; transition: background-color 0.2s; position: relative; }
-    .skill-slot:hover { background-color: #3a3a3a; }
-    .skill-slot img { width: 100%; height: 100%; object-fit: contain; }
-    .skill-slot.empty::after { content: '+'; color: #aaa; font-size: 28px; position: absolute; }
-    .skill-slot .skill-level-badge { position: absolute; bottom: -2px; right: -2px; background: gold; color: black; font-size: 10px; font-weight: bold; border-radius: 4px; padding: 1px 3px; }
-    
+    .skill-slot {
+      width: 48px;
+      height: 48px;
+      border: 2px dashed #555;
+      background-color: #2c2c2c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      position: relative;
+    }
+
+    .skill-slot:hover {
+      background-color: #3a3a3a;
+    }
+
+    .skill-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .skill-slot.empty::after {
+      content: '+';
+      color: #aaa;
+      font-size: 28px;
+      position: absolute;
+    }
+
+    .skill-slot .skill-level-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background: gold;
+      color: black;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 4px;
+      padding: 1px 3px;
+    }
+
     /* Skill & Item Cards */
-    .skill-card, .item-card { position: relative; }
-    .info-icon { position: absolute; top: 5px; right: 5px; width: 20px; height: 20px; background-color: rgba(0,0,0,0.7); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid #888; font-style: normal; }
-    .info-icon:hover { background-color: #555588; }
-    .skill-card { background-color: #2a2a2a; border: 1px solid #444; padding: 12px; }
-    .skill-card .skill-name { font-weight: bold; margin-bottom: 4px; }
-    .skill-card .skill-description { font-size: 12px; color: #aaa; }
+    .skill-card,
+    .item-card {
+      position: relative;
+    }
+
+    .info-icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #888;
+      font-style: normal;
+    }
+
+    .info-icon:hover {
+      background-color: #555588;
+    }
+
+    .skill-card {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      padding: 12px;
+    }
+
+    .skill-card .skill-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .skill-card .skill-description {
+      font-size: 12px;
+      color: #aaa;
+    }
 
     /* Skill Info Modal */
-    #skill-info-modal-content { display: flex; gap: 20px; }
-    #skill-info-modal .left-panel { flex: 1; }
-    #skill-info-modal .right-panel { flex: 2; overflow-y: auto; max-height: 70vh; }
-    #skill-info-modal img { max-width: 150px; margin: 0 auto; display: block; }
-    #skill-info-modal .level-up-controls { margin-top: 15px; padding-top: 15px; border-top: 1px solid #555; }
-    .level-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; }
-    .level-table th, .level-table td { border: 1px solid #444; padding: 5px; text-align: left; }
-    .level-table .current-level-row { background-color: #3a3a55; }
+    #skill-info-modal-content {
+      display: flex;
+      gap: 20px;
+    }
+
+    #skill-info-modal .left-panel {
+      flex: 1;
+    }
+
+    #skill-info-modal .right-panel {
+      flex: 2;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
+
+    #skill-info-modal img {
+      max-width: 150px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    #skill-info-modal .level-up-controls {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #555;
+    }
+
+    .level-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+
+    .level-table th,
+    .level-table td {
+      border: 1px solid #444;
+      padding: 5px;
+      text-align: left;
+    }
+
+    .level-table .current-level-row {
+      background-color: #3a3a55;
+    }
   </style>
 </head>
 
@@ -143,33 +486,36 @@
     </div>
 
     <div class="row">
-        <div class="col">
-            <label>Name</label><input type="text" id="char-name">
-            <label>Race</label><input type="text" id="char-race">
-            <label>Position</label>
-            <select id="char-position" onchange="updateFromTextbox()">
-              <option value="Guide">Guide</option>
-              <option value="Fisherman">Fisherman</option>
-              <option value="Spear Bearer">Spear Bearer</option>
-              <option value="Wave Controller">Wave Controller</option>
-              <option value="Light Bearer">Light Bearer</option>
-              <option value="Anima">Anima</option>
-            </select>
-            <label>Primary Stats</label><div class="affinities" id="primary-affinities"></div><select id="add-primary"></select>
-            <label>Secondary Stats</label><div class="affinities" id="secondary-affinities"></div><select id="add-secondary"></select>
-            <label>Tertiary Stats</label><div class="affinities" id="tertiary-affinities"></div><select id="add-tertiary"></select>
+      <div class="col">
+        <label>Name</label><input type="text" id="char-name">
+        <label>Race</label><input type="text" id="char-race">
+        <label>Position</label>
+        <select id="char-position" onchange="updateFromTextbox()">
+          <option value="Guide">Guide</option>
+          <option value="Fisherman">Fisherman</option>
+          <option value="Spear Bearer">Spear Bearer</option>
+          <option value="Wave Controller">Wave Controller</option>
+          <option value="Light Bearer">Light Bearer</option>
+          <option value="Anima">Anima</option>
+        </select>
+        <label>Primary Stats</label>
+        <div class="affinities" id="primary-affinities"></div><select id="add-primary"></select>
+        <label>Secondary Stats</label>
+        <div class="affinities" id="secondary-affinities"></div><select id="add-secondary"></select>
+        <label>Tertiary Stats</label>
+        <div class="affinities" id="tertiary-affinities"></div><select id="add-tertiary"></select>
+      </div>
+      <div class="col">
+        <label>Level</label><input type="number" id="char-level" min="1" value="1" onchange="updateFromTextbox()">
+        <label>Floor</label><input type="number" id="char-floor" min="1" value="1" onchange="renderHpSpeed()">
+        <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5">
+        <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
+        <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+        <div class="btn-row" style="margin-top: 10px;">
+          <button onclick="levelUp()">Level Up</button>
+          <button onclick="addSkillPoint()">+1 Skill Point</button>
         </div>
-        <div class="col">
-            <label>Level</label><input type="number" id="char-level" min="1" value="1" onchange="updateFromTextbox()">
-            <label>Floor</label><input type="number" id="char-floor" min="1" value="1" onchange="renderHpSpeed()">
-            <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5">
-            <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
-            <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-            <div class="btn-row" style="margin-top: 10px;">
-              <button onclick="levelUp()">Level Up</button>
-              <button onclick="addSkillPoint()">+1 Skill Point</button>
-            </div>
-        </div>
+      </div>
     </div>
     <div id="hp-speed" style="margin-top: 20px; font-size: 1.1em;"></div>
 
@@ -177,7 +523,9 @@
       <h3>Equipment</h3>
       <div class="equipment-grid">
         <div class="equipment-row">
-          <div class="derived-stat attack"><span class="fraction"><span class="top" id="attack-formula-top"></span><span class="bottom" id="attack-formula-bot"></span></span><span class="fraction" id="attack-formula"></span><span id="derived-attack">0</span></div>
+          <div class="derived-stat attack"><span class="fraction"><span class="top" id="attack-formula-top"></span><span
+                class="bottom" id="attack-formula-bot"></span></span><span class="fraction"
+              id="attack-formula"></span><span id="derived-attack">0</span></div>
           <div class="equipment-slots-row">
             <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
             <div class="slot" id="armor-slot" title="Armor"></div>
@@ -185,7 +533,9 @@
           </div>
         </div>
         <div class="equipment-row">
-          <div class="derived-stat defense"><span class="fraction"><span class="top" id="defense-formula-top"></span><span class="bottom" id="defense-formula-bot"></span></span><span class="fraction" id="defense-formula"></span><span id="derived-defense">0</span></div>
+          <div class="derived-stat defense"><span class="fraction"><span class="top"
+                id="defense-formula-top"></span><span class="bottom" id="defense-formula-bot"></span></span><span
+              class="fraction" id="defense-formula"></span><span id="derived-defense">0</span></div>
           <div class="equipment-slots-row">
             <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
             <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
@@ -196,7 +546,13 @@
 
     <h3>Stats</h3>
     <table class="stats-table" id="stats-table">
-      <thead><tr><th>Stat</th><th>Value</th><th>+/-</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Stat</th>
+          <th>Value</th>
+          <th>+/-</th>
+        </tr>
+      </thead>
       <tbody id="stats-body"></tbody>
     </table>
 
@@ -211,19 +567,19 @@
     </div>
 
     <div id="equipment-library-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3 id="equipment-modal-title">Equipment Library</h3>
-          <button onclick="closeEquipmentModal()">Close</button>
-        </div>
-        <div class="modal-grid" id="equipment-library-grid"></div>
+      <div class="modal-header">
+        <h3 id="equipment-modal-title">Equipment Library</h3>
+        <button onclick="closeEquipmentModal()">Close</button>
+      </div>
+      <div class="modal-grid" id="equipment-library-grid"></div>
     </div>
 
     <div id="skill-info-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3 id="skill-info-title">Skill Details</h3>
-          <button onclick="closeSkillInfoModal()">Close</button>
-        </div>
-        <div id="skill-info-modal-content"></div>
+      <div class="modal-header">
+        <h3 id="skill-info-title">Skill Details</h3>
+        <button onclick="closeSkillInfoModal()">Close</button>
+      </div>
+      <div id="skill-info-modal-content"></div>
     </div>
 
     <div id="tooltip"></div>
@@ -236,11 +592,19 @@
 
   <script>
     // --- FIREBASE SETUP ---
-    const firebaseConfig = { /* YOUR FIREBASE CONFIG HERE */ };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCr08RHyYpKBy3omDUtSmYYr3KkXxx30E4",
+      authDomain: "tog-charactersheet.firebaseapp.com",
+      projectId: "tog-charactersheet",
+      storageBucket: "tog-charactersheet.firebasestorage.app",
+      messagingSenderId: "915406998560",
+      appId: "1:915406998560:web:4edbb2e3deb9d70c0a4045",
+      measurementId: "G-ZMQF30F2FC"
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    
+
     // --- GLOBAL STATE ---
     const stats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
     const state = {
@@ -264,8 +628,8 @@
 
     // --- INITIALIZATION & AUTH ---
     function initializeState() {
-        state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
-        state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
+      state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
+      state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
     }
 
     auth.onAuthStateChanged(user => {
@@ -293,86 +657,86 @@
       const user = auth.currentUser;
       if (user) {
         db.collection("characters").doc(user.uid).get().then(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById("char-name").value = data.name || "";
-                document.getElementById("char-race").value = data.race || "";
-                document.getElementById("char-level").value = data.level || 1;
-                document.getElementById("char-floor").value = data.floor || 1;
-                document.getElementById("char-position").value = data.position || "Guide";
-                state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
-                state.statValues = data.stats || Object.fromEntries(stats.map(stat => [stat, 1]));
-                state.skillsByTier = data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] };
-                state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
-                state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
-                state.selectedWeaponSlot = data.selectedWeaponSlot || null;
-            } else {
-                initializeState(); // Set defaults for a new character
-            }
-            fetchLibrariesAndUpdate();
+          if (doc.exists) {
+            const data = doc.data();
+            document.getElementById("char-name").value = data.name || "";
+            document.getElementById("char-race").value = data.race || "";
+            document.getElementById("char-level").value = data.level || 1;
+            document.getElementById("char-floor").value = data.floor || 1;
+            document.getElementById("char-position").value = data.position || "Guide";
+            state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
+            state.statValues = data.stats || Object.fromEntries(stats.map(stat => [stat, 1]));
+            state.skillsByTier = data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] };
+            state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
+            state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
+            state.selectedWeaponSlot = data.selectedWeaponSlot || null;
+          } else {
+            initializeState(); // Set defaults for a new character
+          }
+          fetchLibrariesAndUpdate();
         }).catch(err => {
-            console.error("Load failed:", err);
-            initializeState();
-            fetchLibrariesAndUpdate();
+          console.error("Load failed:", err);
+          initializeState();
+          fetchLibrariesAndUpdate();
         });
       }
     }
 
     async function fetchLibrariesAndUpdate() {
-        await fetchEquipmentLibrary();
-        await fetchSkillLibrary();
-        updateFromTextbox();
+      await fetchEquipmentLibrary();
+      await fetchSkillLibrary();
+      updateFromTextbox();
     }
 
     // --- CORE UPDATE & RENDER ORCHESTRATOR ---
     function updateFromTextbox() {
-        // Step 1: Calculate points based on level
-        const level = parseInt(document.getElementById("char-level").value) || 1;
-        const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
-        state.availableStatPoints = level - totalAllocatedStatPoints - 1;
-        
-        // Step 2: Calculate base stats from affinities and level
-        calculateBaseStats();
+      // Step 1: Calculate points based on level
+      const level = parseInt(document.getElementById("char-level").value) || 1;
+      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
+      state.availableStatPoints = level - totalAllocatedStatPoints - 1;
 
-        // Step 3: Apply all passive skill effects
-        applyAllSkillEffects();
+      // Step 2: Calculate base stats from affinities and level
+      calculateBaseStats();
 
-        // Step 4: Calculate used/available skill points
-        calculateUsedSkillPoints();
-        state.availableSkillPoints = level - state.usedSkillPoints - 1 + state.bonusSkillPoints;
+      // Step 3: Apply all passive skill effects
+      applyAllSkillEffects();
 
-        // Step 5: Render all UI components
-        renderAll();
+      // Step 4: Calculate used/available skill points
+      calculateUsedSkillPoints();
+      state.availableSkillPoints = level - state.usedSkillPoints - 1 + state.bonusSkillPoints;
+
+      // Step 5: Render all UI components
+      renderAll();
     }
 
     function renderAll() {
-        // Update read-only fields
-        document.getElementById("available-stat-points").value = state.availableStatPoints;
-        document.getElementById("available-skill-points").value = state.availableSkillPoints;
+      // Update read-only fields
+      document.getElementById("available-stat-points").value = state.availableStatPoints;
+      document.getElementById("available-skill-points").value = state.availableSkillPoints;
 
-        // Render UI sections
-        renderAffinityControls();
-        renderStats();
-        renderEquipment();
-        renderSkillTiers();
-        updateDerivedStats(); // Depends on stats and equipment
-        renderHpSpeed();      // Depends on stats and skill bonuses
+      // Render UI sections
+      renderAffinityControls();
+      renderStats();
+      renderEquipment();
+      renderSkillTiers();
+      updateDerivedStats(); // Depends on stats and equipment
+      renderHpSpeed();      // Depends on stats and skill bonuses
     }
-    
+
     // --- STAT CALCULATION AND RENDERING ---
     function calculateBaseStats() { /* ... function content from previous version ... */ }
     function renderStats() {
-        const tbody = document.getElementById("stats-body");
-        tbody.innerHTML = "";
+      const tbody = document.getElementById("stats-body");
+      tbody.innerHTML = "";
 
-        stats.forEach(stat => {
-            const tr = document.createElement("tr");
-            const baseValue = state.statValues[stat] || 0;
-            const manual = state.manualStatPoints[stat] || 0;
-            const skillBonus = state.skillBonuses[stat]?.add || 0;
-            const totalValue = baseValue + skillBonus;
-            
-            tr.innerHTML = `
+      stats.forEach(stat => {
+        const tr = document.createElement("tr");
+        const baseValue = state.statValues[stat] || 0;
+        const manual = state.manualStatPoints[stat] || 0;
+        const skillBonus = state.skillBonuses[stat]?.add || 0;
+        const totalValue = baseValue + skillBonus;
+
+        tr.innerHTML = `
                 <td>${stat}</td>
                 <td>
                     ${totalValue.toFixed(1)}
@@ -380,195 +744,181 @@
                 </td>
                 <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
             `;
-            tbody.appendChild(tr);
-        });
-        // Add event listeners after innerHTML (simplified for brevity)
+        tbody.appendChild(tr);
+      });
+      // Add event listeners after innerHTML (simplified for brevity)
     }
 
     // --- HP / SPEED / DERIVED STATS ---
     function renderHpSpeed() {
-        const floor = parseInt(document.getElementById("char-floor").value);
-        const level = parseInt(document.getElementById("char-level").value);
-        const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
-        const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
-        const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
+      const floor = parseInt(document.getElementById("char-floor").value);
+      const level = parseInt(document.getElementById("char-level").value);
+      const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
+      const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
+      const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
 
-        const movePenalty = Math.max(0, 2 * floor - se);
-        let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
-        let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
+      const movePenalty = Math.max(0, 2 * floor - se);
+      let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
+      let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
 
-        document.getElementById("hp-speed").innerHTML = `<b>HP:</b> ${Math.round(hp)}<br><b>Movement Speed:</b> ${speed}`;
+      document.getElementById("hp-speed").innerHTML = `<b>HP:</b> ${Math.round(hp)}<br><b>Movement Speed:</b> ${speed}`;
     }
     function updateDerivedStats() { /* ... function content from previous version ... */ }
-    
+
     // --- SKILL SYSTEM ---
     async function fetchSkillLibrary() {
-        // Placeholder, can be converted to Firebase fetch
-        state.skillLibrary = [
-          {
-            id: "fireball", name: "Fireball", icon: "https://dummyimage.com/100x100/ff4444/ffffff&text=F",
-            description: "Launches a fiery orb that explodes on impact. A fundamental skill for any Wave Controller.",
-            positionTags: ["Wave Controller", "Anima"], maxLevel: 10,
-            costPerLevel: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5],
-            tierByLevel: [ {level: 1, tier: 1}, {level: 5, tier: 2}, {level: 8, tier: 3} ],
-            effects: [ /* No passive effects for this active skill */ ]
-          },
-          {
-            id: "iron_will", name: "Iron Will", icon: "https://dummyimage.com/100x100/cccccc/000000&text=IW",
-            description: "Strengthen your resolve, passively increasing your Willpower and base HP.",
-            positionTags: ["Spear Bearer", "Fisherman", "Guide"], maxLevel: 5,
-            costPerLevel: [2, 3, 4, 5, 6],
-            tierByLevel: [ {level: 1, tier: 1}, {level: 4, tier: 2} ],
-            effects: [
-              { level: 1, stat: "Willpower", type: "add", value: 5 },
-              { level: 2, stat: "Willpower", type: "add", value: 10 },
-              { level: 3, stat: "Willpower", type: "add", value: 15, stat2: "HP", type2: "add", value2: 50 },
-              { level: 4, stat: "Willpower", type: "add", value: 20, stat2: "HP", type2: "add", value2: 100 },
-              { level: 5, stat: "Willpower", type: "add", value: 25, stat2: "HP", type2: "add", value2: 150 },
-            ]
-          },
-        ];
+      try {
+        // This now fetches from the 'skills' collection in Firestore
+        const snapshot = await db.collection("skills").get();
+        state.skillLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log("Successfully fetched", state.skillLibrary.length, "skills from Firestore.");
+      } catch (error) {
+        console.error("Error fetching skill library from Firestore:", error);
+        // You can keep a local fallback if you want
+        state.skillLibrary = [];
+        alert("Could not load skills from the database.");
+      }
     }
 
     function calculateUsedSkillPoints() {
-        let total = 0;
-        for (const tier in state.skillsByTier) {
-            for (const skill of state.skillsByTier[tier]) {
-                if (skill && skill.level > 0) {
-                    total += skill.costPerLevel.slice(0, skill.level).reduce((a, b) => a + b, 0);
-                }
-            }
+      let total = 0;
+      for (const tier in state.skillsByTier) {
+        for (const skill of state.skillsByTier[tier]) {
+          if (skill && skill.level > 0) {
+            total += skill.costPerLevel.slice(0, skill.level).reduce((a, b) => a + b, 0);
+          }
         }
-        state.usedSkillPoints = total;
+      }
+      state.usedSkillPoints = total;
     }
 
     function applyAllSkillEffects() {
-        state.skillBonuses = {}; // Reset
-        for (const tier in state.skillsByTier) {
-            for (const skill of state.skillsByTier[tier]) {
-                if (!skill || skill.level === 0 || !skill.effects) continue;
-                
-                const currentLevelEffect = skill.effects.find(e => e.level === skill.level);
-                if (currentLevelEffect) {
-                    // This logic assumes effects are total, not incremental. Adjust if needed.
-                    [ {stat: 'stat', type: 'type', value: 'value'}, {stat: 'stat2', type: 'type2', value: 'value2'} ].forEach(map => {
-                        const stat = currentLevelEffect[map.stat];
-                        const type = currentLevelEffect[map.type];
-                        const value = currentLevelEffect[map.value];
-                        if (!stat || !type || value === undefined) return;
-                        if (!state.skillBonuses[stat]) state.skillBonuses[stat] = { add: 0, mul: 1 };
-                        if (type === 'add') state.skillBonuses[stat].add += value;
-                        if (type === 'mul') state.skillBonuses[stat].mul *= value;
-                    });
-                }
-            }
+      state.skillBonuses = {}; // Reset
+      for (const tier in state.skillsByTier) {
+        for (const skill of state.skillsByTier[tier]) {
+          if (!skill || skill.level === 0 || !skill.effects) continue;
+
+          const currentLevelEffect = skill.effects.find(e => e.level === skill.level);
+          if (currentLevelEffect) {
+            // This logic assumes effects are total, not incremental. Adjust if needed.
+            [{ stat: 'stat', type: 'type', value: 'value' }, { stat: 'stat2', type: 'type2', value: 'value2' }].forEach(map => {
+              const stat = currentLevelEffect[map.stat];
+              const type = currentLevelEffect[map.type];
+              const value = currentLevelEffect[map.value];
+              if (!stat || !type || value === undefined) return;
+              if (!state.skillBonuses[stat]) state.skillBonuses[stat] = { add: 0, mul: 1 };
+              if (type === 'add') state.skillBonuses[stat].add += value;
+              if (type === 'mul') state.skillBonuses[stat].mul *= value;
+            });
+          }
         }
+      }
     }
 
     function getSkillTier(skill, level) {
-        if (!skill.tierByLevel) return 1;
-        return [...skill.tierByLevel].reverse().find(t => level >= t.level)?.tier || 1;
+      if (!skill.tierByLevel) return 1;
+      return [...skill.tierByLevel].reverse().find(t => level >= t.level)?.tier || 1;
     }
 
     function renderSkillTiers() {
-        const container = document.getElementById("skill-section");
-        container.innerHTML = "";
-        for (let tier = 1; tier <= 5; tier++) {
-            const tierDiv = document.createElement("div");
-            tierDiv.className = "tier-section";
-            tierDiv.innerHTML = `<div class="tier-header"><h4>Tier ${tier}</h4><button onclick="addSkillSlot(${tier})">+ Slot</button></div><div class="skill-slots" id="tier-${tier}-slots"></div>`;
-            const slotGrid = tierDiv.querySelector(`#tier-${tier}-slots`);
-            const skillsInTier = state.skillsByTier[tier] || [];
-            skillsInTier.forEach((skill, index) => {
-                const slot = document.createElement("div");
-                slot.className = "skill-slot";
-                if (!skill) {
-                    slot.classList.add("empty");
-                    slot.onclick = () => openSkillLibrary(tier, index);
-                } else {
-                    slot.innerHTML = `<img src="${skill.icon}" alt="${skill.name}">
+      const container = document.getElementById("skill-section");
+      container.innerHTML = "";
+      for (let tier = 1; tier <= 5; tier++) {
+        const tierDiv = document.createElement("div");
+        tierDiv.className = "tier-section";
+        tierDiv.innerHTML = `<div class="tier-header"><h4>Tier ${tier}</h4><button onclick="addSkillSlot(${tier})">+ Slot</button></div><div class="skill-slots" id="tier-${tier}-slots"></div>`;
+        const slotGrid = tierDiv.querySelector(`#tier-${tier}-slots`);
+        const skillsInTier = state.skillsByTier[tier] || [];
+        skillsInTier.forEach((skill, index) => {
+          const slot = document.createElement("div");
+          slot.className = "skill-slot";
+          if (!skill) {
+            slot.classList.add("empty");
+            slot.onclick = () => openSkillLibrary(tier, index);
+          } else {
+            slot.innerHTML = `<img src="${skill.icon}" alt="${skill.name}">
                                      <div class="skill-level-badge">${skill.level}</div>
                                      <i class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${tier}][${index}], ${tier}, ${index})">ℹ️</i>`;
-                }
-                slotGrid.appendChild(slot);
-            });
-            container.appendChild(tierDiv);
-        }
+          }
+          slotGrid.appendChild(slot);
+        });
+        container.appendChild(tierDiv);
+      }
     }
 
     function selectSkill(skillData) {
-        const { tier, index } = state.currentSkillEdit;
-        if (tier !== null && index !== null) {
-            state.skillsByTier[tier][index] = { ...skillData, level: 0 }; // Equip at level 0
-            openSkillInfoModal(state.skillsByTier[tier][index], tier, index); // Open info modal to prompt for leveling up
-            closeSkillLibrary();
-            updateFromTextbox();
-        }
+      const { tier, index } = state.currentSkillEdit;
+      if (tier !== null && index !== null) {
+        state.skillsByTier[tier][index] = { ...skillData, level: 0 }; // Equip at level 0
+        openSkillInfoModal(state.skillsByTier[tier][index], tier, index); // Open info modal to prompt for leveling up
+        closeSkillLibrary();
+        updateFromTextbox();
+      }
     }
 
     // --- SKILL MODALS (LIBRARY & INFO) ---
     function openSkillLibrary(tier, index) {
-        state.currentSkillEdit = { tier, index };
-        document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${tier} Slot)`;
-        document.getElementById("skill-library-modal").classList.add("active");
-        renderSkillLibrary();
+      state.currentSkillEdit = { tier, index };
+      document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${tier} Slot)`;
+      document.getElementById("skill-library-modal").classList.add("active");
+      renderSkillLibrary();
     }
     function closeSkillLibrary() { document.getElementById("skill-library-modal").classList.remove("active"); }
 
     function renderSkillLibrary() {
-        const grid = document.getElementById("skill-library-grid");
-        const { tier } = state.currentSkillEdit;
-        grid.innerHTML = "";
-        const position = document.getElementById("char-position").value;
+      const grid = document.getElementById("skill-library-grid");
+      const { tier } = state.currentSkillEdit;
+      grid.innerHTML = "";
+      const position = document.getElementById("char-position").value;
 
-        state.skillLibrary
-            .filter(skill => skill.positionTags.includes(position) && getSkillTier(skill, 1) <= tier)
-            .forEach(skill => {
-                const card = document.createElement("div");
-                card.className = "skill-card";
-                card.innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onclick='selectSkill(${JSON.stringify(skill)})' />
+      state.skillLibrary
+        .filter(skill => skill.positionTags.includes(position) && getSkillTier(skill, 1) <= tier)
+        .forEach(skill => {
+          const card = document.createElement("div");
+          card.className = "skill-card";
+          card.innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onclick='selectSkill(${JSON.stringify(skill)})' />
                                 <div class="skill-name">${skill.name}</div>
                                 <i class="info-icon" onclick='openSkillInfoModal(${JSON.stringify(skill)})'>ℹ️</i>`;
-                grid.appendChild(card);
-            });
+          grid.appendChild(card);
+        });
     }
 
     function openSkillInfoModal(skillData, tier = null, index = null) {
-        const modal = document.getElementById("skill-info-modal");
-        document.getElementById("skill-info-title").textContent = skillData.name;
-        const content = document.getElementById("skill-info-modal-content");
-        
-        // Build the level-up controls if the skill is equipped
-        let controlsHTML = '';
-        if (tier !== null && index !== null) {
-            const skill = state.skillsByTier[tier][index];
-            const nextLevel = skill.level + 1;
-            const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level] || 999) && getSkillTier(skill, nextLevel) <= tier;
-            controlsHTML = `<div class="level-up-controls">
+      const modal = document.getElementById("skill-info-modal");
+      document.getElementById("skill-info-title").textContent = skillData.name;
+      const content = document.getElementById("skill-info-modal-content");
+
+      // Build the level-up controls if the skill is equipped
+      let controlsHTML = '';
+      if (tier !== null && index !== null) {
+        const skill = state.skillsByTier[tier][index];
+        const nextLevel = skill.level + 1;
+        const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level] || 999) && getSkillTier(skill, nextLevel) <= tier;
+        controlsHTML = `<div class="level-up-controls">
                 <h3>Current Level: ${skill.level} / ${skill.maxLevel}</h3>
                 <button onclick="levelUpSkill(${tier}, ${index})" ${!canLevelUp ? 'disabled' : ''}>Level Up (Cost: ${skill.costPerLevel[skill.level] || 'N/A'} SP)</button>
                 <button onclick="delevelSkill(${tier}, ${index})" ${skill.level === 0 ? 'disabled' : ''}>De-level</button>
                 <button onclick="unlearnSkill(${tier}, ${index})" style="background-color: #8b0000;">Unlearn</button>
             </div>`;
-        }
+      }
 
-        // Build the table of level effects
-        let levelsTable = `<table class="level-table"><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr>`;
-        for (let i = 1; i <= skillData.maxLevel; i++) {
-            const effect = skillData.effects?.find(e => e.level === i);
-            const effectText = effect ? `${effect.stat}: +${effect.value}` + (effect.stat2 ? `, ${effect.stat2}: +${effect.value2}` : '') : 'N/A';
-            const isCurrent = skillData.level === i;
-            levelsTable += `<tr class="${isCurrent ? 'current-level-row' : ''}">
+      // Build the table of level effects
+      let levelsTable = `<table class="level-table"><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr>`;
+      for (let i = 1; i <= skillData.maxLevel; i++) {
+        const effect = skillData.effects?.find(e => e.level === i);
+        const effectText = effect ? `${effect.stat}: +${effect.value}` + (effect.stat2 ? `, ${effect.stat2}: +${effect.value2}` : '') : 'N/A';
+        const isCurrent = skillData.level === i;
+        levelsTable += `<tr class="${isCurrent ? 'current-level-row' : ''}">
                 <td>${i}</td>
-                <td>${skillData.costPerLevel[i-1]}</td>
+                <td>${skillData.costPerLevel[i - 1]}</td>
                 <td>${getSkillTier(skillData, i)}</td>
                 <td>${effectText}</td>
             </tr>`;
-        }
-        levelsTable += `</table>`;
+      }
+      levelsTable += `</table>`;
 
-        // Assemble final HTML
-        content.innerHTML = `
+      // Assemble final HTML
+      content.innerHTML = `
             <div class="left-panel">
                 <img src="${skillData.icon}" alt="${skillData.name}">
                 <p>${skillData.description}</p>
@@ -577,32 +927,32 @@
             </div>
             <div class="right-panel">${levelsTable}</div>`;
 
-        modal.classList.add("active");
+      modal.classList.add("active");
     }
     function closeSkillInfoModal() { document.getElementById("skill-info-modal").classList.remove("active"); }
 
     function levelUpSkill(tier, index) {
-        const skill = state.skillsByTier[tier][index];
-        const cost = skill.costPerLevel[skill.level];
-        // Re-check conditions
-        if (skill.level < skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, skill.level + 1) <= tier) {
-            skill.level++;
-            updateFromTextbox();
-            openSkillInfoModal(skill, tier, index); // Refresh modal
-        }
+      const skill = state.skillsByTier[tier][index];
+      const cost = skill.costPerLevel[skill.level];
+      // Re-check conditions
+      if (skill.level < skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, skill.level + 1) <= tier) {
+        skill.level++;
+        updateFromTextbox();
+        openSkillInfoModal(skill, tier, index); // Refresh modal
+      }
     }
     function delevelSkill(tier, index) {
-        const skill = state.skillsByTier[tier][index];
-        if (skill.level > 0) {
-            skill.level--;
-            updateFromTextbox();
-            openSkillInfoModal(skill, tier, index); // Refresh modal
-        }
+      const skill = state.skillsByTier[tier][index];
+      if (skill.level > 0) {
+        skill.level--;
+        updateFromTextbox();
+        openSkillInfoModal(skill, tier, index); // Refresh modal
+      }
     }
     function unlearnSkill(tier, index) {
-        state.skillsByTier[tier][index] = null;
-        updateFromTextbox();
-        closeSkillInfoModal();
+      state.skillsByTier[tier][index] = null;
+      updateFromTextbox();
+      closeSkillInfoModal();
     }
 
     // --- OTHER UI & HELPER FUNCTIONS ---
@@ -617,4 +967,5 @@
   </script>
 
 </body>
+
 </html>
