@@ -650,10 +650,11 @@
         };
       });
     }
-
     function renderEquipment() {
-      ["weapon1", "weapon2"].forEach(slot => {
-        const el = document.getElementById(`${slot}-slot`); // Make sure this ID exists in HTML
+      const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
+
+      allSlots.forEach(slot => {
+        const el = document.getElementById(`${slot}-slot`);
         const item = state.equipment[slot];
 
         el.innerHTML = ""; // Clear old content
@@ -661,40 +662,36 @@
         if (item) {
           const img = document.createElement("img");
           img.src = item.image || "default.png";
-          img.alt = item.name || "Weapon";
+          img.alt = item.name || slot;
           el.appendChild(img);
 
-          // Highlight selected
-          if (state.selectedWeaponSlot === slot) {
-            el.classList.add("selected-weapon");
-          } else {
-            el.classList.remove("selected-weapon");
-          }
+          el.title = item.name || slot;
 
-          // Clicking just sets the selected slot
-          el.onclick = () => {
-            state.selectedWeaponSlot = (state.selectedWeaponSlot === slot) ? null : slot;
-            updateDerivedStats();
-            renderEquipment(); // Re-render to update highlight
-          };
+          // Weapon selection logic
+          if (slot === "weapon1" || slot === "weapon2") {
+            if (state.selectedWeaponSlot === slot) {
+              el.classList.add("selected-weapon");
+            } else {
+              el.classList.remove("selected-weapon");
+            }
+
+            el.onclick = () => {
+              state.selectedWeaponSlot = (state.selectedWeaponSlot === slot) ? null : slot;
+              updateDerivedStats();
+              renderEquipment();
+            };
+          } else {
+            // For armor/accessory, maybe later open modal or tooltip
+            el.onclick = () => openEquipmentModal(slot);
+          }
         } else {
           el.textContent = "+";
-          el.onclick = () => openEquipmentModal(slot); // Or however you equip
+          el.title = slot.replace(/([a-z])([A-Z])/g, '$1 $2');
+          el.onclick = () => openEquipmentModal(slot);
         }
       });
+    }
 
-      ["accessory1", "accessory2"].forEach(slot => {
-        const element = document.getElementById(`${slot}-slot`);
-        const item = state.equipment[slot];
-        if (item && item.image) {
-          element.style.backgroundImage = `url(${item.image})`;
-          element.title = item.name;
-        } else {
-          element.style.backgroundImage = '';
-          element.title = slot.replace(/([a-z])([A-Z])/g, '$1 $2');
-        }
-      })
-    };
 
     function getGrowthTable() {
       return {
@@ -1187,8 +1184,11 @@
       },
     ];
 
+    
+
     state.equipment.weapon1 = {
       name: "Iron Sword",
+      image: "https://tse1.mm.bing.net/th/id/OIP.j281zEYkp-jonRx-DTxqOwHaHa?r=0&cb=ucfimgc2&rs=1&pid=ImgDetMain&o=7&rm=3",
       type: "weapon",
       stat: "strength",
       modifier: 5
@@ -1196,6 +1196,7 @@
 
     state.equipment.weapon2 = {
       name: "Iron Sword",
+      image: "https://tse1.mm.bing.net/th/id/OIP.j281zEYkp-jonRx-DTxqOwHaHa?r=0&cb=ucfimgc2&rs=1&pid=ImgDetMain&o=7&rm=3",
       type: "weapon",
       stat: "strength",
       modifier: 5
