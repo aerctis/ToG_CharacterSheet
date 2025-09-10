@@ -308,6 +308,11 @@
       font-size: 12px;
       color: #aaa;
     }
+
+    .selected-weapon {
+      outline: 3px solid #f5d442;
+      box-shadow: 0 0 10px #f5d442;
+    }
   </style>
 </head>
 
@@ -504,7 +509,8 @@
         skillsByTier: state.skillsByTier,
         manualAdds: state.manualStatPoints,
         equipment: state.equipment,
-        derivedStats: state.derivedStats
+        derivedStats: state.derivedStats,
+        selectedWeaponSlot: state.selectedWeaponSlot
       };
     }
 
@@ -537,6 +543,7 @@
               state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
               state.derivedStats = data.derivedStats || { attack: 0, defense: 0 };
               state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
+              state.selectedWeaponSlot = data.selectedWeaponSlot || null;
 
               updateDerivedStats();
               updateFromTextbox();
@@ -570,7 +577,8 @@
         armor: null,
         accessory1: null,
         accessory2: null
-      }
+      },
+      selectedWeaponSlot: null
     };
 
     function renderAffinityControls() {
@@ -601,7 +609,38 @@
     }
 
     function renderEquipment() {
-      for (const slot in state.equipment) {
+      ["weapon1", "weapon2"].forEach(slot => {
+        const el = document.getElementById(slot); // Make sure this ID exists in HTML
+        const item = state.equipment[slot];
+
+        el.innerHTML = ""; // Clear old content
+
+        if (item) {
+          const img = document.createElement("img");
+          img.src = item.image || "default.png";
+          img.alt = item.name || "Weapon";
+          el.appendChild(img);
+
+          // Highlight selected
+          if (state.selectedWeaponSlot === slot) {
+            el.classList.add("selected-weapon");
+          } else {
+            el.classList.remove("selected-weapon");
+          }
+
+          // Clicking just sets the selected slot
+          el.onclick = () => {
+            state.selectedWeaponSlot = (state.selectedWeaponSlot === slot) ? null : slot;
+            updateDerivedStats();
+            renderEquipment(); // Re-render to update highlight
+          };
+        } else {
+          el.textContent = "+";
+          el.onclick = () => openEquipmentModal(slot); // Or however you equip
+        }
+      });
+
+      ["accessory1", "accessory2"].forEach(slot => {
         const element = document.getElementById(`${slot}-slot`);
         const item = state.equipment[slot];
         if (item && item.image) {
@@ -611,8 +650,8 @@
           element.style.backgroundImage = '';
           element.title = slot.replace(/([a-z])([A-Z])/g, '$1 $2');
         }
-      }
-    }
+      })
+    };
 
     function getGrowthTable() {
       return {
@@ -864,44 +903,32 @@
     }
 
     function updateDerivedStats() {
-      let totalAttack = 0;
-      let totalDefense = 0;
+      const stats = state.statValues;
+      const eq = state.equipment;
 
-      // Go through each equipped item
-      Object.values(state.equipment).forEach(item => {
-        if (!item) return;
+      // Use selected weapon if valid
+      const selected = state.selectedWeaponSlot;
+      let attack = 0;
+      if (selected && eq[selected]) {
+        const weapon = eq[selected];
+        const base = stats[weapon.stat] || 0;
+        attack = Math.floor(base / 5) + (weapon.modifier || 0);
+      }
 
-        const scaling = item.scalingStat;
-        const modifier = item.modifier || 0;
+      // Armor for defense
+      let defense = 0;
+      if (eq.armor) {
+        const armor = eq.armor;
+        const base = stats[armor.stat] || 0;
+        defense = Math.floor(base / 5) + (armor.modifier || 0);
+      }
 
-        // Make sure stat exists
-        const baseStat = scaling && state.statValues[scaling] !== undefined
-          ? Math.floor(state.statValues[scaling] / 5)
-          : 0;
+      state.derivedStats = { attack, defense };
 
-        if (item.type === "weapon") {
-          totalAttack += baseStat + modifier;
-        } else if (item.type === "armor") {
-          totalDefense += baseStat + modifier;
-        } else if (item.type === "accessory") {
-          // Accessories can contribute to either — up to you
-          // For now we’ll assume they boost both slightly
-          totalAttack += Math.floor(baseStat / 2) + Math.floor(modifier / 2);
-          totalDefense += Math.floor(baseStat / 2) + Math.floor(modifier / 2);
-        }
-      });
-
-      // Update state
-      state.derivedStats.attack = totalAttack;
-      state.derivedStats.defense = totalDefense;
-
-      // Update the UI (ensure these exist)
-      const atkElem = document.getElementById("derived-attack");
-      const defElem = document.getElementById("derived-defense");
-
-      if (atkElem) atkElem.textContent = totalAttack;
-      if (defElem) defElem.textContent = totalDefense;
+      document.getElementById("derived-attack").textContent = `Attack: ${attack}`;
+      document.getElementById("derived-defense").textContent = `Defense: ${defense}`;
     }
+
 
 
     function equipItem(slot, item) {
@@ -1115,7 +1142,8 @@
         maxTier: 4
       },
     ];
-
+    //We need to create a modal and a library for equipment since clicking on a weapon will slelect it we need a small button the corner of the slot to open the modal. 
+    //
 
     state.equipment.weapon1 = {
       name: "Iron Sword",
