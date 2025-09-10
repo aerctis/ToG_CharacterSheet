@@ -742,26 +742,43 @@
 
     <div id="hp-speed" style="margin-top: 20px; font-size: 1.1em; text-align: center;"></div>
 
-    <div class="derived-stat attack">
-      <div class="derived-stat-formula">
-        <span class="fraction">
-          <span class="top" id="attack-formula-top"></span>
-          <span class="bottom" id="attack-formula-bot"></span>
-        </span>
-        <span id="attack-formula"></span>
+    <div class="equipment-section">
+      <h3>Equipment</h3>
+      <div class="equipment-grid">
+        <div class="equipment-row">
+          <div class="derived-stat attack">
+            <div class="derived-stat-formula">
+              <span class="fraction">
+                <span class="top" id="attack-formula-top"></span>
+                <span class="bottom" id="attack-formula-bot"></span>
+              </span>
+              <span id="attack-formula"></span>
+            </div>
+            <div class="derived-stat-result" id="derived-attack-result">0</div>
+          </div>
+          <div class="equipment-slots-row">
+            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+            <div class="slot" id="armor-slot" title="Armor"></div>
+            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+          </div>
+        </div>
+        <div class="equipment-row">
+          <div class="derived-stat defense">
+            <div class="derived-stat-formula">
+              <span class="fraction">
+                <span class="top" id="defense-formula-top"></span>
+                <span class="bottom" id="defense-formula-bot"></span>
+              </span>
+              <span id="defense-formula"></span>
+            </div>
+            <div class="derived-stat-result" id="derived-defense-result">0</div>
+          </div>
+          <div class="equipment-slots-row">
+            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+          </div>
+        </div>
       </div>
-      <div class="derived-stat-result" id="derived-attack">0</div>
-    </div>
-
-    <div class="derived-stat defense">
-      <div class="derived-stat-formula">
-        <span class="fraction">
-          <span class="top" id="defense-formula-top"></span>
-          <span class="bottom" id="defense-formula-bot"></span>
-        </span>
-        <span id="defense-formula"></span>
-      </div>
-      <div class="derived-stat-result" id="derived-defense">0</div>
     </div>
 
     <h3>Stats</h3>
@@ -1167,8 +1184,9 @@
         document.getElementById("defense-formula").innerHTML = "";
       }
 
-      document.getElementById("derived-attack").textContent = `${attack} Attack`;
-      document.getElementById("derived-defense").textContent = `${defense} Defense`;
+      // Corrected to update the new result divs
+      document.getElementById("derived-attack-result").textContent = `${attack} Attack`;
+      document.getElementById("derived-defense-result").textContent = `${defense} Defense`;
     }
 
     // --- SKILL SYSTEM ---
