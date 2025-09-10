@@ -228,9 +228,6 @@
       
     }
 
-
-
-
     .slot {
       width: 130px;
       height: 130px;
@@ -970,35 +967,35 @@
       });
     }
 
-    function applySkillEffects() {
-      // Clear all skill-modified stats first
-      state.derivedStats = {};
+    // function applySkillEffects() {
+    //   // Clear all skill-modified stats first
+    //   state.derivedStats = {};
 
-      for (let tier = 1; tier <= 5; tier++) {
-        for (const skill of state.skillsByTier[tier]) {
-          if (!skill || skill.level === 0) continue;
+    //   for (let tier = 1; tier <= 5; tier++) {
+    //     for (const skill of state.skillsByTier[tier]) {
+    //       if (!skill || skill.level === 0) continue;
 
-          const effect = skill.effects?.[skill.level - 1];
-          if (!effect) continue;
+    //       const effect = skill.effects?.[skill.level - 1];
+    //       if (!effect) continue;
 
-          const { stat, type, value } = effect;
+    //       const { stat, type, value } = effect;
 
-          if (!state.derivedStats[stat]) state.derivedStats[stat] = 0;
+    //       if (!state.derivedStats[stat]) state.derivedStats[stat] = 0;
 
-          switch (type) {
-            case "add":
-              state.derivedStats[stat] += value;
-              break;
-            case "mul":
-              state.derivedStats[stat] *= value;
-              break;
-            case "limit":
-              state.derivedStats[stat] = Math.min(state.derivedStats[stat], value);
-              break;
-          }
-        }
-      }
-    }
+    //       switch (type) {
+    //         case "add":
+    //           state.derivedStats[stat] += value;
+    //           break;
+    //         case "mul":
+    //           state.derivedStats[stat] *= value;
+    //           break;
+    //         case "limit":
+    //           state.derivedStats[stat] = Math.min(state.derivedStats[stat], value);
+    //           break;
+    //       }
+    //     }
+    //   }
+    // }
 
     function updateDerivedStats() {
       const stats = state.statValues;
