@@ -179,7 +179,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 17px;
     }
 
     .affinities div {
@@ -306,7 +306,7 @@
       position: absolute;
       left: 15px;
       /* Adjusted position */
-      top: 60%;
+      top: 48%;
       transform: translateY(-50%);
       /* Adjusted for vertical centering */
       color: #fff;
@@ -700,13 +700,13 @@
 
     /* Adds a yellow glow to dropdowns when they are active */
     select:focus {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+      border-color: var(--accent-gold) !important;
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5) !important;
     }
 
     /* Adds a brief yellow flash animation to buttons when clicked */
     button:active {
-      animation: button-flash 0.2s ease-out;
+      animation: button-flash 0.2s ease-out !important;
     }
 
     @keyframes button-flash {
