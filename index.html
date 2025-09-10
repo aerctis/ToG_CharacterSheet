@@ -186,10 +186,54 @@
       pointer-events: none;
     }
 
+    .fraction {
+      display: inline-block;
+      text-align: center;
+      font-size: 0.8em;
+      vertical-align: middle;
+      line-height: 1.2;
+    }
+
+    .fraction .top {
+      display: block;
+      padding: 0 2px;
+      margin-bottom: 4px;
+      /* Raise the number higher */
+      position: relative;
+    }
+
+    .fraction .top::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      /* Space between number and line */
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: white;
+    }
+
+    .fraction .bottom {
+      display: block;
+      padding: 0 2px;
+    }
+
+    #attack-formula, #defense-formula {
+      margin-right: 15px;
+    }
+
+    #derived-attack, #derived-defense {
+      color: yellow;
+      font-size: 26px;
+      
+    }
+
+
+
 
     .slot {
-      width: 100px;
-      height: 100px;
+      width: 130px;
+      height: 130px;
       background-color: #2a2a2a;
       border: 2px dashed #555;
       border-radius: 6px;
@@ -424,7 +468,13 @@
       <h3>Equipment</h3>
       <div class="equipment-grid">
         <div class="equipment-row">
-          <div class="derived-stat attack"><span id="derived-attack">0</span></div>
+          <div class="derived-stat attack">
+            <span class="fraction">
+              <span class="top" id="attack-formula-top"></span>
+              <span class="bottom" id="attack-formula-bot"></span>
+            </span>
+            <span class="fraction" id="attack-formula"></span><span id="derived-attack">0</span></span>
+          </div>
           <div class="equipment-slots-row">
             <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
             <div class="slot" id="armor-slot" title="Armor"></div>
@@ -432,7 +482,13 @@
           </div>
         </div>
         <div class="equipment-row">
-          <div class="derived-stat defense"><span id="derived-defense">0</span></div>
+          <div class="derived-stat defense">
+            <span class="fraction">
+              <span class="top" id="defense-formula-top"></span>
+              <span class="bottom" id="defense-formula-bot"></span>
+            </span>
+            <span class="fraction" id="defense-formula"></span><span id="derived-defense">0</span></span>
+          </div>
           <div class="equipment-slots-row">
             <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
             <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
@@ -793,6 +849,7 @@
       renderHpSpeed();
       renderAffinityControls();
       renderEquipment();
+      updateDerivedStats();
     }
 
     function renderDerivedStats() {
@@ -952,22 +1009,31 @@
       let attack = 0;
       if (selected && eq[selected]) {
         const weapon = eq[selected];
-        const base = state.statValues[weapon.stat] || 0;
-        attack = Math.floor(base / 5) + (weapon.modifier || 0);
+        const abase = state.statValues[weapon.stat] || 0;
+        attack = Math.floor(abase / 5) + (weapon.modifier || 0);
+        document.getElementById("attack-formula-top").textContent = `(${abase} ${weapon.stat} )`;
+        document.getElementById("attack-formula-bot").textContent = `5`;
+        document.getElementById("attack-formula").innerHTML = ` &nbsp;+&nbsp; ${weapon.modifier} Modifier &nbsp;&nbsp;&nbsp;=&nbsp;`;
+
+
       }
 
       // Armor for defense
       let defense = 0;
       if (eq.armor) {
         const armor = eq.armor;
-        const base = state.statValues[armor.stat] || 0;
-        defense = Math.floor(base / 5) + (armor.modifier || 0);
+        const dbase = state.statValues[armor.stat] || 0;
+        defense = Math.floor(dbase / 5) + (armor.modifier || 0);
+        document.getElementById("defense-formula").innerHTML = ` &nbsp;+&nbsp; ${armor.modifier} Modifier &nbsp;&nbsp;&nbsp;=&nbsp;`;
+        document.getElementById("defense-formula-top").textContent = `(${dbase} ${armor.stat})`;
+        document.getElementById("defense-formula-bot").textContent = `5`;
+
       }
 
       state.derivedStats = { attack, defense };
 
-      document.getElementById("derived-attack").textContent = `Attack: ${attack}`;
-      document.getElementById("derived-defense").textContent = `Defense: ${defense}`;
+      document.getElementById("derived-attack").textContent = `${attack} Attack`;
+      document.getElementById("derived-defense").textContent = `${defense} Defense`;
     }
 
 
@@ -1184,7 +1250,7 @@
       },
     ];
 
-    
+
 
     state.equipment.weapon1 = {
       name: "Iron Sword",
