@@ -179,6 +179,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      margin-top: 5px;
     }
 
     .affinities div {
@@ -679,6 +680,23 @@
       background-color: #50507a;
       font-weight: bold
     }
+
+    #hp-speed {
+      background-color: var(--bg-inset);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 1.2em;
+      /* Increased size */
+      font-weight: 600;
+      /* Bolder text */
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    #hp-speed .accent-label {
+      color: var(--accent-gold);
+    }
   </style>
 </head>
 
@@ -1148,7 +1166,9 @@
       let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
       let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
 
-      document.getElementById("hp-speed").innerHTML = `<b>HP:</b> ${Math.round(hp)}<br><b>Movement Speed:</b> ${speed}`;
+      // Updated to include spans with the new class for yellow accents
+      document.getElementById("hp-speed").innerHTML =
+        `<span class="accent-label">HP:</span> ${Math.round(hp)}<br><span class="accent-label">Movement Speed:</span> ${speed}`;
     }
 
 
