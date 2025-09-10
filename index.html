@@ -711,6 +711,21 @@
       }
     }
 
+    async function fetchEquipmentLibrary() {
+        try {
+            const snapshot = await db.collection("items").get();
+            state.equipmentLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error("Error fetching equipment library:", error);
+            // Fallback to local data if Firebase fails
+            state.equipmentLibrary = [
+              { id: 'mystery', name: '???', image: 'https://dummyimage.com/100x100/333/aaa&text=?', isDiscovered: false },
+              { id: 'ironsword', name: 'Iron Sword', image: 'https://dummyimage.com/100x100/aaa/000&text=S', type: 'weapon', stat: 'Strength', modifier: 5, specialEffect: 'A standard, reliable blade.', isDiscovered: true },
+              { id: 'leatherarmor', name: 'Leather Armor', image: 'https://dummyimage.com/100x100/8b4513/fff&text=A', type: 'armor', stat: 'Willpower', modifier: 3, specialEffect: 'Simple but effective protection.', isDiscovered: true }
+            ];
+        }
+    }
+
     function loadCharacter() {
       const user = auth.currentUser;
       if (user) {
