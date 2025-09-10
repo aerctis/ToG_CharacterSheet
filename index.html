@@ -1584,7 +1584,6 @@
         if (item.isDiscovered) {
           card.innerHTML = `<img src="${item.image}" alt="${item.name}" /><div class="item-name">${item.name}</div>`;
           card.onclick = () => selectEquipment(item);
-          _
         } else {
           card.classList.add("undiscovered");
           card.innerHTML = `<img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" /><div class="item-name">Undiscovered</div>`;
