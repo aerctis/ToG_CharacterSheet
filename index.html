@@ -4,137 +4,297 @@
 <head>
 
   <title>Character Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    /* General Styles */
-    body {
-      background-color: #1e1e2f;
-      color: #e0e0e0;
+    /* --- CSS Variables for Easy Theming --- */
+    :root {
+      --font-family: 'Poppins', sans-serif;
+      --bg-primary: #1e1e2f;
+      --bg-secondary: #2a2a40;
+      --bg-inset: #1f1f2f;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0c0;
+      --border-color: #4a4a6a;
+      --accent-primary: #555588;
+      --accent-hover: #6a6aac;
+      --accent-gold: #ffd700;
+      --danger-color: #b82a2a;
     }
 
-    .container {
-      background-color: #2a2a40;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 10px #00000080;
-    }
-
-    h2,
-    h3 {
-      text-align: center;
-      color: #ffffff;
-    }
-
-    button {
-      background-color: #444466;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      color: #ffffff;
-      border: 1px solid #555;
-      border-radius: 4px;
-      padding: 5px 10px;
-    }
-
-    button:hover {
-      background-color: #555588;
-    }
-
-    button:disabled {
-      background-color: #2a2a3a;
-      cursor: not-allowed;
-      color: #777;
-    }
-
-    /* Layout */
-    .row {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .col {
-      flex: 1 1 45%;
-      margin: 10px;
-    }
-
-    /* Form Elements */
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      background-color: #3a3a55;
-      color: #ffffff;
-      border: 1px solid #555;
-      border-radius: 4px;
-      padding: 4px;
-      width: 100%;
+    /* --- General & Body Styles --- */
+    * {
       box-sizing: border-box;
     }
 
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #8888ff;
-      box-shadow: 0 0 5px #8888ff50;
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-family);
+      font-size: 16px;
     }
 
+    .container {
+      background-color: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 15px #00000080;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    h2 {
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    h3 {
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    /* --- NEW: Modern Header Grid Layout --- */
+    .character-header-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-areas:
+        "info points level"
+        "affinities affinities affinities"
+        "auth auth auth";
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .info-block {
+      grid-area: info;
+    }
+
+    .points-block {
+      grid-area: points;
+    }
+
+    .level-block {
+      grid-area: level;
+    }
+
+    .affinities-block {
+      grid-area: affinities;
+    }
+
+    .auth-block {
+      grid-area: auth;
+    }
+
+    .info-block,
+    .points-block,
+    .level-block,
+    .affinities-block {
+      background-color: var(--bg-inset);
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .auth-block {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: 10px;
+    }
+
+    .info-block h4,
+    .points-block h4,
+    .level-block h4,
+    .affinities-block h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+      font-size: 0.9em;
+      text-align: center;
+    }
+
+    /* --- NEW: Modern Form Elements & Buttons --- */
     label {
-      font-weight: bold;
+      font-weight: 600;
       display: block;
       margin-top: 10px;
-      color: #ccc;
+      margin-bottom: 5px;
+      color: var(--text-secondary);
+      font-size: 0.9em;
     }
 
-    /* Stats Table */
+    input[type="text"],
+    input[type="number"],
+    select {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 10px;
+      width: 100%;
+      font-family: var(--font-family);
+      font-size: 1em;
+    }
+
+    input[readonly] {
+      background-color: #252535;
+    }
+
+    button {
+      background-color: var(--accent-primary);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 15px;
+      font-family: var(--font-family);
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+
+    button.btn-primary {
+      background-color: var(--accent-gold);
+      color: black;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button.btn-primary:hover {
+      background-color: #fffac0;
+    }
+
+    /* --- NEW: Affinity Tags Styling --- */
+    .affinities {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .affinities div {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border-radius: 15px;
+      padding: 5px 12px;
+      position: relative;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s;
+    }
+
+    .affinities div:hover {
+      background-color: #40405a;
+    }
+
+    .remove-affinity {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: var(--bg-inset);
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-left: 8px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s, background-color 0.2s;
+    }
+
+    .affinities div:hover .remove-affinity {
+      opacity: 1;
+    }
+
+    .remove-affinity:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    .affinity-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .affinity-controls label {
+      margin: 0;
+      align-self: center;
+    }
+
+    .affinity-controls select {
+      flex-grow: 1;
+    }
+
+    /* --- NEW: Improved Stats Table --- */
     .stats-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
+      font-size: 1.1em;
+      /* Bigger font */
     }
 
     .stats-table th,
     .stats-table td {
-      border: 1px solid #4a4a6a;
-      padding: 6px;
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      /* More padding */
       text-align: center;
     }
 
     .stats-table th {
-        background-color: #3a3a55;
+      background-color: var(--bg-inset);
+      font-weight: 600;
+    }
+
+    .stats-table tbody tr:nth-child(even) {
+      background-color: var(--bg-inset);
+      /* Striped rows */
     }
 
     .stat-breakdown {
-      font-size: 0.85em;
-      color: #aaaaaa;
-      margin-left: 5px;
+      font-size: 0.8em;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
 
-    /* Equipment Section */
+    /* --- Equipment Section (Minor tweaks) --- */
     .equipment-section {
-      background-color: #1f1f2f;
+      background-color: var(--bg-inset);
       padding: 20px;
       border-radius: 8px;
       margin-top: 20px;
       width: 100%;
     }
 
+    /* ... (rest of the old styles are mostly fine) ... */
     .equipment-grid {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 14px
     }
 
     .equipment-row {
       position: relative;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: center
     }
 
     .equipment-slots-row {
       display: flex;
-      gap: 14px;
+      gap: 14px
     }
 
     .derived-stat {
@@ -145,22 +305,22 @@
       color: #fff;
       font-weight: bold;
       font-size: 20px;
-      pointer-events: none;
+      pointer-events: none
     }
 
     .fraction {
       display: inline-block;
       text-align: center;
-      font-size: 0.8em;
+      font-size: .8em;
       vertical-align: middle;
-      line-height: 1.2;
+      line-height: 1.2
     }
 
     .fraction .top {
       display: block;
       padding: 0 2px;
       margin-bottom: 4px;
-      position: relative;
+      position: relative
     }
 
     .fraction .top::after {
@@ -170,21 +330,20 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: white;
+      background: #fff
     }
 
     .fraction .bottom {
       display: block;
-      padding: 0 2px;
+      padding: 0 2px
     }
 
     #derived-attack,
     #derived-defense {
-      color: yellow;
-      font-size: 26px;
+      color: var(--accent-gold);
+      font-size: 26px
     }
 
-    /* Equipment Slots */
     .slot {
       width: 130px;
       height: 130px;
@@ -195,18 +354,18 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      transition: background-color 0.2s, border-color 0.2s;
+      transition: background-color .2s, border-color .2s
     }
 
     .slot:hover {
-      background-color: #3a3a3a;
+      background-color: #3a3a3a
     }
 
     .slot img.item-image {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      pointer-events: none;
+      pointer-events: none
     }
 
     .slot .change-item-icon {
@@ -215,7 +374,7 @@
       right: 5px;
       width: 24px;
       height: 24px;
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: rgba(0, 0, 0, .6);
       color: #fff;
       border-radius: 50%;
       display: flex;
@@ -224,27 +383,26 @@
       font-weight: bold;
       cursor: pointer;
       border: 1px solid #888;
-      transition: background-color 0.2s;
-      font-size: 14px;
+      transition: background-color .2s;
+      font-size: 14px
     }
 
     .slot .change-item-icon:hover {
-      background-color: #555588;
+      background-color: var(--accent-hover)
     }
 
     .selected-weapon {
-      border-color: gold;
-      box-shadow: 0 0 8px gold;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 8px var(--accent-gold)
     }
 
-    /* Modals (Shared Styles) */
     .modal-backdrop {
       position: fixed;
       top: 5%;
       left: 5%;
       width: 90%;
       height: 90%;
-      background-color: #1e1e2f;
+      background-color: var(--bg-primary);
       border: 2px solid #555;
       border-radius: 8px;
       z-index: 999;
@@ -252,11 +410,11 @@
       flex-direction: column;
       padding: 20px;
       box-sizing: border-box;
-      overflow-y: auto;
+      overflow-y: auto
     }
 
     .modal-backdrop.active {
-      display: flex;
+      display: flex
     }
 
     .modal-header {
@@ -264,103 +422,102 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      flex-shrink: 0;
+      flex-shrink: 0
     }
 
     .modal-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
+      gap: 16px
     }
 
-    /* Item Card Styles (for Library) */
     .item-card {
       background-color: #2a2a2a;
       border: 1px solid #444;
       border-radius: 6px;
       padding: 12px;
       cursor: pointer;
-      transition: background-color 0.2s;
-      text-align: center;
+      transition: background-color .2s;
+      text-align: center
     }
 
     .item-card:hover {
-      background-color: #333;
+      background-color: #333
     }
 
     .item-card img {
       width: 100%;
       height: 100px;
       object-fit: contain;
-      margin-bottom: 8px;
+      margin-bottom: 8px
     }
 
     .item-card .item-name {
       font-weight: bold;
-      margin-bottom: 4px;
+      margin-bottom: 4px
     }
 
     .item-card.undiscovered {
-      filter: grayscale(1) brightness(0.6);
-      cursor: not-allowed;
+      filter: grayscale(1) brightness(.6);
+      cursor: not-allowed
     }
 
-    /* Tooltip */
     #tooltip {
       position: absolute;
       display: none;
-      background-color: #1e1e2f;
-      border: 1px solid #8888ff;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--accent-hover);
       border-radius: 6px;
       padding: 10px;
       z-index: 1000;
       max-width: 300px;
       pointer-events: none;
-      box-shadow: 0 0 10px #00000080;
-    }
-     #tooltip .tooltip-name {
-        font-size: 1.1em;
-        font-weight: bold;
-        color: gold;
-        margin-bottom: 5px;
-    }
-    #tooltip .tooltip-stats {
-        margin-bottom: 5px;
-        color: #ccc;
-    }
-    #tooltip .tooltip-effect {
-        font-style: italic;
-        color: #aaa;
+      box-shadow: 0 0 10px #00000080
     }
 
-    /* --- SKILL SECTION --- */
+    #tooltip .tooltip-name {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: var(--accent-gold);
+      margin-bottom: 5px
+    }
+
+    #tooltip .tooltip-stats {
+      margin-bottom: 5px;
+      color: var(--text-secondary)
+    }
+
+    #tooltip .tooltip-effect {
+      font-style: italic;
+      color: #aaa
+    }
+
     .skill-section {
       margin-top: 20px;
       padding: 10px;
-      background-color: #1f1f1f;
-      border-radius: 8px;
+      background-color: var(--bg-inset);
+      border-radius: 8px
     }
 
     .tier-section {
       margin-bottom: 15px;
       border-top: 1px solid #444;
-      padding-top: 10px;
+      padding-top: 10px
     }
 
     .tier-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 8px
     }
 
     .skill-slots {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 8px
     }
 
-    /* Skill Slot */
     .skill-slot {
       width: 48px;
       height: 48px;
@@ -371,43 +528,42 @@
       justify-content: center;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.2s;
-      position: relative;
+      transition: background-color .2s;
+      position: relative
     }
 
     .skill-slot:hover {
-      background-color: #3a3a3a;
+      background-color: #3a3a3a
     }
 
     .skill-slot img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: contain
     }
 
     .skill-slot.empty::after {
       content: '+';
       color: #aaa;
       font-size: 28px;
-      position: absolute;
+      position: absolute
     }
 
     .skill-slot .skill-level-badge {
       position: absolute;
       bottom: -2px;
       right: -2px;
-      background: gold;
-      color: black;
+      background: var(--accent-gold);
+      color: #000;
       font-size: 10px;
       font-weight: bold;
       border-radius: 4px;
-      padding: 1px 3px;
+      padding: 1px 3px
     }
 
-    /* Skill & Item Cards */
     .skill-card,
     .item-card {
-      position: relative;
+      position: relative
     }
 
     .info-icon {
@@ -416,7 +572,7 @@
       right: 5px;
       width: 20px;
       height: 20px;
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: rgba(0, 0, 0, .7);
       color: #fff;
       border-radius: 50%;
       display: flex;
@@ -425,77 +581,77 @@
       font-weight: bold;
       cursor: pointer;
       border: 1px solid #888;
-      font-style: normal;
+      font-style: normal
     }
 
     .info-icon:hover {
-      background-color: #555588;
+      background-color: var(--accent-hover)
     }
 
     .skill-card {
       background-color: #2a2a2a;
       border: 1px solid #444;
-      padding: 12px;
+      padding: 12px
     }
 
     .skill-card .skill-name {
       font-weight: bold;
-      margin-bottom: 4px;
+      margin-bottom: 4px
     }
 
     .skill-card .skill-description {
       font-size: 12px;
-      color: #aaa;
+      color: #aaa
     }
 
-    /* Skill Info Modal */
     #skill-info-modal-content {
       display: flex;
-      gap: 20px;
+      gap: 20px
     }
 
     #skill-info-modal .left-panel {
-      flex: 1;
+      flex: 1
     }
 
     #skill-info-modal .right-panel {
       flex: 2;
       overflow-y: auto;
-      max-height: 70vh;
+      max-height: 70vh
     }
 
     #skill-info-modal img {
       max-width: 150px;
       margin: 0 auto;
-      display: block;
+      display: block
     }
 
     #skill-info-modal .level-up-controls {
       margin-top: 15px;
       padding-top: 15px;
-      border-top: 1px solid #555;
+      border-top: 1px solid #555
     }
 
     .level-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
-      font-size: 0.9em;
+      font-size: .9em
     }
 
     .level-table th,
     .level-table td {
       border: 1px solid #444;
       padding: 5px;
-      text-align: left;
+      text-align: left
     }
-     .level-table th {
-        background-color: #3a3a55;
+
+    .level-table th {
+      background-color: #3a3a55
     }
 
     .level-table .current-level-row {
       background-color: #50507a;
-      font-weight: bold;
+      font-weight: bold
     }
   </style>
 </head>
@@ -503,16 +659,18 @@
 <body>
   <div class="container">
     <h2>Character Sheet</h2>
-    <div style="margin-bottom: 10px;">
-      <button onclick="signInWithGoogle()">Sign In with Google</button>
-      <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-      <button onclick="saveCharacter()">Save Character</button>
-      <button onclick="resetCharacter()">Reset Character</button>
-      <span id="user-info" style="margin-left: 10px;"></span>
-    </div>
 
-    <div class="row">
-      <div class="col">
+    <div class="character-header-grid">
+      <div class="auth-block">
+        <button onclick="signInWithGoogle()">Sign In with Google</button>
+        <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+        <button onclick="saveCharacter()">Save Character</button>
+        <button onclick="resetCharacter()">Reset Character</button>
+        <span id="user-info" style="margin-left: 10px;"></span>
+      </div>
+
+      <div class="info-block">
+        <h4>Identity</h4>
         <label>Name</label><input type="text" id="char-name">
         <label>Race</label><input type="text" id="char-race">
         <label>Position</label>
@@ -524,26 +682,39 @@
           <option value="Light Bearer">Light Bearer</option>
           <option value="Anima">Anima</option>
         </select>
-        <label>Primary Stats</label>
-        <div class="affinities" id="primary-affinities"></div><select id="add-primary"></select>
-        <label>Secondary Stats</label>
-        <div class="affinities" id="secondary-affinities"></div><select id="add-secondary"></select>
-        <label>Tertiary Stats</label>
-        <div class="affinities" id="tertiary-affinities"></div><select id="add-tertiary"></select>
       </div>
-      <div class="col">
-        <label>Level</label><input type="number" id="char-level" min="1" value="1" onchange="updateFromTextbox()">
-        <label>Floor</label><input type="number" id="char-floor" min="1" value="1" onchange="renderHpSpeed()">
-        <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5">
+
+      <div class="points-block">
+        <h4>Resources</h4>
         <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
         <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-        <div class="btn-row" style="margin-top: 10px;">
-          <button onclick="levelUp()">Level Up</button>
-          <button onclick="addSkillPoint()">+1 Skill Point</button>
+        <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5">
+      </div>
+
+      <div class="level-block">
+        <h4>Progression</h4>
+        <label>Level</label><input type="number" id="char-level" min="1" value="1" onchange="updateFromTextbox()">
+        <label>Floor</label><input type="number" id="char-floor" min="1" value="1" onchange="renderHpSpeed()">
+        <button onclick="levelUp()" class="btn-primary">Level Up</button>
+      </div>
+
+      <div class="affinities-block">
+        <div class="affinity-controls">
+          <label>Primary Stats</label><select id="add-primary"></select>
         </div>
+        <div class="affinities" id="primary-affinities"></div>
+        <div class="affinity-controls" style="margin-top: 15px;">
+          <label>Secondary Stats</label><select id="add-secondary"></select>
+        </div>
+        <div class="affinities" id="secondary-affinities"></div>
+        <div class="affinity-controls" style="margin-top: 15px;">
+          <label>Tertiary Stats</label><select id="add-tertiary"></select>
+        </div>
+        <div class="affinities" id="tertiary-affinities"></div>
       </div>
     </div>
-    <div id="hp-speed" style="margin-top: 20px; font-size: 1.1em;"></div>
+
+    <div id="hp-speed" style="margin-top: 20px; font-size: 1.1em; text-align: center;"></div>
 
     <div class="equipment-section">
       <h3>Equipment</h3>
@@ -609,8 +780,9 @@
     </div>
 
     <div id="tooltip"></div>
-
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
@@ -673,15 +845,15 @@
         document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
         document.getElementById("logoutBtn").style.display = 'inline-block';
         document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
-        loadCharacter(); 
+        loadCharacter();
       } else {
         document.getElementById("user-info").textContent = "Logged out.";
         document.getElementById("logoutBtn").style.display = 'none';
         document.querySelectorAll("input, select, button").forEach(el => {
           if (el.textContent !== "Sign In with Google") el.disabled = true;
         });
-        initializeState(); 
-        updateFromTextbox(); 
+        initializeState();
+        updateFromTextbox();
       }
     });
 
@@ -749,7 +921,7 @@
     // --- CORE UPDATE & RENDER ORCHESTRATOR ---
     function updateFromTextbox() {
       const level = parseInt(document.getElementById("char-level").value) || 1;
-      
+
       // Step 1: Calculate base stats from level, position, and affinities.
       calculateBaseStats();
 
@@ -773,8 +945,8 @@
       renderStats();
       renderEquipment();
       renderSkillTiers();
-      updateDerivedStats(); 
-      renderHpSpeed();      
+      updateDerivedStats();
+      renderHpSpeed();
     }
 
     // --- STAT CALCULATION AND RENDERING ---
@@ -794,7 +966,7 @@
       const table = getGrowthTable()[position] || [];
       return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
     }
-    
+
     // *** NEWLY ADDED FUNCTION ***
     function calculateBaseStats() {
       const level = parseInt(document.getElementById("char-level").value) || 1;
@@ -817,11 +989,11 @@
         // Add manually allocated points
         calculatedStats[stat] = total + (state.manualStatPoints[stat] || 0);
       });
-      
+
       // Update the main state
       state.statValues = calculatedStats;
     }
-    
+
     // *** FIXED FUNCTION ***
     function renderStats() {
       const tbody = document.getElementById("stats-body");
@@ -848,23 +1020,23 @@
 
         // Add button logic
         tr.querySelector('.add-stat-btn').onclick = () => {
-            if (state.availableStatPoints > 0 && totalValue + 1 <= Math.floor(max)) {
-                state.manualStatPoints[stat]++;
-                updateFromTextbox();
-            }
+          if (state.availableStatPoints > 0 && totalValue + 1 <= Math.floor(max)) {
+            state.manualStatPoints[stat]++;
+            updateFromTextbox();
+          }
         };
 
         tr.querySelector('.remove-stat-btn').onclick = () => {
-            if (state.manualStatPoints[stat] > 0) {
-                state.manualStatPoints[stat]--;
-                updateFromTextbox();
-            }
+          if (state.manualStatPoints[stat] > 0) {
+            state.manualStatPoints[stat]--;
+            updateFromTextbox();
+          }
         };
 
         tbody.appendChild(tr);
       });
     }
-    
+
     function renderEquipment() {
       const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
       const tooltip = document.getElementById('tooltip');
@@ -873,10 +1045,10 @@
         const el = document.getElementById(`${slotKey}-slot`);
         const item = state.equipment[slotKey];
 
-        el.innerHTML = ""; 
+        el.innerHTML = "";
         el.onmouseover = (e) => showTooltip(e, item);
         el.onmouseout = hideTooltip;
-        
+
         if (item) {
           const img = document.createElement("img");
           img.src = item.image || "https://dummyimage.com/100x100/333/aaa&text=?";
@@ -884,7 +1056,7 @@
           img.className = "item-image";
           el.appendChild(img);
         }
-        
+
         const changeIcon = document.createElement("div");
         changeIcon.className = "change-item-icon";
         changeIcon.textContent = item ? '⇄' : '+';
@@ -892,22 +1064,22 @@
         el.appendChild(changeIcon);
 
         if (slotKey === "weapon1" || slotKey === "weapon2") {
-            el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
-            el.onclick = () => {
-                if (state.equipment[slotKey]) {
-                    state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
-                    updateDerivedStats();
-                    renderEquipment();
-                }
-            };
+          el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
+          el.onclick = () => {
+            if (state.equipment[slotKey]) {
+              state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
+              updateDerivedStats();
+              renderEquipment();
+            }
+          };
         }
       });
     }
 
     function showTooltip(event, item) {
-        if (!item) return;
-        const tooltip = document.getElementById('tooltip');
-        const html = `
+      if (!item) return;
+      const tooltip = document.getElementById('tooltip');
+      const html = `
             <div class="tooltip-name">${item.name}</div>
             <div class="tooltip-stats">
                 Type: ${item.type}<br>
@@ -915,14 +1087,14 @@
             </div>
             <div class="tooltip-effect">${item.specialEffect || 'No special effect.'}</div>
         `;
-        tooltip.innerHTML = html;
-        tooltip.style.display = 'block';
-        tooltip.style.left = `${event.pageX + 15}px`;
-        tooltip.style.top = `${event.pageY + 15}px`;
+      tooltip.innerHTML = html;
+      tooltip.style.display = 'block';
+      tooltip.style.left = `${event.pageX + 15}px`;
+      tooltip.style.top = `${event.pageY + 15}px`;
     }
 
     function hideTooltip() {
-        document.getElementById('tooltip').style.display = 'none';
+      document.getElementById('tooltip').style.display = 'none';
     }
 
     function renderHpSpeed() {
@@ -1012,7 +1184,7 @@
     }
 
     function applyAllSkillEffects() {
-      state.skillBonuses = {}; 
+      state.skillBonuses = {};
       for (const tier in state.skillsByTier) {
         for (const skill of state.skillsByTier[tier]) {
           if (!skill || skill.level === 0 || !skill.effects) continue;
@@ -1080,8 +1252,8 @@
       if (tier !== null && index !== null) {
         const newSkillInstance = JSON.parse(JSON.stringify(skillData)); // Deep copy
         newSkillInstance.level = 0; // Equip at level 0
-        state.skillsByTier[tier][index] = newSkillInstance; 
-        openSkillInfoModal(state.skillsByTier[tier][index], tier, index); 
+        state.skillsByTier[tier][index] = newSkillInstance;
+        openSkillInfoModal(state.skillsByTier[tier][index], tier, index);
         closeSkillLibrary();
         updateFromTextbox();
       }
@@ -1139,10 +1311,10 @@
         const effect = skillData.effects?.find(e => e.level === i);
         let effectText = 'N/A';
         if (effect) {
-            effectText = `${effect.stat}: ${effect.type === 'add' ? '+' : 'x'}${effect.value}`;
-            if (effect.stat2) {
-                effectText += `, ${effect.stat2}: ${effect.type2 === 'add' ? '+' : 'x'}${effect.value2}`;
-            }
+          effectText = `${effect.stat}: ${effect.type === 'add' ? '+' : 'x'}${effect.value}`;
+          if (effect.stat2) {
+            effectText += `, ${effect.stat2}: ${effect.type2 === 'add' ? '+' : 'x'}${effect.value2}`;
+          }
         }
         const isCurrent = skillData.level === i;
         levelsTable += `<tr class="${isCurrent ? 'current-level-row' : ''}">
@@ -1174,7 +1346,7 @@
       if (nextLevel <= skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, nextLevel) <= tier) {
         skill.level = nextLevel;
         updateFromTextbox();
-        openSkillInfoModal(skill, tier, index); 
+        openSkillInfoModal(skill, tier, index);
       }
     }
     function delevelSkill(tier, index) {
@@ -1216,68 +1388,74 @@
         const container = document.getElementById(`${type}-affinities`);
         const select = document.getElementById(`add-${type}`);
         container.innerHTML = "";
+        
+        // Populate the dropdown with only unselected stats
         select.innerHTML = "<option value=''>+ Add</option>" + stats
           .filter(stat => !state.affinities.primary.includes(stat) && !state.affinities.secondary.includes(stat) && !state.affinities.tertiary.includes(stat))
           .map(stat => `<option value="${stat}">${stat}</option>`).join("");
 
+        // Render the tags for currently selected affinities
         (state.affinities[type] || []).forEach(stat => {
           const div = document.createElement("div");
-          div.textContent = `❌ ${stat}`;
-          div.style.cursor = "pointer";
-          div.onclick = () => {
+          div.innerHTML = `${stat} <span class="remove-affinity">x</span>`;
+          
+          div.querySelector('.remove-affinity').onclick = () => {
             state.affinities[type] = state.affinities[type].filter(s => s !== stat);
             updateFromTextbox();
           };
           container.appendChild(div);
         });
 
+        // Handle adding a new affinity from the dropdown
         select.onchange = e => {
           const val = e.target.value;
-          if (val && !state.affinities[type].includes(val)) {
+          if (val && !(state.affinities[type] || []).includes(val)) {
+            if (!state.affinities[type]) state.affinities[type] = [];
             state.affinities[type].push(val);
             updateFromTextbox();
           }
-          e.target.value = ''; // Reset dropdown
+          e.target.value = ''; // Reset dropdown after selection
         };
       });
     }
 
     function openEquipmentModal(slotKey) {
-        state.currentEquipmentEdit = slotKey;
-        const modal = document.getElementById("equipment-library-modal");
-        const title = slotKey.replace('slot','').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
-        modal.classList.add("active");
-        renderEquipmentLibrary();
+      state.currentEquipmentEdit = slotKey;
+      const modal = document.getElementById("equipment-library-modal");
+      const title = slotKey.replace('slot', '').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
+      modal.classList.add("active");
+      renderEquipmentLibrary();
     }
-    
+
     function closeEquipmentModal() { document.getElementById("equipment-library-modal").classList.remove("active"); }
 
     function renderEquipmentLibrary() {
-        const grid = document.getElementById("equipment-library-grid");
-        grid.innerHTML = "";
-        const slotKey = state.currentEquipmentEdit;
-        const slotType = slotKey.includes('weapon') ? 'weapon' : (slotKey.includes('armor') ? 'armor' : 'accessory');
+      const grid = document.getElementById("equipment-library-grid");
+      grid.innerHTML = "";
+      const slotKey = state.currentEquipmentEdit;
+      const slotType = slotKey.includes('weapon') ? 'weapon' : (slotKey.includes('armor') ? 'armor' : 'accessory');
 
-        const filteredItems = state.equipmentLibrary.filter(item => item.type === slotType);
+      const filteredItems = state.equipmentLibrary.filter(item => item.type === slotType);
 
-        filteredItems.forEach(item => {
-            const card = document.createElement("div");
-            card.className = "item-card";
-            card.onmouseover = (e) => showTooltip(e, item.isDiscovered ? item : null);
-            card.onmouseout = hideTooltip;
+      filteredItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+        card.onmouseover = (e) => showTooltip(e, item.isDiscovered ? item : null);
+        card.onmouseout = hideTooltip;
 
-            if (item.isDiscovered) {
-                card.innerHTML = `<img src="${item.image}" alt="${item.name}" /><div class="item-name">${item.name}</div>`;
-                card.onclick = () => selectEquipment(item);
-_            } else {
-                card.classList.add("undiscovered");
-                card.innerHTML = `<img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" /><div class="item-name">Undiscovered</div>`;
-            }
-            grid.appendChild(card);
-        });
+        if (item.isDiscovered) {
+          card.innerHTML = `<img src="${item.image}" alt="${item.name}" /><div class="item-name">${item.name}</div>`;
+          card.onclick = () => selectEquipment(item);
+          _
+        } else {
+          card.classList.add("undiscovered");
+          card.innerHTML = `<img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" /><div class="item-name">Undiscovered</div>`;
+        }
+        grid.appendChild(card);
+      });
     }
-    
+
     function equipItem(slot, item) {
       state.equipment[slot] = item;
       if (item && item.type === 'weapon' && !state.selectedWeaponSlot) {
@@ -1290,10 +1468,10 @@ _            } else {
     }
 
     function selectEquipment(item) {
-        if (state.currentEquipmentEdit) {
-            equipItem(state.currentEquipmentEdit.replace('-slot',''), item);
-            closeEquipmentModal();
-        }
+      if (state.currentEquipmentEdit) {
+        equipItem(state.currentEquipmentEdit.replace('-slot', ''), item);
+        closeEquipmentModal();
+      }
     }
 
     function addSkillSlot(tier) {
@@ -1301,9 +1479,9 @@ _            } else {
       state.skillsByTier[tier].push(null);
       renderSkillTiers();
     }
-    
+
     window.onload = () => {
-      initializeState(); 
+      initializeState();
     };
   </script>
 
