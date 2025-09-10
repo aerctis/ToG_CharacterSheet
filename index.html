@@ -564,6 +564,7 @@
       skillFilter: { position: "", tier: null, search: "" },
       availableStatPoints: 0,
       availableSkillPoints: 0,
+      bonusSkillPoints: 0,
       usedSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
       derivedStats: { attack: 0, defense: 0 },
@@ -710,7 +711,7 @@
       const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
 
       state.availableStatPoints = level - totalAllocatedStatPoints - 1;
-      state.availableSkillPoints = level - state.usedSkillPoints - 1;
+      state.availableSkillPoints = level - state.usedSkillPoints - 1 + state.bonusSkillPoints;
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
       renderStats();
@@ -801,6 +802,7 @@
 
     function addSkillPoint() {
       state.availableSkillPoints++;
+      state.bonusSkillPoints++;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
     }
 
