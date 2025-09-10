@@ -649,9 +649,67 @@
       }
     });
 
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          const user = result.user;
+          document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
+          document.getElementById("logoutBtn").style.display = 'inline-block';
+          loadCharacter(); // Auto-load on login
+        })
+        .catch(error => console.error("Login error", error));
+    }
+
+    function signOut() {
+      auth.signOut().then(() => {
+        document.getElementById("user-info").textContent = "Logged out.";
+        document.getElementById("logoutBtn").style.display = 'none';
+      });
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
+        document.getElementById("logoutBtn").style.display = 'inline-block';
+        document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
+        loadCharacter();
+        fetchEquipmentLibrary(); // Fetch global items on login
+      } else {
+        document.getElementById("user-info").textContent = "Logged out.";
+        document.getElementById("logoutBtn").style.display = 'none';
+        document.querySelectorAll("input, select, button").forEach(el => {
+          if (!el.closest("body > .container > div > button")) el.disabled = true;
+        });
+      }
+    });
+
     // --- DATA MANAGEMENT (SAVE/LOAD) ---
-    function getCurrentCharacterData() { /* ... function content from previous version ... */ }
-    function saveCharacter() { /* ... function content from previous version ... */ }
+    function getCurrentCharacterData() {
+      return {
+        level: document.getElementById("char-level").value,
+        floor: document.getElementById("char-floor").value,
+        name: document.getElementById("char-name").value,
+        race: document.getElementById("char-race").value,
+        position: document.getElementById("char-position").value,
+        affinities: state.affinities,
+        stats: state.statValues,
+        skillsByTier: state.skillsByTier,
+        manualAdds: state.manualStatPoints,
+        equipment: state.equipment,
+        derivedStats: state.derivedStats,
+        selectedWeaponSlot: state.selectedWeaponSlot
+      };
+    }
+
+    function saveCharacter() {
+      const user = auth.currentUser;
+      if (user) {
+        db.collection("characters").doc(user.uid).set(getCurrentCharacterData())
+          .then(() => alert("Character saved!"))
+          .catch(err => console.error("Save failed:", err));
+      }
+    }
 
     function loadCharacter() {
       const user = auth.currentUser;
@@ -749,6 +807,67 @@
       // Add event listeners after innerHTML (simplified for brevity)
     }
 
+    function renderEquipment() {
+      const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
+
+      allSlots.forEach(slotKey => {
+        const el = document.getElementById(`${slotKey}-slot`);
+        const item = state.equipment[slotKey];
+
+        el.innerHTML = ""; // Clear old content
+        el.onmouseover = (e) => showTooltip(e, item);
+        el.onmouseout = hideTooltip;
+
+        if (item) {
+          const img = document.createElement("img");
+          img.src = item.image || "default.png";
+          img.alt = item.name || slotKey;
+          img.className = "item-image";
+          el.appendChild(img);
+        }
+        
+        // Add the 'change item' icon regardless of whether an item is equipped
+        const changeIcon = document.createElement("div");
+        changeIcon.className = "change-item-icon";
+        changeIcon.textContent = item ? '⇄' : '+';
+        changeIcon.onclick = () => openEquipmentModal(slotKey);
+        el.appendChild(changeIcon);
+
+        // Weapon selection border logic
+        if (slotKey === "weapon1" || slotKey === "weapon2") {
+            el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
+            // Click on the slot itself (not the change icon) to select it for attack
+            el.onclick = () => {
+                if (state.equipment[slotKey]) { // Can only select if a weapon is equipped
+                    state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
+                    updateDerivedStats();
+                    renderEquipment(); // Re-render to show selection border
+                }
+            };
+        }
+      });
+    }
+
+    function showTooltip(event, item) {
+        if (!item) return;
+        const html = `
+            <div class="tooltip-name">${item.name}</div>
+            <div class="tooltip-stats">
+                Type: ${item.type}<br>
+                Stat: ${item.stat} | Modifier: ${item.modifier}
+            </div>
+            <div class="tooltip-effect">${item.specialEffect || 'No special effect.'}</div>
+        `;
+        tooltip.innerHTML = html;
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${event.pageX + 15}px`;
+        tooltip.style.top = `${event.pageY + 15}px`;
+    }
+
+    function hideTooltip() {
+        tooltip.style.display = 'none';
+    }
+
     // --- HP / SPEED / DERIVED STATS ---
     function renderHpSpeed() {
       const floor = parseInt(document.getElementById("char-floor").value);
@@ -763,7 +882,47 @@
 
       document.getElementById("hp-speed").innerHTML = `<b>HP:</b> ${Math.round(hp)}<br><b>Movement Speed:</b> ${speed}`;
     }
-    function updateDerivedStats() { /* ... function content from previous version ... */ }
+
+
+    function updateDerivedStats() {
+      const stats = state.statValues;
+      const eq = state.equipment;
+
+      // Attack Calculation
+      const selected = state.selectedWeaponSlot;
+      let attack = 0;
+      if (selected && eq[selected]) {
+        const weapon = eq[selected];
+        const abase = state.statValues[weapon.stat] || 0;
+        attack = Math.floor(abase / 5) + (weapon.modifier || 0);
+        document.getElementById("attack-formula-top").textContent = `(${abase.toFixed(1)} ${weapon.stat})`;
+        document.getElementById("attack-formula-bot").textContent = `5`;
+        document.getElementById("attack-formula").innerHTML = ` &nbsp;+&nbsp; ${weapon.modifier} Mod &nbsp;=&nbsp;`;
+      } else {
+        document.getElementById("attack-formula-top").textContent = "";
+        document.getElementById("attack-formula-bot").textContent = "";
+        document.getElementById("attack-formula").innerHTML = "";
+      }
+
+      // Defense Calculation
+      let defense = 0;
+      if (eq.armor) {
+        const armor = eq.armor;
+        const dbase = state.statValues[armor.stat] || 0;
+        defense = Math.floor(dbase / 5) + (armor.modifier || 0);
+        document.getElementById("defense-formula-top").textContent = `(${dbase.toFixed(1)} ${armor.stat})`;
+        document.getElementById("defense-formula-bot").textContent = `5`;
+        document.getElementById("defense-formula").innerHTML = ` &nbsp;+&nbsp; ${armor.modifier} Mod &nbsp;=&nbsp;`;
+      } else {
+        document.getElementById("defense-formula-top").textContent = "";
+        document.getElementById("defense-formula-bot").textContent = "";
+        document.getElementById("defense-formula").innerHTML = "";
+      }
+
+      state.derivedStats = { attack, defense };
+      document.getElementById("derived-attack").textContent = `${attack} Attack`;
+      document.getElementById("derived-defense").textContent = `${defense} Defense`;
+    }
 
     // --- SKILL SYSTEM ---
     async function fetchSkillLibrary() {
@@ -953,6 +1112,208 @@
       state.skillsByTier[tier][index] = null;
       updateFromTextbox();
       closeSkillInfoModal();
+    }
+
+    function addSkillPoint() {
+      state.availableSkillPoints++;
+      state.bonusSkillPoints++;
+      document.getElementById("available-skill-points").value = state.availableSkillPoints;
+    }
+
+    function levelUp() {
+      document.getElementById("char-level").value++;
+      updateFromTextbox();
+    }
+
+
+    function getGrowthTable() {
+      return {
+        Guide: [
+          { range: [1, 10], primary: 1, secondary: 0.5, tertiary: 0.5 },
+          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 2, secondary: 1.5, tertiary: 1 },
+          { range: [81, 110], primary: 2.5, secondary: 2, tertiary: 1 },
+          { range: [111, 140], primary: 3, secondary: 2, tertiary: 1.5 },
+          { range: [141, 170], primary: 3, secondary: 2.5, tertiary: 2 },
+          { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }
+        ],
+        Fisherman: [
+          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
+          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 2, secondary: 2, tertiary: 1 },
+          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
+          { range: [111, 140], primary: 3, secondary: 2, tertiary: 2 },
+          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
+          { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }
+        ],
+        "Spear Bearer": [
+          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
+          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
+          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
+          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
+          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
+          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
+        ],
+        "Wave Controller": [
+          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
+          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
+          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
+          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
+          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
+          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
+        ],
+        "Light Bearer": [
+          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
+          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
+          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
+          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
+          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
+          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
+        ],
+        Anima: [
+          { range: [1, 10], primary: 2, secondary: 1, tertiary: 0.5 },
+          { range: [11, 25], primary: 2.5, secondary: 1, tertiary: 0.5 },
+          { range: [26, 50], primary: 3, secondary: 1, tertiary: 0.5 },
+          { range: [51, 80], primary: 3.5, secondary: 1.5, tertiary: 1 },
+          { range: [81, 110], primary: 4, secondary: 1.5, tertiary: 1 },
+          { range: [111, 140], primary: 5, secondary: 2, tertiary: 1.5 },
+          { range: [141, 170], primary: 6, secondary: 2, tertiary: 1.5 },
+          { range: [171, Infinity], primary: 6, secondary: 2, tertiary: 2 }
+        ]
+      };
+    }
+
+    function getGrowthRatesForLevel(position, level) {
+      const table = getGrowthTable()[position] || [];
+      return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
+    }
+
+    function resetCharacter() {
+      if (!confirm("Are you sure you want to completely reset and delete this character? This cannot be undone.")) return;
+      
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      db.collection("characters").doc(user.uid).delete().then(() => {
+        // Reset all input fields
+        document.getElementById("char-name").value = "";
+        document.getElementById("char-race").value = "";
+        document.getElementById("char-level").value = 1;
+        document.getElementById("char-floor").value = 1;
+        document.getElementById("char-position").value = "Guide";
+        
+        // Reset state object to its initial values
+        Object.assign(state, {
+            statValues: Object.fromEntries(stats.map(stat => [stat, 1])),
+            manualStatPoints: Object.fromEntries(stats.map(stat => [stat, 0])),
+            skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
+            affinities: { primary: [], secondary: [], tertiary: [] },
+            equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null },
+            selectedWeaponSlot: null,
+            bonusSkillPoints: 0,
+            usedSkillPoints: 0
+        });
+
+        // Trigger a full UI refresh
+        updateFromTextbox();
+        alert("Character has been reset.");
+      }).catch(err => console.error("Failed to delete character:", err));
+    }
+
+    function renderAffinityControls() {
+      ["primary", "secondary", "tertiary"].forEach(type => {
+        const container = document.getElementById(`${type}-affinities`);
+        const select = document.getElementById(`add-${type}`);
+        container.innerHTML = "";
+        select.innerHTML = "<option value=''>+ Add</option>" + stats.map(stat => `<option value="${stat}">${stat}</option>`).join("");
+
+        state.affinities[type].forEach(stat => {
+          const div = document.createElement("div");
+          div.textContent = stat;
+          div.onclick = () => {
+            state.affinities[type] = state.affinities[type].filter(s => s !== stat);
+            updateFromTextbox();
+          };
+          container.appendChild(div);
+        });
+
+        select.onchange = e => {
+          const val = e.target.value;
+          if (val && !state.affinities[type].includes(val)) {
+            state.affinities[type].push(val);
+            updateFromTextbox();
+          }
+        };
+      });
+    }
+
+    function closeEquipmentModal() {
+        document.getElementById("equipment-library-modal").classList.remove("active");
+        state.currentEquipmentEdit = null;
+    }
+
+    function openEquipmentModal(slotKey) {
+        state.currentEquipmentEdit = slotKey;
+        const modal = document.getElementById("equipment-library-modal");
+        const title = slotKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
+        modal.classList.add("active");
+        renderEquipmentLibrary();
+    }
+
+    function renderEquipmentLibrary() {
+        const grid = document.getElementById("equipment-library-grid");
+        grid.innerHTML = "";
+        const slotKey = state.currentEquipmentEdit;
+        const slotType = slotKey.includes('weapon') ? 'weapon' : (slotKey.includes('armor') ? 'armor' : 'accessory');
+
+        const filteredItems = state.equipmentLibrary.filter(item => item.type === slotType);
+
+        filteredItems.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "item-card";
+            card.onmouseover = (e) => showTooltip(e, item.isDiscovered ? item : null);
+            card.onmouseout = hideTooltip;
+
+            if (item.isDiscovered) {
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" />
+                    <div class="item-name">${item.name}</div>
+                `;
+                card.onclick = () => selectEquipment(item);
+            } else {
+                card.classList.add("undiscovered");
+                card.innerHTML = `
+                    <img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" />
+                    <div class="item-name">Undiscovered Item</div>
+                `;
+            }
+            grid.appendChild(card);
+        });
+    }
+
+    function selectEquipment(item) {
+        const slotKey = state.currentEquipmentEdit;
+        if (slotKey) {
+            equipItem(slotKey, item);
+            closeEquipmentModal();
+        }
+    }
+
+    function addSkillSlot(tier) {
+      if (!state.skillsByTier[tier]) {
+        state.skillsByTier[tier] = [];
+      }
+      state.skillsByTier[tier].push(null); // Use null for empty slots
+      renderSkillTiers();
     }
 
     // --- OTHER UI & HELPER FUNCTIONS ---
