@@ -610,7 +610,7 @@
 
     function renderEquipment() {
       ["weapon1", "weapon2"].forEach(slot => {
-        const element = document.getElementById(`${slot}-slot`); // Make sure this ID exists in HTML
+        const el = document.getElementById(`${slot}-slot`); // Make sure this ID exists in HTML
         const item = state.equipment[slot];
 
         el.innerHTML = ""; // Clear old content
@@ -1143,8 +1143,6 @@
         maxTier: 4
       },
     ];
-    //We need to create a modal and a library for equipment since clicking on a weapon will slelect it we need a small button the corner of the slot to open the modal. 
-    //
 
     state.equipment.weapon1 = {
       name: "Iron Sword",
