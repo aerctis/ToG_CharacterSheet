@@ -66,6 +66,8 @@
       border: 1px solid #555;
       border-radius: 4px;
       padding: 4px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     input[type="text"]:focus,
@@ -93,9 +95,13 @@
 
     .stats-table th,
     .stats-table td {
-      border: 1px solid #ccc;
+      border: 1px solid #4a4a6a;
       padding: 6px;
       text-align: center;
+    }
+
+    .stats-table th {
+        background-color: #3a3a55;
     }
 
     .stat-breakdown {
@@ -219,6 +225,7 @@
       cursor: pointer;
       border: 1px solid #888;
       transition: background-color 0.2s;
+      font-size: 14px;
     }
 
     .slot .change-item-icon:hover {
@@ -244,6 +251,7 @@
       display: none;
       flex-direction: column;
       padding: 20px;
+      box-sizing: border-box;
       overflow-y: auto;
     }
 
@@ -309,6 +317,20 @@
       max-width: 300px;
       pointer-events: none;
       box-shadow: 0 0 10px #00000080;
+    }
+     #tooltip .tooltip-name {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: gold;
+        margin-bottom: 5px;
+    }
+    #tooltip .tooltip-stats {
+        margin-bottom: 5px;
+        color: #ccc;
+    }
+    #tooltip .tooltip-effect {
+        font-style: italic;
+        color: #aaa;
     }
 
     /* --- SKILL SECTION --- */
@@ -467,9 +489,13 @@
       padding: 5px;
       text-align: left;
     }
+     .level-table th {
+        background-color: #3a3a55;
+    }
 
     .level-table .current-level-row {
-      background-color: #3a3a55;
+      background-color: #50507a;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -632,40 +658,14 @@
       state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
     }
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
-        document.getElementById("logoutBtn").style.display = 'inline-block';
-        document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
-        loadCharacter(); // This will trigger fetching library data and a full render
-      } else {
-        document.getElementById("user-info").textContent = "Logged out.";
-        document.getElementById("logoutBtn").style.display = 'none';
-        document.querySelectorAll("input, select, button").forEach(el => {
-          if (!el.closest("body > .container > div > button")) el.disabled = true;
-        });
-        initializeState(); // Reset state for logged-out view
-        updateFromTextbox(); // Render the clean slate
-      }
-    });
-
     function signInWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
-        .then(result => {
-          const user = result.user;
-          document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
-          document.getElementById("logoutBtn").style.display = 'inline-block';
-          loadCharacter(); // Auto-load on login
-        })
         .catch(error => console.error("Login error", error));
     }
 
     function signOut() {
-      auth.signOut().then(() => {
-        document.getElementById("user-info").textContent = "Logged out.";
-        document.getElementById("logoutBtn").style.display = 'none';
-      });
+      auth.signOut();
     }
 
     auth.onAuthStateChanged(user => {
@@ -673,14 +673,15 @@
         document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
         document.getElementById("logoutBtn").style.display = 'inline-block';
         document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
-        loadCharacter();
-        fetchEquipmentLibrary(); // Fetch global items on login
+        loadCharacter(); 
       } else {
         document.getElementById("user-info").textContent = "Logged out.";
         document.getElementById("logoutBtn").style.display = 'none';
         document.querySelectorAll("input, select, button").forEach(el => {
-          if (!el.closest("body > .container > div > button")) el.disabled = true;
+          if (el.textContent !== "Sign In with Google") el.disabled = true;
         });
+        initializeState(); 
+        updateFromTextbox(); 
       }
     });
 
@@ -693,11 +694,10 @@
         race: document.getElementById("char-race").value,
         position: document.getElementById("char-position").value,
         affinities: state.affinities,
-        stats: state.statValues,
+        stats: state.statValues, // These already include manual points
         skillsByTier: state.skillsByTier,
         manualAdds: state.manualStatPoints,
         equipment: state.equipment,
-        derivedStats: state.derivedStats,
         selectedWeaponSlot: state.selectedWeaponSlot
       };
     }
@@ -709,21 +709,6 @@
           .then(() => alert("Character saved!"))
           .catch(err => console.error("Save failed:", err));
       }
-    }
-
-    async function fetchEquipmentLibrary() {
-        try {
-            const snapshot = await db.collection("items").get();
-            state.equipmentLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        } catch (error) {
-            console.error("Error fetching equipment library:", error);
-            // Fallback to local data if Firebase fails
-            state.equipmentLibrary = [
-              { id: 'mystery', name: '???', image: 'https://dummyimage.com/100x100/333/aaa&text=?', isDiscovered: false },
-              { id: 'ironsword', name: 'Iron Sword', image: 'https://dummyimage.com/100x100/aaa/000&text=S', type: 'weapon', stat: 'Strength', modifier: 5, specialEffect: 'A standard, reliable blade.', isDiscovered: true },
-              { id: 'leatherarmor', name: 'Leather Armor', image: 'https://dummyimage.com/100x100/8b4513/fff&text=A', type: 'armor', stat: 'Willpower', modifier: 3, specialEffect: 'Simple but effective protection.', isDiscovered: true }
-            ];
-        }
     }
 
     function loadCharacter() {
@@ -738,11 +723,11 @@
             document.getElementById("char-floor").value = data.floor || 1;
             document.getElementById("char-position").value = data.position || "Guide";
             state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
-            state.statValues = data.stats || Object.fromEntries(stats.map(stat => [stat, 1]));
             state.skillsByTier = data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] };
             state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
             state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
             state.selectedWeaponSlot = data.selectedWeaponSlot || null;
+            // Note: state.statValues is NOT loaded here; it's recalculated by updateFromTextbox()
           } else {
             initializeState(); // Set defaults for a new character
           }
@@ -763,100 +748,156 @@
 
     // --- CORE UPDATE & RENDER ORCHESTRATOR ---
     function updateFromTextbox() {
-      // Step 1: Calculate points based on level
       const level = parseInt(document.getElementById("char-level").value) || 1;
-      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
-      state.availableStatPoints = level - totalAllocatedStatPoints - 1;
-
-      // Step 2: Calculate base stats from affinities and level
+      
+      // Step 1: Calculate base stats from level, position, and affinities.
       calculateBaseStats();
 
-      // Step 3: Apply all passive skill effects
+      // Step 2: Apply all passive skill effects
       applyAllSkillEffects();
 
-      // Step 4: Calculate used/available skill points
+      // Step 3: Calculate used/available skill and stat points
+      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
+      state.availableStatPoints = (level - 1) - totalAllocatedStatPoints;
       calculateUsedSkillPoints();
-      state.availableSkillPoints = level - state.usedSkillPoints - 1 + state.bonusSkillPoints;
+      state.availableSkillPoints = (level - 1) - state.usedSkillPoints + state.bonusSkillPoints;
 
-      // Step 5: Render all UI components
+      // Step 4: Render all UI components with the new data
       renderAll();
     }
 
     function renderAll() {
-      // Update read-only fields
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
-
-      // Render UI sections
       renderAffinityControls();
       renderStats();
       renderEquipment();
       renderSkillTiers();
-      updateDerivedStats(); // Depends on stats and equipment
-      renderHpSpeed();      // Depends on stats and skill bonuses
+      updateDerivedStats(); 
+      renderHpSpeed();      
     }
 
     // --- STAT CALCULATION AND RENDERING ---
-    function calculateBaseStats() { /* ... function content from previous version ... */ }
+    function getGrowthTable() {
+      // This table defines stat growth per level based on class
+      return {
+        Guide: [{ range: [1, 10], primary: 1, secondary: 0.5, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 2, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 2.5, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 3, secondary: 2.5, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }],
+        Fisherman: [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 2, secondary: 2, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }],
+        "Spear Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
+        "Wave Controller": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
+        "Light Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
+        Anima: [{ range: [1, 10], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 2.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 3, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3.5, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 4, secondary: 1.5, tertiary: 1 }, { range: [111, 140], primary: 5, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 6, secondary: 2, tertiary: 1.5 }, { range: [171, Infinity], primary: 6, secondary: 2, tertiary: 2 }]
+      };
+    }
+
+    function getGrowthRatesForLevel(position, level) {
+      const table = getGrowthTable()[position] || [];
+      return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
+    }
+    
+    // *** NEWLY ADDED FUNCTION ***
+    function calculateBaseStats() {
+      const level = parseInt(document.getElementById("char-level").value) || 1;
+      const pos = document.getElementById("char-position").value;
+      const priList = state.affinities.primary;
+      const secList = state.affinities.secondary;
+      const terList = state.affinities.tertiary;
+
+      // Create a temporary object to hold calculated stats
+      const calculatedStats = {};
+
+      stats.forEach(stat => {
+        let total = 1; // Start with base 1 for all stats
+        for (let i = 1; i < level; i++) { // Loop up to level-1 because level 1 is the base
+          const rates = getGrowthRatesForLevel(pos, i);
+          if (priList.includes(stat)) total += rates.primary;
+          if (secList.includes(stat)) total += rates.secondary;
+          if (terList.includes(stat)) total += rates.tertiary;
+        }
+        // Add manually allocated points
+        calculatedStats[stat] = total + (state.manualStatPoints[stat] || 0);
+      });
+      
+      // Update the main state
+      state.statValues = calculatedStats;
+    }
+    
+    // *** FIXED FUNCTION ***
     function renderStats() {
       const tbody = document.getElementById("stats-body");
       tbody.innerHTML = "";
 
+      const average = stats.reduce((sum, stat) => sum + state.statValues[stat], 0) / stats.length;
+      const max = parseFloat(document.getElementById("stat-multiplier").value) * average;
+
       stats.forEach(stat => {
         const tr = document.createElement("tr");
-        const baseValue = state.statValues[stat] || 0;
+        const baseValue = state.statValues[stat] || 0; // Includes manual points
         const manual = state.manualStatPoints[stat] || 0;
         const skillBonus = state.skillBonuses[stat]?.add || 0;
         const totalValue = baseValue + skillBonus;
 
         tr.innerHTML = `
-                <td>${stat}</td>
-                <td>
-                    ${totalValue.toFixed(1)}
-                    <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
-                </td>
-                <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
-            `;
+          <td>${stat}</td>
+          <td>
+              ${totalValue.toFixed(1)}
+              <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
+          </td>
+          <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
+        `;
+
+        // Add button logic
+        tr.querySelector('.add-stat-btn').onclick = () => {
+            if (state.availableStatPoints > 0 && totalValue + 1 <= Math.floor(max)) {
+                state.manualStatPoints[stat]++;
+                updateFromTextbox();
+            }
+        };
+
+        tr.querySelector('.remove-stat-btn').onclick = () => {
+            if (state.manualStatPoints[stat] > 0) {
+                state.manualStatPoints[stat]--;
+                updateFromTextbox();
+            }
+        };
+
         tbody.appendChild(tr);
       });
-      // Add event listeners after innerHTML (simplified for brevity)
     }
-
+    
     function renderEquipment() {
       const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
+      const tooltip = document.getElementById('tooltip');
 
       allSlots.forEach(slotKey => {
         const el = document.getElementById(`${slotKey}-slot`);
         const item = state.equipment[slotKey];
 
-        el.innerHTML = ""; // Clear old content
+        el.innerHTML = ""; 
         el.onmouseover = (e) => showTooltip(e, item);
         el.onmouseout = hideTooltip;
-
+        
         if (item) {
           const img = document.createElement("img");
-          img.src = item.image || "default.png";
+          img.src = item.image || "https://dummyimage.com/100x100/333/aaa&text=?";
           img.alt = item.name || slotKey;
           img.className = "item-image";
           el.appendChild(img);
         }
         
-        // Add the 'change item' icon regardless of whether an item is equipped
         const changeIcon = document.createElement("div");
         changeIcon.className = "change-item-icon";
         changeIcon.textContent = item ? '⇄' : '+';
-        changeIcon.onclick = () => openEquipmentModal(slotKey);
+        changeIcon.onclick = (e) => { e.stopPropagation(); openEquipmentModal(slotKey); };
         el.appendChild(changeIcon);
 
-        // Weapon selection border logic
         if (slotKey === "weapon1" || slotKey === "weapon2") {
             el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
-            // Click on the slot itself (not the change icon) to select it for attack
             el.onclick = () => {
-                if (state.equipment[slotKey]) { // Can only select if a weapon is equipped
+                if (state.equipment[slotKey]) {
                     state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
                     updateDerivedStats();
-                    renderEquipment(); // Re-render to show selection border
+                    renderEquipment();
                 }
             };
         }
@@ -865,6 +906,7 @@
 
     function showTooltip(event, item) {
         if (!item) return;
+        const tooltip = document.getElementById('tooltip');
         const html = `
             <div class="tooltip-name">${item.name}</div>
             <div class="tooltip-stats">
@@ -880,10 +922,9 @@
     }
 
     function hideTooltip() {
-        tooltip.style.display = 'none';
+        document.getElementById('tooltip').style.display = 'none';
     }
 
-    // --- HP / SPEED / DERIVED STATS ---
     function renderHpSpeed() {
       const floor = parseInt(document.getElementById("char-floor").value);
       const level = parseInt(document.getElementById("char-level").value);
@@ -900,17 +941,16 @@
 
 
     function updateDerivedStats() {
-      const stats = state.statValues;
       const eq = state.equipment;
-
-      // Attack Calculation
-      const selected = state.selectedWeaponSlot;
       let attack = 0;
-      if (selected && eq[selected]) {
-        const weapon = eq[selected];
-        const abase = state.statValues[weapon.stat] || 0;
-        attack = Math.floor(abase / 5) + (weapon.modifier || 0);
-        document.getElementById("attack-formula-top").textContent = `(${abase.toFixed(1)} ${weapon.stat})`;
+      let defense = 0;
+
+      const selectedWeaponSlot = state.selectedWeaponSlot;
+      if (selectedWeaponSlot && eq[selectedWeaponSlot]) {
+        const weapon = eq[selectedWeaponSlot];
+        const baseStat = state.statValues[weapon.stat] + (state.skillBonuses[weapon.stat]?.add || 0);
+        attack = Math.floor(baseStat / 5) + (weapon.modifier || 0);
+        document.getElementById("attack-formula-top").textContent = `(${baseStat.toFixed(1)} ${weapon.stat})`;
         document.getElementById("attack-formula-bot").textContent = `5`;
         document.getElementById("attack-formula").innerHTML = ` &nbsp;+&nbsp; ${weapon.modifier} Mod &nbsp;=&nbsp;`;
       } else {
@@ -919,13 +959,11 @@
         document.getElementById("attack-formula").innerHTML = "";
       }
 
-      // Defense Calculation
-      let defense = 0;
       if (eq.armor) {
         const armor = eq.armor;
-        const dbase = state.statValues[armor.stat] || 0;
-        defense = Math.floor(dbase / 5) + (armor.modifier || 0);
-        document.getElementById("defense-formula-top").textContent = `(${dbase.toFixed(1)} ${armor.stat})`;
+        const baseStat = state.statValues[armor.stat] + (state.skillBonuses[armor.stat]?.add || 0);
+        defense = Math.floor(baseStat / 5) + (armor.modifier || 0);
+        document.getElementById("defense-formula-top").textContent = `(${baseStat.toFixed(1)} ${armor.stat})`;
         document.getElementById("defense-formula-bot").textContent = `5`;
         document.getElementById("defense-formula").innerHTML = ` &nbsp;+&nbsp; ${armor.modifier} Mod &nbsp;=&nbsp;`;
       } else {
@@ -934,7 +972,6 @@
         document.getElementById("defense-formula").innerHTML = "";
       }
 
-      state.derivedStats = { attack, defense };
       document.getElementById("derived-attack").textContent = `${attack} Attack`;
       document.getElementById("derived-defense").textContent = `${defense} Defense`;
     }
@@ -942,15 +979,23 @@
     // --- SKILL SYSTEM ---
     async function fetchSkillLibrary() {
       try {
-        // This now fetches from the 'skills' collection in Firestore
         const snapshot = await db.collection("skills").get();
         state.skillLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        console.log("Successfully fetched", state.skillLibrary.length, "skills from Firestore.");
       } catch (error) {
         console.error("Error fetching skill library from Firestore:", error);
-        // You can keep a local fallback if you want
         state.skillLibrary = [];
         alert("Could not load skills from the database.");
+      }
+    }
+
+    async function fetchEquipmentLibrary() {
+      try {
+        const snapshot = await db.collection("items").get();
+        state.equipmentLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error("Error fetching equipment from Firestore:", error);
+        state.equipmentLibrary = [];
+        alert("Could not load equipment from the database.");
       }
     }
 
@@ -967,14 +1012,13 @@
     }
 
     function applyAllSkillEffects() {
-      state.skillBonuses = {}; // Reset
+      state.skillBonuses = {}; 
       for (const tier in state.skillsByTier) {
         for (const skill of state.skillsByTier[tier]) {
           if (!skill || skill.level === 0 || !skill.effects) continue;
 
           const currentLevelEffect = skill.effects.find(e => e.level === skill.level);
           if (currentLevelEffect) {
-            // This logic assumes effects are total, not incremental. Adjust if needed.
             [{ stat: 'stat', type: 'type', value: 'value' }, { stat: 'stat2', type: 'type2', value: 'value2' }].forEach(map => {
               const stat = currentLevelEffect[map.stat];
               const type = currentLevelEffect[map.type];
@@ -1011,7 +1055,7 @@
             slot.onclick = () => openSkillLibrary(tier, index);
           } else {
             slot.innerHTML = `<img src="${skill.icon}" alt="${skill.name}">
-                                     <div class="skill-level-badge">${skill.level}</div>
+                                     <div class="skill-level-badge">${skill.level || 0}</div>
                                      <i class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${tier}][${index}], ${tier}, ${index})">ℹ️</i>`;
           }
           slotGrid.appendChild(slot);
@@ -1023,14 +1067,16 @@
     function selectSkill(skillData) {
       const { tier, index } = state.currentSkillEdit;
       if (tier !== null && index !== null) {
-        state.skillsByTier[tier][index] = { ...skillData, level: 0 }; // Equip at level 0
-        openSkillInfoModal(state.skillsByTier[tier][index], tier, index); // Open info modal to prompt for leveling up
+        const newSkillInstance = JSON.parse(JSON.stringify(skillData)); // Deep copy
+        newSkillInstance.level = 0; // Equip at level 0
+        state.skillsByTier[tier][index] = newSkillInstance; 
+        openSkillInfoModal(state.skillsByTier[tier][index], tier, index); 
         closeSkillLibrary();
         updateFromTextbox();
       }
     }
 
-    // --- SKILL MODALS (LIBRARY & INFO) ---
+    // --- MODALS (LIBRARY & INFO) ---
     function openSkillLibrary(tier, index) {
       state.currentSkillEdit = { tier, index };
       document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${tier} Slot)`;
@@ -1050,9 +1096,11 @@
         .forEach(skill => {
           const card = document.createElement("div");
           card.className = "skill-card";
-          card.innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onclick='selectSkill(${JSON.stringify(skill)})' />
+          // We must escape the JSON string for the onclick attribute
+          const skillJSON = JSON.stringify(skill).replace(/'/g, "&apos;");
+          card.innerHTML = `<img src="${skill.icon}" alt="${skill.name}" onclick='selectSkill(${skillJSON})' />
                                 <div class="skill-name">${skill.name}</div>
-                                <i class="info-icon" onclick='openSkillInfoModal(${JSON.stringify(skill)})'>ℹ️</i>`;
+                                <i class="info-icon" onclick='event.stopPropagation(); openSkillInfoModal(${skillJSON})'>ℹ️</i>`;
           grid.appendChild(card);
         });
     }
@@ -1062,25 +1110,29 @@
       document.getElementById("skill-info-title").textContent = skillData.name;
       const content = document.getElementById("skill-info-modal-content");
 
-      // Build the level-up controls if the skill is equipped
       let controlsHTML = '';
       if (tier !== null && index !== null) {
         const skill = state.skillsByTier[tier][index];
-        const nextLevel = skill.level + 1;
-        const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level] || 999) && getSkillTier(skill, nextLevel) <= tier;
+        const nextLevel = (skill.level || 0) + 1;
+        const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level || 0] || 999) && getSkillTier(skill, nextLevel) <= tier;
         controlsHTML = `<div class="level-up-controls">
-                <h3>Current Level: ${skill.level} / ${skill.maxLevel}</h3>
-                <button onclick="levelUpSkill(${tier}, ${index})" ${!canLevelUp ? 'disabled' : ''}>Level Up (Cost: ${skill.costPerLevel[skill.level] || 'N/A'} SP)</button>
-                <button onclick="delevelSkill(${tier}, ${index})" ${skill.level === 0 ? 'disabled' : ''}>De-level</button>
+                <h3>Current Level: ${skill.level || 0} / ${skill.maxLevel}</h3>
+                <button onclick="levelUpSkill(${tier}, ${index})" ${!canLevelUp ? 'disabled' : ''}>Level Up (Cost: ${skill.costPerLevel[skill.level || 0] || 'N/A'} SP)</button>
+                <button onclick="delevelSkill(${tier}, ${index})" ${!skill.level || skill.level === 0 ? 'disabled' : ''}>De-level</button>
                 <button onclick="unlearnSkill(${tier}, ${index})" style="background-color: #8b0000;">Unlearn</button>
             </div>`;
       }
 
-      // Build the table of level effects
       let levelsTable = `<table class="level-table"><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr>`;
       for (let i = 1; i <= skillData.maxLevel; i++) {
         const effect = skillData.effects?.find(e => e.level === i);
-        const effectText = effect ? `${effect.stat}: +${effect.value}` + (effect.stat2 ? `, ${effect.stat2}: +${effect.value2}` : '') : 'N/A';
+        let effectText = 'N/A';
+        if (effect) {
+            effectText = `${effect.stat}: ${effect.type === 'add' ? '+' : 'x'}${effect.value}`;
+            if (effect.stat2) {
+                effectText += `, ${effect.stat2}: ${effect.type2 === 'add' ? '+' : 'x'}${effect.value2}`;
+            }
+        }
         const isCurrent = skillData.level === i;
         levelsTable += `<tr class="${isCurrent ? 'current-level-row' : ''}">
                 <td>${i}</td>
@@ -1091,7 +1143,6 @@
       }
       levelsTable += `</table>`;
 
-      // Assemble final HTML
       content.innerHTML = `
             <div class="left-panel">
                 <img src="${skillData.icon}" alt="${skillData.name}">
@@ -1107,12 +1158,12 @@
 
     function levelUpSkill(tier, index) {
       const skill = state.skillsByTier[tier][index];
-      const cost = skill.costPerLevel[skill.level];
-      // Re-check conditions
-      if (skill.level < skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, skill.level + 1) <= tier) {
-        skill.level++;
+      const cost = skill.costPerLevel[skill.level || 0];
+      const nextLevel = (skill.level || 0) + 1;
+      if (nextLevel <= skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, nextLevel) <= tier) {
+        skill.level = nextLevel;
         updateFromTextbox();
-        openSkillInfoModal(skill, tier, index); // Refresh modal
+        openSkillInfoModal(skill, tier, index); 
       }
     }
     function delevelSkill(tier, index) {
@@ -1120,7 +1171,7 @@
       if (skill.level > 0) {
         skill.level--;
         updateFromTextbox();
-        openSkillInfoModal(skill, tier, index); // Refresh modal
+        openSkillInfoModal(skill, tier, index);
       }
     }
     function unlearnSkill(tier, index) {
@@ -1130,117 +1181,23 @@
     }
 
     function addSkillPoint() {
-      state.availableSkillPoints++;
       state.bonusSkillPoints++;
-      document.getElementById("available-skill-points").value = state.availableSkillPoints;
-    }
-
-    function levelUp() {
-      document.getElementById("char-level").value++;
       updateFromTextbox();
     }
 
-
-    function getGrowthTable() {
-      return {
-        Guide: [
-          { range: [1, 10], primary: 1, secondary: 0.5, tertiary: 0.5 },
-          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 2, secondary: 1.5, tertiary: 1 },
-          { range: [81, 110], primary: 2.5, secondary: 2, tertiary: 1 },
-          { range: [111, 140], primary: 3, secondary: 2, tertiary: 1.5 },
-          { range: [141, 170], primary: 3, secondary: 2.5, tertiary: 2 },
-          { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }
-        ],
-        Fisherman: [
-          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
-          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 2, secondary: 2, tertiary: 1 },
-          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
-          { range: [111, 140], primary: 3, secondary: 2, tertiary: 2 },
-          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
-          { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }
-        ],
-        "Spear Bearer": [
-          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
-          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
-          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
-          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
-          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
-          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
-        ],
-        "Wave Controller": [
-          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
-          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
-          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
-          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
-          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
-          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
-        ],
-        "Light Bearer": [
-          { range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 },
-          { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 },
-          { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 },
-          { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 },
-          { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 },
-          { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }
-        ],
-        Anima: [
-          { range: [1, 10], primary: 2, secondary: 1, tertiary: 0.5 },
-          { range: [11, 25], primary: 2.5, secondary: 1, tertiary: 0.5 },
-          { range: [26, 50], primary: 3, secondary: 1, tertiary: 0.5 },
-          { range: [51, 80], primary: 3.5, secondary: 1.5, tertiary: 1 },
-          { range: [81, 110], primary: 4, secondary: 1.5, tertiary: 1 },
-          { range: [111, 140], primary: 5, secondary: 2, tertiary: 1.5 },
-          { range: [141, 170], primary: 6, secondary: 2, tertiary: 1.5 },
-          { range: [171, Infinity], primary: 6, secondary: 2, tertiary: 2 }
-        ]
-      };
-    }
-
-    function getGrowthRatesForLevel(position, level) {
-      const table = getGrowthTable()[position] || [];
-      return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
+    function levelUp() {
+      document.getElementById("char-level").value = parseInt(document.getElementById("char-level").value) + 1;
+      updateFromTextbox();
     }
 
     function resetCharacter() {
-      if (!confirm("Are you sure you want to completely reset and delete this character? This cannot be undone.")) return;
-      
+      if (!confirm("Are you sure? This will delete the character from the database.")) return;
       const user = auth.currentUser;
-      if (!user) return;
-      
-      db.collection("characters").doc(user.uid).delete().then(() => {
-        // Reset all input fields
-        document.getElementById("char-name").value = "";
-        document.getElementById("char-race").value = "";
-        document.getElementById("char-level").value = 1;
-        document.getElementById("char-floor").value = 1;
-        document.getElementById("char-position").value = "Guide";
-        
-        // Reset state object to its initial values
-        Object.assign(state, {
-            statValues: Object.fromEntries(stats.map(stat => [stat, 1])),
-            manualStatPoints: Object.fromEntries(stats.map(stat => [stat, 0])),
-            skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
-            affinities: { primary: [], secondary: [], tertiary: [] },
-            equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null },
-            selectedWeaponSlot: null,
-            bonusSkillPoints: 0,
-            usedSkillPoints: 0
-        });
-
-        // Trigger a full UI refresh
-        updateFromTextbox();
-        alert("Character has been reset.");
-      }).catch(err => console.error("Failed to delete character:", err));
+      if (user) {
+        db.collection("characters").doc(user.uid).delete().then(() => {
+          location.reload(); // Easiest way to reset the sheet to its initial state
+        }).catch(err => console.error("Failed to delete character:", err));
+      }
     }
 
     function renderAffinityControls() {
@@ -1248,11 +1205,14 @@
         const container = document.getElementById(`${type}-affinities`);
         const select = document.getElementById(`add-${type}`);
         container.innerHTML = "";
-        select.innerHTML = "<option value=''>+ Add</option>" + stats.map(stat => `<option value="${stat}">${stat}</option>`).join("");
+        select.innerHTML = "<option value=''>+ Add</option>" + stats
+          .filter(stat => !state.affinities.primary.includes(stat) && !state.affinities.secondary.includes(stat) && !state.affinities.tertiary.includes(stat))
+          .map(stat => `<option value="${stat}">${stat}</option>`).join("");
 
-        state.affinities[type].forEach(stat => {
+        (state.affinities[type] || []).forEach(stat => {
           const div = document.createElement("div");
-          div.textContent = stat;
+          div.textContent = `❌ ${stat}`;
+          div.style.cursor = "pointer";
           div.onclick = () => {
             state.affinities[type] = state.affinities[type].filter(s => s !== stat);
             updateFromTextbox();
@@ -1266,23 +1226,21 @@
             state.affinities[type].push(val);
             updateFromTextbox();
           }
+          e.target.value = ''; // Reset dropdown
         };
       });
-    }
-
-    function closeEquipmentModal() {
-        document.getElementById("equipment-library-modal").classList.remove("active");
-        state.currentEquipmentEdit = null;
     }
 
     function openEquipmentModal(slotKey) {
         state.currentEquipmentEdit = slotKey;
         const modal = document.getElementById("equipment-library-modal");
-        const title = slotKey.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        const title = slotKey.replace('slot','').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
         document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
         modal.classList.add("active");
         renderEquipmentLibrary();
     }
+    
+    function closeEquipmentModal() { document.getElementById("equipment-library-modal").classList.remove("active"); }
 
     function renderEquipmentLibrary() {
         const grid = document.getElementById("equipment-library-grid");
@@ -1299,46 +1257,42 @@
             card.onmouseout = hideTooltip;
 
             if (item.isDiscovered) {
-                card.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" />
-                    <div class="item-name">${item.name}</div>
-                `;
+                card.innerHTML = `<img src="${item.image}" alt="${item.name}" /><div class="item-name">${item.name}</div>`;
                 card.onclick = () => selectEquipment(item);
-            } else {
+_            } else {
                 card.classList.add("undiscovered");
-                card.innerHTML = `
-                    <img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" />
-                    <div class="item-name">Undiscovered Item</div>
-                `;
+                card.innerHTML = `<img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" /><div class="item-name">Undiscovered</div>`;
             }
             grid.appendChild(card);
         });
     }
+    
+    function equipItem(slot, item) {
+      state.equipment[slot] = item;
+      if (item && item.type === 'weapon' && !state.selectedWeaponSlot) {
+        state.selectedWeaponSlot = slot;
+      }
+      if (!item && state.selectedWeaponSlot === slot) {
+        state.selectedWeaponSlot = null;
+      }
+      updateFromTextbox();
+    }
 
     function selectEquipment(item) {
-        const slotKey = state.currentEquipmentEdit;
-        if (slotKey) {
-            equipItem(slotKey, item);
+        if (state.currentEquipmentEdit) {
+            equipItem(state.currentEquipmentEdit.replace('-slot',''), item);
             closeEquipmentModal();
         }
     }
 
     function addSkillSlot(tier) {
-      if (!state.skillsByTier[tier]) {
-        state.skillsByTier[tier] = [];
-      }
-      state.skillsByTier[tier].push(null); // Use null for empty slots
+      if (!state.skillsByTier[tier]) state.skillsByTier[tier] = [];
+      state.skillsByTier[tier].push(null);
       renderSkillTiers();
     }
-
-    // --- OTHER UI & HELPER FUNCTIONS ---
-    // (addSkillPoint, levelUp, resetCharacter, affinity controls, equipment modals, tooltips, etc. from previous version)
-    // ...
-
-    // --- ONLOAD ---
+    
     window.onload = () => {
-      initializeState(); // Set default values on initial load
-      // The auth listener will then take over to load user data if available.
+      initializeState(); 
     };
   </script>
 
