@@ -237,6 +237,10 @@
     }
 
     /* --- NEW: Improved Stats Table --- */
+    .stats-table .remove-stat-btn {
+      margin-left: 8px;
+    }
+
     .stats-table {
       width: 100%;
       border-collapse: collapse;
@@ -299,13 +303,35 @@
 
     .derived-stat {
       position: absolute;
-      left: 40px;
+      left: 15px;
+      /* Adjusted position */
       top: 50%;
-      transform: translateY(-180%);
+      transform: translateY(-50%);
+      /* Adjusted for vertical centering */
       color: #fff;
+      pointer-events: none;
+      display: flex;
+      /* Key change */
+      flex-direction: column;
+      /* Key change */
+      align-items: center;
+      gap: 4px;
+    }
+
+    .derived-stat-formula {
+      display: flex;
+      align-items: center;
       font-weight: bold;
-      font-size: 20px;
-      pointer-events: none
+      font-size: 0.9em;
+      /* Slightly smaller formula */
+    }
+
+    .derived-stat-result {
+      color: var(--accent-gold);
+      font-weight: 600;
+      font-size: 1.5em;
+      /* Slightly smaller result text */
+      line-height: 1;
     }
 
     .fraction {
@@ -716,29 +742,26 @@
 
     <div id="hp-speed" style="margin-top: 20px; font-size: 1.1em; text-align: center;"></div>
 
-    <div class="equipment-section">
-      <h3>Equipment</h3>
-      <div class="equipment-grid">
-        <div class="equipment-row">
-          <div class="derived-stat attack"><span class="fraction"><span class="top" id="attack-formula-top"></span><span
-                class="bottom" id="attack-formula-bot"></span></span><span class="fraction"
-              id="attack-formula"></span><span id="derived-attack">0</span></div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-            <div class="slot" id="armor-slot" title="Armor"></div>
-            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-          </div>
-        </div>
-        <div class="equipment-row">
-          <div class="derived-stat defense"><span class="fraction"><span class="top"
-                id="defense-formula-top"></span><span class="bottom" id="defense-formula-bot"></span></span><span
-              class="fraction" id="defense-formula"></span><span id="derived-defense">0</span></div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-          </div>
-        </div>
+    <div class="derived-stat attack">
+      <div class="derived-stat-formula">
+        <span class="fraction">
+          <span class="top" id="attack-formula-top"></span>
+          <span class="bottom" id="attack-formula-bot"></span>
+        </span>
+        <span id="attack-formula"></span>
       </div>
+      <div class="derived-stat-result" id="derived-attack">0</div>
+    </div>
+
+    <div class="derived-stat defense">
+      <div class="derived-stat-formula">
+        <span class="fraction">
+          <span class="top" id="defense-formula-top"></span>
+          <span class="bottom" id="defense-formula-bot"></span>
+        </span>
+        <span id="defense-formula"></span>
+      </div>
+      <div class="derived-stat-result" id="derived-defense">0</div>
     </div>
 
     <h3>Stats</h3>
@@ -1388,7 +1411,7 @@
         const container = document.getElementById(`${type}-affinities`);
         const select = document.getElementById(`add-${type}`);
         container.innerHTML = "";
-        
+
         // Populate the dropdown with only unselected stats
         select.innerHTML = "<option value=''>+ Add</option>" + stats
           .filter(stat => !state.affinities.primary.includes(stat) && !state.affinities.secondary.includes(stat) && !state.affinities.tertiary.includes(stat))
@@ -1398,7 +1421,7 @@
         (state.affinities[type] || []).forEach(stat => {
           const div = document.createElement("div");
           div.innerHTML = `${stat} <span class="remove-affinity">x</span>`;
-          
+
           div.querySelector('.remove-affinity').onclick = () => {
             state.affinities[type] = state.affinities[type].filter(s => s !== stat);
             updateFromTextbox();
