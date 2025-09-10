@@ -707,8 +707,9 @@
 
         state.statValues[stat] = total + state.manualStatPoints[stat];
       });
+      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
 
-      state.availableStatPoints = level - state.manualStatPoints - 1;
+      state.availableStatPoints = level - totalAllocatedStatPoints - 1;
       state.availableSkillPoints = level - state.usedSkillPoints - 1;
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
