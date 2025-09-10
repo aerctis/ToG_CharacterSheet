@@ -610,7 +610,7 @@
 
     function renderEquipment() {
       ["weapon1", "weapon2"].forEach(slot => {
-        const el = document.getElementById(slot); // Make sure this ID exists in HTML
+        const element = document.getElementById(`${slot}-slot`); // Make sure this ID exists in HTML
         const item = state.equipment[slot];
 
         el.innerHTML = ""; // Clear old content
@@ -813,7 +813,7 @@
         td3.appendChild(removeBtn);
 
         tr.appendChild(td1);
-        console.log("td2:", td2); // Is this undefined or null?
+        
         tr.appendChild(td2);
         tr.appendChild(td3);
         tbody.appendChild(tr);
