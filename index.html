@@ -952,7 +952,7 @@ there character.) (hopefully with cool design and display features.)
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
   <script>
-    
+
     // --- ADMIN CONFIG ---
     const ADMIN_UID = "5pNCkPPJblRfKPvTofqa4kwENJQ2";
 
@@ -1012,8 +1012,15 @@ there character.) (hopefully with cool design and display features.)
     }
 
     // --- AUTH & DATA MANAGEMENT ---
-    function signInWithGoogle() { /* ... unchanged ... */ }
-    function signOut() { /* ... unchanged ... */ }
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .catch(error => console.error("Login error", error));
+    }
+
+    function signOut() {
+      auth.signOut();
+    }
 
     auth.onAuthStateChanged(user => {
       if (user) {
@@ -1022,7 +1029,13 @@ there character.) (hopefully with cool design and display features.)
         document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
         loadCharacter();
       } else {
-        // ... (unchanged)
+        document.getElementById("user-info").textContent = "Logged out.";
+        document.getElementById("logoutBtn").style.display = 'none';
+        document.querySelectorAll("input, select, button").forEach(el => {
+          if (el.textContent !== "Sign In with Google") el.disabled = true;
+        });
+        initializeState();
+        updateFromTextbox();
       }
     });
 
@@ -1077,15 +1090,165 @@ there character.) (hopefully with cool design and display features.)
     }
 
     // --- CORE RENDER ORCHESTRATOR ---
-    function updateFromTextbox() { /* ... unchanged ... */ }
-    function renderAll() { /* ... unchanged ... */ }
+    function updateFromTextbox() {
+      const level = parseInt(document.getElementById("char-level").value) || 1;
+
+      // Step 1: Calculate base stats from level, position, and affinities.
+      calculateBaseStats();
+
+      // Step 2: Apply all passive skill effects
+      applyAllSkillEffects();
+
+      // Step 3: Calculate used/available skill and stat points
+      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
+      state.availableStatPoints = (level - 1) - totalAllocatedStatPoints;
+      calculateUsedSkillPoints();
+      state.availableSkillPoints = (level - 1) - state.usedSkillPoints + state.bonusSkillPoints;
+
+      // Step 4: Render all UI components with the new data
+      renderAll();
+    }
+
+    function renderAll() {
+      document.getElementById("available-stat-points").value = state.availableStatPoints;
+      document.getElementById("available-skill-points").value = state.availableSkillPoints;
+      renderAffinityControls();
+      renderStats();
+      renderEquipment();
+      renderSkillTiers();
+      updateDerivedStats();
+      renderHpSpeed();
+    }
 
     // --- STATS ---
-    function calculateBaseStats() { /* ... unchanged ... */ }
-    function renderStats() { /* ... unchanged ... */ }
+    function calculateBaseStats() {
+      const level = parseInt(document.getElementById("char-level").value) || 1;
+      const pos = document.getElementById("char-position").value;
+      const priList = state.affinities.primary;
+      const secList = state.affinities.secondary;
+      const terList = state.affinities.tertiary;
+
+      // Create a temporary object to hold calculated stats
+      const calculatedStats = {};
+
+      stats.forEach(stat => {
+        let total = 1; // Start with base 1 for all stats
+        for (let i = 1; i < level; i++) { // Loop up to level-1 because level 1 is the base
+          const rates = getGrowthRatesForLevel(pos, i);
+          if (priList.includes(stat)) total += rates.primary;
+          if (secList.includes(stat)) total += rates.secondary;
+          if (terList.includes(stat)) total += rates.tertiary;
+        }
+        // Add manually allocated points
+        calculatedStats[stat] = total + (state.manualStatPoints[stat] || 0);
+      });
+
+      // Update the main state
+      state.statValues = calculatedStats;
+    }
+
+    function renderStats() {
+      const tbody = document.getElementById("stats-body");
+      tbody.innerHTML = "";
+
+      const average = stats.reduce((sum, stat) => sum + state.statValues[stat], 0) / stats.length;
+      const max = parseFloat(document.getElementById("stat-multiplier").value) * average;
+
+      stats.forEach(stat => {
+        const tr = document.createElement("tr");
+        const baseValue = state.statValues[stat] || 0;
+        const manual = state.manualStatPoints[stat] || 0;
+        const skillBonus = state.skillBonuses[stat]?.add || 0;
+        const totalValue = baseValue + skillBonus;
+        const isCapped = totalValue > max;
+
+        // We add a new "stat-value-cell" class to easily target this element
+        tr.innerHTML = `
+      <td>${stat}</td>
+      <td class="stat-value-cell ${isCapped ? 'stat-capped' : ''}">
+          ${totalValue.toFixed(1)}
+          <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
+      </td>
+      <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
+    `;
+
+        const addBtn = tr.querySelector('.add-stat-btn');
+        const removeBtn = tr.querySelector('.remove-stat-btn');
+
+        // Disable button only if there are no stat points available
+        if (state.availableStatPoints <= 0) {
+          addBtn.disabled = true;
+        }
+
+        addBtn.onclick = () => {
+          // Check for the cap inside the click event now
+          if (state.availableStatPoints > 0) {
+            if (totalValue + 1 <= Math.floor(max)) {
+              // Success: Increase the stat
+              state.manualStatPoints[stat]++;
+              updateFromTextbox();
+            } else {
+              // Failure: Trigger the flash effect on the table cell
+              const statCell = tr.querySelector('.stat-value-cell');
+              statCell.classList.add('stat-flash-error');
+              // Remove the class after the animation finishes
+              setTimeout(() => {
+                statCell.classList.remove('stat-flash-error');
+              }, 500);
+            }
+          }
+        };
+
+        removeBtn.onclick = () => {
+          if (state.manualStatPoints[stat] > 0) {
+            state.manualStatPoints[stat]--;
+            updateFromTextbox();
+          }
+        };
+
+        tbody.appendChild(tr);
+      });
+    }
 
     // --- EQUIPMENT ---
-    function renderEquipment() { /* ... unchanged ... */ }
+    function renderEquipment() {
+      const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
+      const tooltip = document.getElementById('tooltip');
+
+      allSlots.forEach(slotKey => {
+        const el = document.getElementById(`${slotKey}-slot`);
+        const item = state.equipment[slotKey];
+
+        el.innerHTML = "";
+        el.onmouseover = (e) => showTooltip(e, item);
+        el.onmouseout = hideTooltip;
+
+        if (item) {
+          const img = document.createElement("img");
+          img.src = item.image || "https://dummyimage.com/100x100/333/aaa&text=?";
+          img.alt = item.name || slotKey;
+          img.className = "item-image";
+          el.appendChild(img);
+        }
+
+        const changeIcon = document.createElement("div");
+        changeIcon.className = "change-item-icon";
+        changeIcon.textContent = item ? '⇄' : '+';
+        changeIcon.onclick = (e) => { e.stopPropagation(); openEquipmentModal(slotKey); };
+        el.appendChild(changeIcon);
+
+        if (slotKey === "weapon1" || slotKey === "weapon2") {
+          el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
+          el.onclick = () => {
+            if (state.equipment[slotKey]) {
+              state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
+              updateDerivedStats();
+              renderEquipment();
+            }
+          };
+        }
+      });
+    }
 
     function selectEquipment(item) {
       if (!state.currentEquipmentEdit) return;
@@ -1276,18 +1439,6 @@ there character.) (hopefully with cool design and display features.)
     document.getElementById('skill-search').addEventListener('input', renderSkillLibrary);
     document.getElementById('equipment-search').addEventListener('input', renderEquipmentLibrary);
 
-    // ... (rest of unchanged functions)
-
-    function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .catch(error => console.error("Login error", error));
-    }
-
-    function signOut() {
-      auth.signOut();
-    }
-
     function initializeState() {
       state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
       state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
@@ -1345,6 +1496,12 @@ there character.) (hopefully with cool design and display features.)
       // Corrected to update the new result divs
       document.getElementById("derived-attack-result").textContent = `${attack} Attack`;
       document.getElementById("derived-defense-result").textContent = `${defense} Defense`;
+    }
+    
+    async function fetchLibrariesAndUpdate() {
+      await fetchEquipmentLibrary();
+      await fetchSkillLibrary();
+      updateFromTextbox();
     }
 
     function showTooltip(event, item) {
