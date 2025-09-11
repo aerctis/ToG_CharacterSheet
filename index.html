@@ -1,4 +1,39 @@
+
+
+I want to make a big update to the application. I have attached the curent HTML and below is a list of things to change and new features to add. If anything is unclear or you want to make sugestions ask me before coding anything.
+You can give me a complete new HTML or You can provide new functions and changes to functions, either way be very clear about what you do and list everything in the text portion of your response. Please take your time with this request. 
+
+TODOs:
+
+SKILLS:
+-Make the skill sockets larger (about twice as large side lengths = 4x area)
+-Clean up the information icons on the skills (more consistently placed, better icon, perhaps larger to follow the larger skills)
+-Make the table in the skills modal larger (generally clean up layout in the modal)
+-Add new fields to the skills framework (damage per level and skill type tag)
+-In the modal, for skills that don't have a specific field instead of "N/A" in the table omit that column; just don't show anything. 
+
+EQUIPMENT:
+-Easier method to discover items (not for general users) (maybe a backdoor for my account)
+-Since players can only have a limited amount of items equipped we may want a way to mark items as owned in the equipemnt library
+-Equipment library displays results ordered. Equiped -> Owned -> Discovered -> Undiscovered 
+
+GENERAL:
+-Saving on every change rather than with a 'Save Character' button. Need to aviod lag and excessive writes to the firestore. (Maybe requires decently large refactor)
+-Search feature implemented for all libraries (equipment, skills, lighthouse, and beastiary)
+-Printing Formatting (when priting the character sheet make it appear more concise and compact).
+-The same accessory cannot be equiped in both slots.
+
+NEW FEATURES:
+-Position specific sections (such as equipped lighthouse and lighout library for lightbearers, tamed creature beastiary parallel for anima)
+-For equipped lighthouse display on the right of equipment images (symmetric to the derived stats) 
+-Currency. Show currency amount (points). Shop button to open shop model (fancy styling) library with buying and selling. Can manually add points as well. The the shop should only be open at my discretion, there should be a way for me to open the shop to all users. And choose what Items go there. Items in the shop should automatically become discovered.  
+-hit dice (like DnD). Should be on the page somewhere scale off stats. 
+-Proficiencies. In the skills modal there should be a toggle for proficiency in that skill, this will change what the skill does and the info for it. There should also be a way to be proficient in a category of skills (uses the new skill type tag)
+-Inventory for special items. A new modal that can be opened. Allows users to add items manually and write about them (we will store these items so they are saved, but not create them ourselves). (miscellanous items the characters aquire that shuold be kept track of).
+-Backsory section (A medium sized flexible text section that allows the users to put in backstory and information about there character.) (hopefully with cool design and display features.)
+
 <!DOCTYPE html>
+
 <html>
 
 <head>
