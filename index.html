@@ -132,7 +132,7 @@ back).
     .auth-block {
       padding: 10px;
       text-align: center;
-      border-top: 1px solid var(--border-color);
+      border-top: none;
       margin-top: 20px;
       display: flex;
       flex-wrap: wrap;
@@ -148,7 +148,7 @@ back).
 
     /* --- Backstory Section --- */
     .backstory-section h4 {
-      margin-top: 0;
+      margin-top: 30px;
       margin-bottom: 10px;
       color: var(--text-secondary);
       font-size: 1.1em;
@@ -167,6 +167,7 @@ back).
     }
 
     #backstory-textarea:focus {
+      min-height: 200px;
       outline: none;
       border-style: solid;
       border-color: var(--accent-gold);
@@ -372,16 +373,20 @@ back).
       }
     }
 
+    #hp-speed {
+      flex: 1;
+      margin-top: 0;
+      padding: 10px 15px;
+      /* Shrunk vertically */
+      line-height: 1.5;
+    }
+
     /* --- HP, Speed, Hit Dice Display --- */
     #hp-speed {
-      background-color: var(--bg-inset);
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 20px;
-      font-size: 1.2em;
-      font-weight: 600;
-      text-align: center;
-      line-height: 1.6;
+      flex: 1;
+      margin-top: 0;
+      padding: 10px 15px;
+      line-height: 1.5;
     }
 
     #hp-speed .accent-label {
@@ -422,16 +427,17 @@ back).
       /* Hidden by default */
     }
 
-    .equipment-core {
-      position: relative;
-      padding: 0 200px;
-      /* Add padding to make space for derived stats */
+    .equipment-row {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      /* Increased vertical gap */
+      justify-content: center;
     }
 
     .equipment-core {
       position: relative;
-      /* Reduced padding to shrink the component horizontally */
-      padding: 0 30px;
+
     }
 
     .equipment-slots-row {
@@ -444,18 +450,25 @@ back).
       /* This centers the accessory slots */
     }
 
-    .derived-stat {
-      position: absolute;
-      width: 180px;
-      /* Use negative left value to position it outside the core box */
-      left: -170px;
-      text-align: center;
-      color: #fff;
-      pointer-events: none;
+    .derived-stats-container {
+      flex: 1;
       display: flex;
       flex-direction: column;
+      gap: 10px;
+    }
+
+    .derived-stat {
+      background-color: var(--bg-inset);
+      border-radius: 8px;
+      padding: 10px 15px;
+      /* Shrunk vertically */
+      font-size: 1.2em;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+      display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
     }
 
     .attack-stat {
@@ -470,19 +483,6 @@ back).
       transform: translateY(-50%);
     }
 
-    .derived-stat-formula {
-      display: flex;
-      align-items: center;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-
-    .derived-stat-result {
-      color: var(--accent-gold);
-      font-weight: 600;
-      font-size: 1.5em;
-      line-height: 1;
-    }
 
     .slot {
       width: 130px;
@@ -536,35 +536,6 @@ back).
       box-shadow: 0 0 8px var(--accent-gold);
     }
 
-    /* Hidden by default */
-    .derived-stat {
-      position: absolute;
-      left: -200px;
-      top: 50%;
-      width: 180px;
-      transform: translateY(-50%);
-      text-align: center;
-      color: #fff;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .derived-stat-formula {
-      display: flex;
-      align-items: center;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-
-    .derived-stat-result {
-      color: var(--accent-gold);
-      font-weight: 600;
-      font-size: 1.5em;
-      line-height: 1;
-    }
 
     .fraction {
       display: inline-block;
@@ -1071,6 +1042,116 @@ back).
           <h4>Resources</h4>
           <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
           <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
+            oninput="handleInputChange()">
+        </div>
+        <div class="affinities-block">
+          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
+          <div class="affinities" id="primary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
+              id="add-secondary"></select></div>
+          <div class="affinities" id="secondary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
+              id="add-tertiary"></select></div>
+          <div class="affinities" id="tertiary-affinities"></div>
+        </div>
+      </div>
+      <div class="right-column">
+        <div class="top-stats-bar">
+          <div id="hp-speed"></div>
+          <div class="derived-stats-container">
+            <div class="derived-stat" id="derived-attack-display"></div>
+            <div class="derived-stat" id="derived-defense-display"></div>
+          </div>
+        </div>
+        <div class="equipment-section">
+          <h3>Equipment</h3>
+          <div class="equipment-grid">
+            <div class="equipment-core">
+              <div class="equipment-row">
+                <div class="equipment-slots-row">
+                  <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+                  <div class="slot" id="armor-slot" title="Armor"></div>
+                  <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+                </div>
+                <div class="equipment-slots-row accessory-row">
+                  <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+                  <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+                </div>
+              </div>
+            </div>
+            <div id="light-bearer-slots">
+              <div class="equipment-row">
+                <div class="equipment-slots-row">
+                  <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
+                  <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="auth-block">
+          <button onclick="signInWithGoogle()">Sign In with Google</button>
+          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+          <button onclick="openSpecialItemsModal()">Special Items</button>
+          <button onclick="resetCharacter()">Reset Character</button>
+          <span id="user-info" style="margin-left: 10px;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-skills-grid">
+      <div>
+        <h3>Stats</h3>
+        <table class="stats-table" id="stats-table">
+          <thead>
+            <tr>
+              <th>Stat</th>
+              <th>Value</th>
+              <th>+/-</th>
+            </tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="skill-section" id="skill-section"></div>
+      </div>
+    </div>
+
+    <div class="backstory-section">
+      <h4>Backstory & Notes</h4>
+      <textarea id="backstory-textarea" placeholder="Type your character's story here..."
+        oninput="handleInputChange()"></textarea>
+    </div>
+
+    <!-- <div class="main-layout">
+      <div class="left-column">
+        <div class="info-block">
+          <h4>Identity</h4>
+          <label>Name</label><input type="text" id="char-name" oninput="handleInputChange()">
+          <label>Race</label><input type="text" id="char-race" oninput="handleInputChange()">
+          <label>Position</label>
+          <select id="char-position" onchange="handleInputChange()">
+            <option value="Guide">Guide</option>
+            <option value="Fisherman">Fisherman</option>
+            <option value="Spear Bearer">Spear Bearer</option>
+            <option value="Wave Controller">Wave Controller</option>
+            <option value="Light Bearer">Light Bearer</option>
+            <option value="Anima">Anima</option>
+          </select>
+        </div>
+        <div class="level-block">
+          <h4>Progression</h4>
+          <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
+          <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
+          <button onclick="levelUp()" class="btn-primary">Level Up</button>
+          <button onclick="addSkillPoint()" style="width: 100%; margin-top: 10px;">+1 Skill Point</button>
+        </div>
+        <div class="points-block">
+          <h4>Resources</h4>
+          <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
+          <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
           <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2"
             oninput="handleInputChange()">
         </div>
@@ -1160,85 +1241,16 @@ back).
       <div>
         <div class="skill-section" id="skill-section"></div>
       </div>
-    </div>
+    </div> -->
 
-    <!-- <div class="backstory-section">
-      <h4>Backstory & Notes</h4>
-      <textarea id="backstory-textarea" placeholder="Type your character's story here..."
-        oninput="handleInputChange()"></textarea>
-    </div>
 
-    <div id="hp-speed">
-      <div id="hit-dice"></div>
-    </div>
 
-    <div class="equipment-section">
-      <h3>Equipment</h3>
-      <div class="equipment-grid">
-        <div class="equipment-row">
-          <div class="derived-stat attack">
-            <div class="derived-stat-formula">
-              <span class="fraction">
-                <span class="top" id="attack-formula-top"></span>
-                <span class="bottom" id="attack-formula-bot"></span>
-              </span>
-              <span id="attack-formula"></span>
-            </div>
-            <div class="derived-stat-result" id="derived-attack-result">0</div>
-          </div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-            <div class="slot" id="armor-slot" title="Armor"></div>
-            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-          </div>
-        </div>
-        <div class="equipment-row">
-          <div class="derived-stat defense">
-            <div class="derived-stat-formula">
-              <span class="fraction">
-                <span class="top" id="defense-formula-top"></span>
-                <span class="bottom" id="defense-formula-bot"></span>
-              </span>
-              <span id="defense-formula"></span>
-            </div>
-            <div class="derived-stat-result" id="derived-defense-result">0</div>
-          </div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-  </div>
 
-  <div id="light-bearer-section" class="position-specific-section">
-    <h3>Lighthouse</h3>
-    <div class="equipment-row">
-      <div class="equipment-slots-row">
-        <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
-        <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
-      </div>
-    </div>
-  </div>
 
-  <h3>Stats</h3>
 
-  <h3>Stats</h3>
-  <table class="stats-table" id="stats-table">
-    <thead>
-      <tr>
-        <th>Stat</th>
-        <th>Value</th>
-        <th>+/-</th>
-      </tr>
-    </thead>
-    <tbody id="stats-body"></tbody>
-  </table>
 
-  <div class="skill-section" id="skill-section"></div>
--->
+
     <div id="skill-library-modal" class="modal-backdrop">
       <div class="modal-header">
         <h3 id="skill-library-title">Skill Library</h3>
@@ -1992,31 +2004,17 @@ back).
         const weapon = eq[selectedWeaponSlot];
         const baseStat = state.statValues[weapon.stat] + (state.skillBonuses[weapon.stat]?.add || 0);
         attack = Math.floor(baseStat / 5) + (weapon.modifier || 0);
-        document.getElementById("attack-formula-top").textContent = `(${baseStat.toFixed(1)} ${weapon.stat})`;
-        document.getElementById("attack-formula-bot").textContent = `5`;
-        document.getElementById("attack-formula").innerHTML = ` &nbsp;+&nbsp; ${weapon.modifier} Mod &nbsp;=&nbsp;`;
-      } else {
-        document.getElementById("attack-formula-top").textContent = "";
-        document.getElementById("attack-formula-bot").textContent = "";
-        document.getElementById("attack-formula").innerHTML = "";
       }
 
       if (eq.armor) {
         const armor = eq.armor;
         const baseStat = state.statValues[armor.stat] + (state.skillBonuses[armor.stat]?.add || 0);
         defense = Math.floor(baseStat / 5) + (armor.modifier || 0);
-        document.getElementById("defense-formula-top").textContent = `(${baseStat.toFixed(1)} ${armor.stat})`;
-        document.getElementById("defense-formula-bot").textContent = `5`;
-        document.getElementById("defense-formula").innerHTML = ` &nbsp;+&nbsp; ${armor.modifier} Mod &nbsp;=&nbsp;`;
-      } else {
-        document.getElementById("defense-formula-top").textContent = "";
-        document.getElementById("defense-formula-bot").textContent = "";
-        document.getElementById("defense-formula").innerHTML = "";
       }
 
-      // Corrected to update the new result divs
-      document.getElementById("derived-attack-result").textContent = `${attack} Attack`;
-      document.getElementById("derived-defense-result").textContent = `${defense} Defense`;
+      // Update the new, simplified display elements
+      document.getElementById("derived-attack-display").innerHTML = `<span class="accent-label">Attack:</span> ${attack}`;
+      document.getElementById("derived-defense-display").innerHTML = `<span class="accent-label">Defense:</span> ${defense}`;
     }
 
     async function fetchLibrariesAndUpdate() {
