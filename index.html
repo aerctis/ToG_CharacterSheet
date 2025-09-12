@@ -18,13 +18,17 @@ GENERAL:
 -Tune Hitdice numbers
 -Move lighthouse slots next to equipment slots.
 
-1. Shop Logic: Yes, it is a global shop, managed by firestore. It would be great if it could be managed by admin on the page.
+1. Shop Logic: Yes, it is a global shop, managed by firestore. It would be great if it could be managed by admin on the
+page.
 
 
 2. Proficiency Effects: If a skill has a individual proficiency, it's effects should be completely overhauled. If I
 
 
-3. Category Proficiency: If am proficient in all skills tagged with "sword" then it should just be a bonus on the base effects. There should be a skill point cost reduction as well as a small percentage boost to damage. Make sure that the cost reduction works retroactively (if I become proficient after I am already level 5 it should give me some points back).
+3. Category Proficiency: If am proficient in all skills tagged with "sword" then it should just be a bonus on the base
+effects. There should be a skill point cost reduction as well as a small percentage boost to damage. Make sure that the
+cost reduction works retroactively (if I become proficient after I am already level 5 it should give me some points
+back).
 
 
 <!DOCTYPE html>
@@ -130,6 +134,16 @@ GENERAL:
       text-align: center;
       border-top: 1px solid var(--border-color);
       margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    .auth-block button {
+      margin: 0;
     }
 
     /* --- Backstory Section --- */
@@ -396,6 +410,7 @@ GENERAL:
       display: flex;
       flex-direction: column;
       gap: 14px;
+      justify-content: center;
     }
 
     .equipment-slots-row {
@@ -936,11 +951,14 @@ GENERAL:
           <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
           <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
           <button onclick="levelUp()" class="btn-primary">Level Up</button>
+          <button onclick="addSkillPoint()" style="width: 100%; margin-top: 10px;">+1 Skill Point</button>
         </div>
         <div class="points-block">
           <h4>Resources</h4>
           <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
           <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
+            oninput="handleInputChange()">
         </div>
         <div class="backstory-section">
           <h4>Backstory & Notes</h4>
@@ -1097,52 +1115,52 @@ GENERAL:
 
   <div class="skill-section" id="skill-section"></div>
 -->
-  <div id="skill-library-modal" class="modal-backdrop">
-    <div class="modal-header">
-      <h3 id="skill-library-title">Skill Library</h3>
-      <button onclick="closeSkillLibrary()">Close</button>
+    <div id="skill-library-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="skill-library-title">Skill Library</h3>
+        <button onclick="closeSkillLibrary()">Close</button>
+      </div>
+      <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
+      <div class="modal-grid" id="skill-library-grid"></div>
     </div>
-    <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
-    <div class="modal-grid" id="skill-library-grid"></div>
-  </div>
-  <div id="equipment-library-modal" class="modal-backdrop">
-    <div class="modal-header">
-      <h3 id="equipment-modal-title">Equipment Library</h3>
-      <button onclick="closeEquipmentModal()">Close</button>
+    <div id="equipment-library-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="equipment-modal-title">Equipment Library</h3>
+        <button onclick="closeEquipmentModal()">Close</button>
+      </div>
+      <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
+      <div class="modal-grid" id="equipment-library-grid"></div>
     </div>
-    <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
-    <div class="modal-grid" id="equipment-library-grid"></div>
-  </div>
-  <div id="skill-info-modal" class="modal-backdrop">
-    <div class="modal-header">
-      <h3 id="skill-info-title">Skill Details</h3>
-      <button onclick="closeSkillInfoModal()">Close</button>
+    <div id="skill-info-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="skill-info-title">Skill Details</h3>
+        <button onclick="closeSkillInfoModal()">Close</button>
+      </div>
+      <div id="skill-info-modal-content"></div>
     </div>
-    <div id="skill-info-modal-content"></div>
+    <div id="tooltip"></div>
+
+    <div id="special-items-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3>Special Items</h3>
+        <button onclick="closeSpecialItemsModal()">Close</button>
+      </div>
+      <div id="special-items-list">
+      </div>
+      <div class="add-item-form">
+        <h4>Add New Item</h4>
+        <label>Item Name</label>
+        <input type="text" id="new-item-name" placeholder="E.g., Black March">
+        <label>Description</label>
+        <textarea id="new-item-desc" placeholder="Details about the item..."
+          style="min-height: 80px; resize: vertical;"></textarea>
+        <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
+      </div>
+    </div>
+
   </div>
   <div id="tooltip"></div>
-
-  <div id="special-items-modal" class="modal-backdrop">
-    <div class="modal-header">
-      <h3>Special Items</h3>
-      <button onclick="closeSpecialItemsModal()">Close</button>
-    </div>
-    <div id="special-items-list">
-    </div>
-    <div class="add-item-form">
-      <h4>Add New Item</h4>
-      <label>Item Name</label>
-      <input type="text" id="new-item-name" placeholder="E.g., Black March">
-      <label>Description</label>
-      <textarea id="new-item-desc" placeholder="Details about the item..."
-        style="min-height: 80px; resize: vertical;"></textarea>
-      <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
-    </div>
   </div>
-
-  </div>
-  <div id="tooltip"></div>
-  </div> 
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
