@@ -303,6 +303,8 @@ back).
       grid-template-columns: 1fr 1fr;
       gap: 30px;
       align-items: start;
+      margin-top: 30px;
+
     }
 
     .stats-table .remove-stat-btn {
@@ -426,10 +428,10 @@ back).
       /* Add padding to make space for derived stats */
     }
 
-    .equipment-row {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .equipment-core {
+      position: relative;
+      /* Reduced padding to shrink the component horizontally */
+      padding: 0 30px;
     }
 
     .equipment-slots-row {
@@ -445,8 +447,8 @@ back).
     .derived-stat {
       position: absolute;
       width: 180px;
-      left: 0;
-      /* Position relative to the padded core */
+      /* Use negative left value to position it outside the core box */
+      left: -170px;
       text-align: center;
       color: #fff;
       pointer-events: none;
@@ -1139,27 +1141,28 @@ back).
               id="add-tertiary"></select></div>
           <div class="affinities" id="tertiary-affinities"></div>
         </div>
-        <div class="stats-skills-grid">
-          <div>
-            <h3>Stats</h3>
-            <table class="stats-table" id="stats-table">
-              <thead>
-                <tr>
-                  <th>Stat</th>
-                  <th>Value</th>
-                  <th>+/-</th>
-                </tr>
-              </thead>
-              <tbody id="stats-body"></tbody>
-            </table>
-          </div>
-          <div>
-            <div class="skill-section" id="skill-section"></div>
-          </div>
-        </div>
       </div>
+    </div>
+    <div class="stats-skills-grid">
+      <div>
+        <h3>Stats</h3>
+        <table class="stats-table" id="stats-table">
+          <thead>
+            <tr>
+              <th>Stat</th>
+              <th>Value</th>
+              <th>+/-</th>
+            </tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="skill-section" id="skill-section"></div>
+      </div>
+    </div>
 
-      <!-- <div class="backstory-section">
+    <!-- <div class="backstory-section">
       <h4>Backstory & Notes</h4>
       <textarea id="backstory-textarea" placeholder="Type your character's story here..."
         oninput="handleInputChange()"></textarea>
@@ -1236,51 +1239,51 @@ back).
 
   <div class="skill-section" id="skill-section"></div>
 -->
-      <div id="skill-library-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3 id="skill-library-title">Skill Library</h3>
-          <button onclick="closeSkillLibrary()">Close</button>
-        </div>
-        <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
-        <div class="modal-grid" id="skill-library-grid"></div>
+    <div id="skill-library-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="skill-library-title">Skill Library</h3>
+        <button onclick="closeSkillLibrary()">Close</button>
       </div>
-      <div id="equipment-library-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3 id="equipment-modal-title">Equipment Library</h3>
-          <button onclick="closeEquipmentModal()">Close</button>
-        </div>
-        <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
-        <div class="modal-grid" id="equipment-library-grid"></div>
+      <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
+      <div class="modal-grid" id="skill-library-grid"></div>
+    </div>
+    <div id="equipment-library-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="equipment-modal-title">Equipment Library</h3>
+        <button onclick="closeEquipmentModal()">Close</button>
       </div>
-      <div id="skill-info-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3 id="skill-info-title">Skill Details</h3>
-          <button onclick="closeSkillInfoModal()">Close</button>
-        </div>
-        <div id="skill-info-modal-content"></div>
+      <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
+      <div class="modal-grid" id="equipment-library-grid"></div>
+    </div>
+    <div id="skill-info-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3 id="skill-info-title">Skill Details</h3>
+        <button onclick="closeSkillInfoModal()">Close</button>
       </div>
-      <div id="tooltip"></div>
-
-      <div id="special-items-modal" class="modal-backdrop">
-        <div class="modal-header">
-          <h3>Special Items</h3>
-          <button onclick="closeSpecialItemsModal()">Close</button>
-        </div>
-        <div id="special-items-list">
-        </div>
-        <div class="add-item-form">
-          <h4>Add New Item</h4>
-          <label>Item Name</label>
-          <input type="text" id="new-item-name" placeholder="E.g., Black March">
-          <label>Description</label>
-          <textarea id="new-item-desc" placeholder="Details about the item..."
-            style="min-height: 80px; resize: vertical;"></textarea>
-          <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
-        </div>
-      </div>
-
+      <div id="skill-info-modal-content"></div>
     </div>
     <div id="tooltip"></div>
+
+    <div id="special-items-modal" class="modal-backdrop">
+      <div class="modal-header">
+        <h3>Special Items</h3>
+        <button onclick="closeSpecialItemsModal()">Close</button>
+      </div>
+      <div id="special-items-list">
+      </div>
+      <div class="add-item-form">
+        <h4>Add New Item</h4>
+        <label>Item Name</label>
+        <input type="text" id="new-item-name" placeholder="E.g., Black March">
+        <label>Description</label>
+        <textarea id="new-item-desc" placeholder="Details about the item..."
+          style="min-height: 80px; resize: vertical;"></textarea>
+        <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
+      </div>
+    </div>
+
+  </div>
+  <div id="tooltip"></div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
