@@ -39,7 +39,7 @@ back).
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
+  <!-- <style>
     /* --- CSS Variables for Easy Theming --- */
     :root {
       --font-family: 'Poppins', sans-serif;
@@ -993,7 +993,100 @@ back).
         padding: 0;
       }
     }
-  </style>
+  </style> -->
+
+
+  <style>
+        :root {
+            --font-family: 'Poppins', sans-serif;
+            --bg-primary: #121212;
+            --bg-secondary: #2a2a40;
+            --bg-inset: #1f1f2f;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0c0;
+            --border-color: #4a4a6a;
+            --accent-primary: #555588;
+            --accent-hover: #6a6aac;
+            --accent-gold: #ffd700;
+            --danger-color: #b82a2a;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 16px;
+        }
+        .container {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            max-width: 1400px;
+            margin: 40px auto;
+        }
+        h2, h3, h4 { text-align: center; color: white; font-weight: 600; }
+        h2 { margin-bottom: 24px; }
+        h3 { margin-top: 40px; margin-bottom: 16px; }
+        h4 { margin-top: 0; margin-bottom: 15px; color: var(--text-secondary); font-size: 0.9em; text-align: center; }
+
+        .main-layout { display: flex; gap: 30px; }
+        .left-column { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .right-column { flex: 2; }
+        .info-block, .points-block, .level-block, .affinities-block, .auth-block, .proficiencies-block { background-color: var(--bg-inset); padding: 15px; border-radius: 8px; }
+        
+        .auth-block {
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .backstory-section { margin-top: 30px; }
+        #backstory-textarea { width: 100%; min-height: 200px; resize: vertical; background-color: var(--bg-inset); border: 1px dashed var(--border-color); padding: 15px; font-size: 1em; line-height: 1.6; }
+        #backstory-textarea:focus { border-style: solid; border-color: var(--accent-gold); }
+
+        label { font-weight: 600; display: block; margin-top: 10px; margin-bottom: 5px; color: var(--text-secondary); font-size: 0.9em; }
+        input, select, textarea { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 10px; width: 100%; font-family: var(--font-family); font-size: 1em; }
+        button { background-color: var(--accent-primary); cursor: pointer; transition: background-color 0.2s; color: white; border: none; border-radius: 4px; padding: 8px 15px; font-family: var(--font-family); font-weight: 600; font-size: 0.9em; }
+        button:hover { background-color: var(--accent-hover); }
+        button:disabled { background-color: #2a2a3a; color: #777; cursor: not-allowed; }
+
+        .stats-skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; margin-top: 30px; }
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 1.1em; }
+        .stats-table th, .stats-table td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
+        .stat-capped { color: var(--danger-color); font-weight: 600; animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red { 0%, 100% { text-shadow: 0 0 3px rgba(255,50,50,0.5); } 50% { text-shadow: 0 0 10px rgba(255,50,50,1); } }
+        .stat-flash-error { animation: flash-red-bg 0.5s ease-out; }
+        @keyframes flash-red-bg { from { background-color: rgba(184,42,42,0.5); } to { background-color: transparent; } }
+
+        .top-stats-bar { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; background-color: var(--bg-inset); border-radius: 8px; padding: 15px; font-weight: 600; text-align: center; }
+        #hp-speed, .derived-stats-container { display: flex; justify-content: space-around; align-items: center; width: 100%; }
+        .derived-stat, #hp-speed span { font-size: 1.2em; }
+        #hp-speed .accent-label, .derived-stat .accent-label { color: var(--accent-gold); }
+
+        .equipment-section { background-color: var(--bg-inset); padding: 20px; border-radius: 8px; width: 100%; }
+        .equipment-layout { display: flex; justify-content: center; align-items: flex-start; gap: 30px; }
+        .equipment-main-group, .equipment-extra-group { display: flex; flex-direction: column; align-items: center; }
+        .equipment-extra-group { display: none; }
+        .equipment-slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        #accessory1-slot { grid-column: 1 / span 2; justify-self: end; margin-top: 6px; }
+        #accessory2-slot { grid-column: 2 / span 2; justify-self: start; margin-top: 6px; }
+        .slot { width: 130px; height: 130px; background-color: #2a2a4a; border: 2px dashed #555; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .slot:hover { background-color: #3a3a3a; }
+        .slot img.item-image { width: 100%; height: 100%; object-fit: contain; }
+        .slot .change-item-icon { position: absolute; bottom: 5px; right: 5px; width: 24px; height: 24px; background-color: rgba(0, 0, 0, .6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: 1px solid #888; }
+        .selected-weapon { border-color: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
+
+        .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .shop-item, .admin-shop-item, .proficiency-item { display: flex; align-items: center; gap: 15px; background-color: var(--bg-secondary); padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+        .shop-item img, .admin-shop-item img { width: 50px; height: 50px; object-fit: contain; background: #111; border-radius: 4px; }
+        .shop-item-info, .admin-shop-item-info, .proficiency-item-info { flex-grow: 1; text-align: left; }
+        .proficiency-toggle { margin-top: 15px; padding-top: 15px; border-top: 1px solid #555; }
+        .proficiency-toggle button.active { border: 2px solid var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
+    </style>
 </head>
 
 <body>
@@ -1030,6 +1123,34 @@ back).
           <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
             oninput="handleInputChange()">
         </div>
+         </div><div class="proficiencies-block">
+          <h4>Proficiencies</h4>
+          <div id="category-proficiencies-list"></div>
+          <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
+        </div>
+        
+        
+      </div>
+      <div class="right-column">
+
+        <div class="top-stats-bar">
+          <div id="hp-speed"></div>
+          <div class="derived-stats-container">
+            <div class="derived-stat" id="derived-attack-display"></div>
+            <div class="derived-stat" id="derived-defense-display"></div>
+          </div>
+        </div>
+
+         <div class="auth-block">
+          <button onclick="signInWithGoogle()">Sign In</button>
+          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+          <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
+          <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
+          <button onclick="openSpecialItemsModal()">Special Items</button>
+          <button onclick="resetCharacter()">Reset</button>
+          <span id="user-info"></span>
+        </div>
+        
         <div class="affinities-block">
           <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
           <div class="affinities" id="primary-affinities"></div>
@@ -1040,20 +1161,7 @@ back).
               id="add-tertiary"></select></div>
           <div class="affinities" id="tertiary-affinities"></div>
         </div>
-        <div class="proficiencies-block">
-          <h4>Proficiencies</h4>
-          <div id="category-proficiencies-list"></div>
-          <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
-        </div>
-      </div>
-      <div class="right-column">
-        <div class="top-stats-bar">
-          <div id="hp-speed"></div>
-          <div class="derived-stats-container">
-            <div class="derived-stat" id="derived-attack-display"></div>
-            <div class="derived-stat" id="derived-defense-display"></div>
-          </div>
-        </div>
+
         <div class="equipment-section">
           <h3>Equipment</h3>
           <div class="equipment-grid">
@@ -1079,17 +1187,7 @@ back).
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="auth-block">
-          <button onclick="signInWithGoogle()">Sign In</button>
-          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-          <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
-          <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
-          <button onclick="openSpecialItemsModal()">Special Items</button>
-          <button onclick="resetCharacter()">Reset</button>
-          <span id="user-info"></span>
-        </div>
+     
       </div>
     </div>
 
