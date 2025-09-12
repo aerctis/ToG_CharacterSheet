@@ -11,10 +11,18 @@
   <style>
     :root {
       --font-family: 'Inter', sans-serif;
-      --bg-primary: #111827; --bg-secondary: #1F2937; --bg-tertiary: #374151;
-      --border-color: #4B5563; --text-primary: #F9FAFB; --text-secondary: #D1D5DB;
-      --accent-primary: #3B82F6; --accent-hover: #60A5FA; --accent-gold: #F59E0B;
-      --danger-color: #EF4444; --success-color: #22C55E; --border-radius: 6px; /* Sharper corners */
+      --bg-primary: #0C0A09; /* Deeper Background */
+      --bg-secondary: #1C1917; /* Sharper, Darker Boxes */
+      --bg-tertiary: #292524;
+      --border-color: #57534E;
+      --text-primary: #F2F2F2;
+      --text-secondary: #A8A29E;
+      --accent-gold: #F59E0B;
+      --accent-gold-transparent: rgba(245, 158, 11, 0.1);
+      --accent-gold-hover: #FBBF24;
+      --danger-color: #DC2626;
+      --success-color: #16A34A;
+      --border-radius: 4px; /* Sharper Corners */
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -23,18 +31,20 @@
     .header { grid-column: 1 / -1; text-align: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
     .main-widgets-wrapper { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; gap: 2rem; align-items: start; }
     .col-1, .col-2, .col-3 { display: flex; flex-direction: column; gap: 2rem; }
-    .widget { background-color: var(--bg-secondary); border-radius: var(--border-radius); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
-    .widget h3 { color: var(--text-primary); font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+    .widget { background-color: var(--bg-secondary); border-radius: var(--border-radius); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .widget h3 { color: var(--accent-gold); font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.05em; }
     label { font-weight: 600; display: block; margin-top: 0.75rem; margin-bottom: 0.25rem; color: var(--text-secondary); font-size: 0.9em; }
-    input, select, textarea { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem 0.75rem; width: 100%; font-family: var(--font-family); font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.5); }
-    input[readonly] { background-color: #2a2a3a; cursor: not-allowed; }
-    button { background-color: var(--accent-primary); cursor: pointer; transition: background-color 0.2s, transform 0.1s; color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--font-family); font-weight: 600; font-size: 0.9em; }
-    button:hover { background-color: var(--accent-hover); }
-    button:active { transform: translateY(1px); }
-    button:disabled { background-color: var(--bg-tertiary); color: #9CA3AF; cursor: not-allowed; }
-    button.btn-gold { background-color: var(--accent-gold); color: var(--bg-primary); }
-    button.btn-danger { background-color: var(--danger-color); }
+    input, select, textarea { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem 0.75rem; width: 100%; font-family: var(--font-family); font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px var(--accent-gold-transparent); }
+    input[readonly] { background-color: var(--bg-tertiary); cursor: not-allowed; }
+    button { background-color: var(--bg-tertiary); cursor: pointer; transition: background-color 0.2s, transform 0.1s; color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem 1rem; font-family: var(--font-family); font-weight: 600; font-size: 0.9em; }
+    button:hover { background-color: #44403C; border-color: #78716C; }
+    button:active { transform: translateY(1px); animation: button-flash 0.2s ease-out; }
+    @keyframes button-flash { 0% { box-shadow: 0 0 0 0 var(--accent-gold-transparent); } 100% { box-shadow: 0 0 10px 10px rgba(245, 158, 11, 0); } }
+    button:disabled { background-color: var(--bg-tertiary); color: #78716C; cursor: not-allowed; }
+    button.btn-gold { background-color: var(--accent-gold); color: var(--bg-primary); border-color: var(--accent-gold); }
+    button.btn-gold:hover { background-color: var(--accent-gold-hover); }
+    button.btn-danger { background-color: var(--danger-color); border-color: var(--danger-color); color: var(--text-primary); }
     .auth-block { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
     #user-info { margin-left: auto; font-size: 0.9em; color: var(--text-secondary); }
     .top-stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; text-align: center; }
@@ -48,8 +58,9 @@
     .affinity-tags div { background-color: var(--bg-tertiary); color: var(--text-primary); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.9em; display: flex; align-items: center; gap: 0.5rem; }
     .remove-affinity { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; }
     .remove-affinity:hover { color: var(--danger-color); }
-    .equipment-grid { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .slot { width: 120px; height: 120px; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
+    .equipment-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    .position-slots { grid-column: 1 / -1; display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+    .slot { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
     .slot:hover { background-color: var(--bg-tertiary); border-color: var(--accent-hover); }
     .slot.selected-weapon { border-color: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
     .slot img.item-image { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
@@ -78,15 +89,16 @@
     .info-icon { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; cursor: pointer; z-index: 2; fill: white; transition: fill 0.2s; }
     .info-icon:hover { fill: var(--accent-gold); }
     #backstory-textarea { width: 100%; min-height: 250px; resize: vertical; }
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 999; display: none; align-items: center; justify-content: center; padding: 2rem; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 999; display: none; align-items: center; justify-content: center; padding: 2rem; }
     .modal-backdrop.active { display: flex; }
     .modal-content { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 2rem; width: 100%; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .modal-header h3 { color: var(--accent-gold); }
     .modal-body { overflow-y: auto; padding-right: 1rem; }
     .library-search { margin-bottom: 1.5rem; }
     .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
-    .item-card, .skill-card, .shop-item, .admin-shop-item { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1rem; cursor: pointer; transition: background-color .2s, transform 0.2s; text-align: center; position: relative; }
-    .item-card:hover, .skill-card:hover, .shop-item:hover, .admin-shop-item:hover { background-color: #4B5563; transform: translateY(-2px); border-color: var(--accent-gold); }
+    .item-card, .skill-card, .shop-item, .admin-shop-item { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1rem; cursor: pointer; transition: background-color .2s, transform 0.2s, border-color 0.2s; text-align: center; position: relative; }
+    .item-card:hover, .skill-card:hover, .shop-item:hover, .admin-shop-item:hover { background-color: #44403C; transform: translateY(-2px); border-color: var(--accent-gold); }
     .item-card img, .shop-item img, .admin-shop-item img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 0.5rem; }
     .item-card .item-name, .skill-card .skill-name { font-weight: bold; }
     #notification-toast { position: fixed; top: 20px; right: 20px; background-color: var(--accent-primary); color: white; padding: 1rem 1.5rem; border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; }
@@ -96,9 +108,12 @@
     #confirmation-modal .modal-content { max-width: 400px; }
     #confirmation-modal .modal-body { margin-bottom: 1.5rem; }
     #confirmation-modal .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; }
-    .special-item-header div { display: flex; gap: 0.5rem; } /* Spacing for special item buttons */
-    #skill-info-modal-content .controls { display: flex; flex-direction: column; gap: 0.5rem; } /* Spacing for skill modal buttons */
+    .special-item-header div { display: flex; gap: 0.5rem; }
+    #skill-info-modal-content .controls { display: flex; flex-direction: column; gap: 0.5rem; }
     #skill-info-modal-content .controls button { width: 100%; }
+    .currency-display { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center; }
+    .currency-display .label { font-size: 0.9em; color: var(--text-secondary); }
+    .currency-display .value { font-size: 2em; font-weight: 700; color: var(--accent-gold); letter-spacing: 0.05em; }
     @media (max-width: 1200px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 768px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr; } .container { padding: 1rem; } }
   </style>
@@ -142,6 +157,10 @@
                     <label for="available-skill-points">Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
                     <button onclick="addSkillPoint()" style="width: 100%; margin-top: 1rem;">+1 Bonus Skill Point</button>
                     <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2.0" oninput="handleInputChange()">
+                    <div class="currency-display">
+                        <span class="label">POINTS</span>
+                        <div id="currency-value" class="value">0</div>
+                    </div>
                 </div>
                 <div class="widget">
                     <h3>Proficiencies</h3>
@@ -150,8 +169,9 @@
                 </div>
                 <div class="widget auth-block">
                     <button onclick="signInWithGoogle()">Sign In</button><button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-                    <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button><button onclick="openSpecialItemsModal()">Special Items</button>
-                    <button onclick="resetCharacter()" class="btn-danger">Reset</button><button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin</button>
+                    <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button><button onclick="openSellModal()">Sell Items</button>
+                    <button onclick="openSpecialItemsModal()">Special Items</button><button onclick="resetCharacter()" class="btn-danger">Reset</button>
+                    <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin</button>
                     <span id="user-info"></span>
                 </div>
             </div>
@@ -165,10 +185,12 @@
                         <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
                         <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
                         <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-                        <div class="slot" id="lighthouse1-slot" title="Lighthouse 1" data-position="Light Bearer"></div>
-                        <div class="slot" id="lighthouse2-slot" title="Lighthouse 2" data-position="Light Bearer"></div>
-                        <div class="slot" id="beast1-slot" title="Beast 1" data-position="Anima"></div>
-                        <div class="slot" id="beast2-slot" title="Beast 2" data-position="Anima"></div>
+                        <div class="position-slots">
+                            <div class="slot" id="lighthouse1-slot" title="Lighthouse 1" data-position="Light Bearer"></div>
+                            <div class="slot" id="lighthouse2-slot" title="Lighthouse 2" data-position="Light Bearer"></div>
+                            <div class="slot" id="beast1-slot" title="Beast 1" data-position="Anima"></div>
+                            <div class="slot" id="beast2-slot" title="Beast 2" data-position="Anima"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -194,14 +216,15 @@
     <div id="notification-toast"></div>
     <div id="confirmation-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Confirm Action</h3></div><div class="modal-body" id="confirmation-message"></div><div class="modal-footer"><button id="confirm-btn-no">Cancel</button><button id="confirm-btn-yes" class="btn-danger">Confirm</button></div></div></div>
     <div id="item-info-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="item-info-title">Item Details</h3><button onclick="closeModal('item-info-modal')">Close</button></div><div class="modal-body" id="item-info-modal-content"></div></div></div>
-    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="skill-library-title">Skill Library</h3><button onclick="closeSkillLibrary()">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
+    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Skill Library</h3><button onclick="closeSkillLibrary()">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
     <div id="equipment-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="equipment-modal-title">Equipment Library</h3><button onclick="closeEquipmentModal()">Close</button></div><div class="modal-body"><input type="text" id="equipment-search" class="library-search" placeholder="Search equipment..."><div class="modal-grid" id="equipment-library-grid"></div></div></div></div>
-    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1000px;"><div class="modal-header"><h3 id="skill-info-title">Skill Details</h3><button onclick="closeSkillInfoModal()">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
+    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1000px;"><div class="modal-header"><h3>Skill Details</h3><button onclick="closeSkillInfoModal()">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
     <div id="special-items-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Special Items</h3><button onclick="closeSpecialItemsModal()">Close</button></div><div class="modal-body"><div id="special-items-list"></div><div class="add-item-form" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;"><h4>Add New Item</h4><label for="new-item-name">Item Name</label><input type="text" id="new-item-name" placeholder="E.g., Black March"><label for="new-item-desc">Description</label><textarea id="new-item-desc" placeholder="Details about the item..."></textarea><button onclick="addSpecialItem()" style="margin-top: 1rem;">Add Item</button></div></div></div></div>
     <div id="shop-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Shop</h3><button onclick="closeShopModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="shop-grid"></div></div></div></div>
-    <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeAdminPanel()">Close</button></div><div class="modal-body"><button id="shop-status-btn" onclick="toggleShopStatus()" style="margin-bottom: 1rem;">Toggle Shop</button><div class="modal-grid" id="admin-shop-grid"></div></div></div></div>
+    <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1200px;"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeAdminPanel()">Close</button></div><div class="modal-body" id="admin-panel-body"></div></div></div>
     <div id="proficiency-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Manage Proficiencies</h3><button onclick="closeProficiencyModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="proficiency-grid"></div></div></div></div>
-    <div id="bestiary-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="bestiary-modal-title">Bestiary</h3><button onclick="closeBestiaryModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="bestiary-grid"></div></div></div></div>
+    <div id="bestiary-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Bestiary</h3><button onclick="closeBestiaryModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="bestiary-grid"></div></div></div></div>
+    <div id="sell-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Sell Items</h3><button onclick="closeModal('sell-modal')">Close</button></div><div class="modal-body"><p>Select an item from your inventory to list for sale.</p><div class="modal-grid" id="sell-grid"></div></div></div></div>
 
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
@@ -250,18 +273,19 @@
           document.getElementById("char-level").value = data.level || 1; document.getElementById("char-floor").value = data.floor || 1;
           document.getElementById("char-position").value = data.position || "Guide"; document.getElementById('backstory-textarea').value = data.backstory || "";
           document.getElementById('stat-multiplier').value = data.statMultiplier || 2.0;
-          Object.assign(state, { affinities: data.affinities || {primary:[],secondary:[],tertiary:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], ownedBeasts: data.ownedBeasts || {}, proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
+          Object.assign(state, { currency: data.currency || 0, affinities: data.affinities || {primary:[],secondary:[],tertiary:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], ownedBeasts: data.ownedBeasts || {}, proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
         } else { initializeState(); }
         fetchLibrariesAndUpdate();
       }).catch(err => console.error("Load failed:", err));
     }
-    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, ownedBeasts: state.ownedBeasts, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
+    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), currency: state.currency, affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, ownedBeasts: state.ownedBeasts, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
     function resetCharacter() { showConfirmation("Are you sure? This will permanently delete this character.", () => { const u = auth.currentUser; if (u) { db.collection("characters").doc(u.uid).delete().then(() => location.reload()).catch(e => console.error("Delete failed:", e)); } }); }
 
     function recalculateAndRenderAll() { calculateBaseStats(); applyAllSkillEffects(); const l = parseInt(document.getElementById("char-level").value) || 1; const totalAllocated = Object.values(state.manualStatPoints).reduce((s, v) => s + v, 0); state.availableStatPoints = (l - 1) - totalAllocated; calculateUsedSkillPoints(); state.availableSkillPoints = (l - 1) - state.usedSkillPoints + state.bonusSkillPoints; renderAllUI(); }
     function renderAllUI() { 
         document.getElementById("available-stat-points").value = state.availableStatPoints; 
-        document.getElementById("available-skill-points").value = state.availableSkillPoints; 
+        document.getElementById("available-skill-points").value = state.availableSkillPoints;
+        document.getElementById("currency-value").textContent = state.currency;
         renderAffinityControls(); 
         renderStats(); 
         renderEquipment(); 
@@ -409,9 +433,123 @@
 
     function renderShop() { const g=document.getElementById('shop-grid'); g.innerHTML='<h4>Loading...</h4>'; const items=state.gameSettings.shopItems.map(itemData=>{const libItem=state.equipmentLibrary.find(li=>li.id===itemData.id); return {...libItem, ...itemData}; }); if(items.length===0){g.innerHTML='<h4>Shop is empty.</h4>';return;} g.innerHTML=items.map(i=>`<div class="shop-item"><img src="${i.image}" alt="${i.name}"><div class="shop-item-info"><strong>${i.name}</strong></div><button onclick="buyItem('${i.id}',${i.price})" ${state.currency<i.price?'disabled':''}>Buy (${i.price} P)</button></div>`).join(''); }
     async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i=>i.id===id); if(item&&!item.isDiscovered){await db.collection("items").doc(id).set({isDiscovered:true}, {merge:true});item.isDiscovered=true;} handleInputChange(); renderShop(); showNotification("Purchase successful!","success");} else { showNotification("Not enough points!","danger"); } }
-    function renderAdminPanel() { if(!state.gameSettings) return; document.getElementById('shop-status-btn').textContent=`Shop is ${state.gameSettings.isShopOpen?'Open':'Closed'}`; const g=document.getElementById('admin-shop-grid'); g.innerHTML = state.equipmentLibrary.map(i=>`<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${state.gameSettings.shopItems.some(si=>si.id===i.id)?'Remove':'Add'}</button></div>`).join(''); }
+    
+    async function renderAdminPanel() {
+        const body = document.getElementById('admin-panel-body');
+        body.innerHTML = `
+            <div>
+                <button id="shop-status-btn" onclick="toggleShopStatus()" style="margin-bottom: 1rem;">Toggle Shop</button>
+                <h3>Shop Management</h3>
+                <div class="modal-grid" id="admin-shop-grid"></div>
+            </div>
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <h3>Items for Sale</h3>
+                <div id="admin-sale-grid">Loading items...</div>
+            </div>`;
+
+        if(!state.gameSettings) return; 
+        document.getElementById('shop-status-btn').textContent=`Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
+        document.getElementById('admin-shop-grid').innerHTML = state.equipmentLibrary.map(i => `<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${(state.gameSettings.shopItems||[]).some(si => si.id === i.id) ? 'Remove' : 'Add'}</button></div>`).join('');
+
+        const salesSnapshot = await db.collection("itemsForSale").where("status", "==", "listed").get();
+        const saleGrid = document.getElementById('admin-sale-grid');
+        if (salesSnapshot.empty) {
+            saleGrid.innerHTML = "<p>No items are currently listed for sale.</p>";
+            return;
+        }
+        saleGrid.innerHTML = salesSnapshot.docs.map(doc => {
+            const saleData = doc.data();
+            return `<div class="item-card">
+                <strong>${saleData.itemName}</strong>
+                <p style="font-size:0.8em">Seller: ${saleData.sellerName}</p>
+                <button onclick="adminPurchaseItem('${doc.id}')" class="btn-gold">Purchase</button>
+            </div>`
+        }).join('');
+    }
     async function toggleShopStatus() { await db.collection("game_settings").doc("shop").set({ isShopOpen: !state.gameSettings.isShopOpen }, { merge: true }); }
     async function updateShopItem(id) { const items=[...(state.gameSettings.shopItems||[])]; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").set({ shopItems:items }, { merge: true }); }
+
+    function openSellModal() {
+        renderSellableItems();
+        openModal('sell-modal');
+    }
+    function renderSellableItems() {
+        const grid = document.getElementById('sell-grid');
+        const equippedIds = Object.values(state.equipment).filter(Boolean).map(item => item.id);
+        const sellableItems = state.ownedItems
+            .map(id => state.equipmentLibrary.find(item => item.id === id))
+            .filter(item => item && !equippedIds.includes(item.id));
+        
+        if (sellableItems.length === 0) {
+            grid.innerHTML = "<p>You have no unequipped items to sell.</p>";
+            return;
+        }
+        grid.innerHTML = sellableItems.map(item => `
+            <div class="item-card">
+                <img src="${item.image}" alt="${item.name}">
+                <div><strong>${item.name}</strong></div>
+                <button onclick="listItemForSale('${item.id}')">List for Sale</button>
+            </div>
+        `).join('');
+    }
+
+    async function listItemForSale(itemId) {
+        const user = auth.currentUser;
+        if (!user) return;
+        const item = state.equipmentLibrary.find(i => i.id === itemId);
+        if (!item) return;
+
+        showConfirmation(`Are you sure you want to list ${item.name} for sale? You will not be able to use it until the sale is complete or canceled.`, async () => {
+            try {
+                await db.collection("itemsForSale").add({
+                    itemId: itemId,
+                    itemName: item.name,
+                    sellerUid: user.uid,
+                    sellerName: user.displayName,
+                    status: 'listed',
+                    listedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                state.ownedItems = state.ownedItems.filter(id => id !== itemId);
+                handleInputChange();
+                closeModal('sell-modal');
+                showNotification(`${item.name} has been listed for sale.`, 'success');
+            } catch (error) {
+                console.error("Error listing item: ", error);
+                showNotification('Failed to list item.', 'danger');
+            }
+        });
+    }
+
+    async function adminPurchaseItem(saleId) {
+        const price = parseInt(prompt("Enter the purchase price in points:"));
+        if (isNaN(price) || price < 0) {
+            showNotification("Invalid price entered.", "danger");
+            return;
+        }
+
+        const saleDocRef = db.collection("itemsForSale").doc(saleId);
+        try {
+            await db.runTransaction(async (transaction) => {
+                const saleDoc = await transaction.get(saleDocRef);
+                if (!saleDoc.exists) throw "Sale document not found!";
+                
+                const saleData = saleDoc.data();
+                const sellerCharRef = db.collection("characters").doc(saleData.sellerUid);
+                const sellerCharDoc = await transaction.get(sellerCharRef);
+                if (!sellerCharDoc.exists) throw "Seller character not found!";
+
+                const currentCurrency = sellerCharDoc.data().currency || 0;
+                transaction.update(sellerCharRef, { currency: currentCurrency + price });
+                transaction.update(saleDocRef, { status: 'sold', price: price, soldAt: firebase.firestore.FieldValue.serverTimestamp() });
+            });
+            showNotification("Item purchased successfully!", "success");
+            renderAdminPanel();
+        } catch (error) {
+            console.error("Transaction failed: ", error);
+            showNotification(`Purchase failed: ${error}`, "danger");
+        }
+    }
+
 
     function renderBestiaryLibrary() {
         const grid = document.getElementById('bestiary-grid');
@@ -436,7 +574,4 @@
   </script>
 </body>
 </html>
-```, I will make the requested changes. 
-
-Please take a look at the attached file. I have redesigned the layout as requested and updated all of the functions to be in working order. I am still working to improve the character sheet, please let me know your thoughts.
 
