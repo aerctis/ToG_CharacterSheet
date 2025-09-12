@@ -18,13 +18,14 @@ GENERAL:
 -Tune Hitdice numbers
 -Move lighthouse slots next to equipment slots.
 
-The special items work great. The Position equipment framework has a good start, but I believe that (for instance the
-lighouse slots) should be placed to the right of the equipment slots currently they are below. Let's change this.
-The hit dice seems fine although the numbers need tuning (I can do that myself)
-The backstory section also seems generally fine.
-BIG ISSUE: the layout the page has changed from a sort of centered document/paper view island, to a full screen
-application with a section of nice condensed UI at the top. Things are too spread out and have little contrast we should
-move back in the other direction.
+1. Shop Logic: Yes, it is a global shop, managed by firestore. It would be great if it could be managed by admin on the page.
+
+
+2. Proficiency Effects: If a skill has a individual proficiency, it's effects should be completely overhauled. If I
+
+
+3. Category Proficiency: If am proficient in all skills tagged with "sword" then it should just be a bonus on the base effects. There should be a skill point cost reduction as well as a small percentage boost to damage. Make sure that the cost reduction works retroactively (if I become proficient after I am already level 5 it should give me some points back).
+
 
 <!DOCTYPE html>
 <html>
@@ -1095,7 +1096,7 @@ move back in the other direction.
   </table>
 
   <div class="skill-section" id="skill-section"></div>
-
+-->
   <div id="skill-library-modal" class="modal-backdrop">
     <div class="modal-header">
       <h3 id="skill-library-title">Skill Library</h3>
@@ -1141,7 +1142,7 @@ move back in the other direction.
 
   </div>
   <div id="tooltip"></div>
-  </div> -->
+  </div> 
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
