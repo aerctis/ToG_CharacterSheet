@@ -240,7 +240,7 @@ back).
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 17px;
+      margin-top: 50 px;
     }
 
     .affinities div {
@@ -393,10 +393,6 @@ back).
       color: var(--accent-gold);
     }
 
-    #hit-dice {
-      font-weight: 600;
-    }
-
     #hit-dice .accent-label {
       color: var(--accent-gold);
     }
@@ -461,7 +457,7 @@ back).
       background-color: var(--bg-inset);
       border-radius: 8px;
       padding: 10px 15px;
-      /* Shrunk vertically */
+      position: absolute;
       font-size: 1.2em;
       font-weight: 600;
       text-align: center;
@@ -469,6 +465,7 @@ back).
       display: flex;
       align-items: center;
       justify-content: center;
+      left: -200px
     }
 
     .attack-stat {
@@ -922,19 +919,48 @@ back).
     }
 
     /* --- Other --- */
-    #hp-speed {
+    .top-stats-bar {
+      display: flex;
+      flex-direction: column;
+      /* Stack the rows vertically */
+      gap: 10px;
+      margin-bottom: 20px;
       background-color: var(--bg-inset);
       border-radius: 8px;
       padding: 15px;
-      margin-top: 20px;
-      font-size: 1.2em;
       font-weight: 600;
       text-align: center;
-      line-height: 1.6;
     }
 
-    #hp-speed .accent-label {
+    #hp-speed,
+    .derived-stats-container {
+      display: flex;
+      justify-content: space-around;
+      /* Space out the items in each row */
+      align-items: center;
+      width: 100%;
+    }
+
+    .derived-stat {
+      font-size: 1.2em;
+    }
+
+    /* Remove old individual styling */
+    #hp-speed {
+      padding: 0;
+      margin: 0;
+      background-color: transparent;
+      border-radius: 0;
+      line-height: 1.2;
+    }
+
+    #hp-speed .accent-label,
+    .derived-stat .accent-label {
       color: var(--accent-gold);
+    }
+
+    #hit-dice {
+      font-weight: 600;
     }
 
     select:focus {
