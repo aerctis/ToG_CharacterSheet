@@ -18,10 +18,13 @@ GENERAL:
 -Tune Hitdice numbers
 -Move lighthouse slots next to equipment slots.
 
-The special items work great. The Position equipment framework has a good start, but I believe that (for instance the lighouse slots) should be placed to the right of the equipment slots currently they are below. Let's change this.
+The special items work great. The Position equipment framework has a good start, but I believe that (for instance the
+lighouse slots) should be placed to the right of the equipment slots currently they are below. Let's change this.
 The hit dice seems fine although the numbers need tuning (I can do that myself)
 The backstory section also seems generally fine.
-BIG ISSUE: the layout the page has changed from a sort of centered document/paper view island, to a full screen application with a section of nice condensed UI at the top. Things are too spread out and have little contrast we should move back in the other direction.
+BIG ISSUE: the layout the page has changed from a sort of centered document/paper view island, to a full screen
+application with a section of nice condensed UI at the top. Things are too spread out and have little contrast we should
+move back in the other direction.
 
 <!DOCTYPE html>
 <html>
@@ -35,7 +38,8 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
     /* --- CSS Variables for Easy Theming --- */
     :root {
       --font-family: 'Poppins', sans-serif;
-      --bg-primary: #1e1e2f;
+      --bg-primary: #121212;
+      /* Darker background for contrast */
       --bg-secondary: #2a2a40;
       --bg-inset: #1f1f2f;
       --text-primary: #e0e0e0;
@@ -47,7 +51,6 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       --danger-color: #b82a2a;
     }
 
-    /* --- General & Body Styles --- */
     * {
       box-sizing: border-box;
     }
@@ -62,54 +65,43 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
     .container {
       background-color: var(--bg-secondary);
       border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 15px #00000080;
-      max-width: 1200px;
-      margin: 20px auto;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      max-width: 1400px;
+      margin: 40px auto;
     }
 
-    h2 {
+    h2,
+    h3 {
       text-align: center;
       color: white;
       font-weight: 600;
+    }
+
+    h2 {
       margin-bottom: 24px;
     }
 
     h3 {
-      text-align: center;
-      color: white;
       margin-top: 40px;
       margin-bottom: 16px;
-      font-weight: 600;
     }
 
-    /* --- Modern Header Grid Layout --- */
-    .character-header-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-areas: "info points level" "affinities affinities affinities" "auth auth auth";
+    /* --- NEW: Main Two-Column Layout --- */
+    .main-layout {
+      display: flex;
+      gap: 30px;
+    }
+
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       gap: 20px;
-      margin-bottom: 30px;
     }
 
-    .info-block {
-      grid-area: info;
-    }
-
-    .points-block {
-      grid-area: points;
-    }
-
-    .level-block {
-      grid-area: level;
-    }
-
-    .affinities-block {
-      grid-area: affinities;
-    }
-
-    .auth-block {
-      grid-area: auth;
+    .right-column {
+      flex: 2;
     }
 
     .info-block,
@@ -119,13 +111,6 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       background-color: var(--bg-inset);
       padding: 15px;
       border-radius: 8px;
-    }
-
-    .auth-block {
-      padding: 10px;
-      text-align: center;
-      border-top: 1px solid var(--border-color);
-      margin-top: 10px;
     }
 
     .info-block h4,
@@ -139,13 +124,14 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       text-align: center;
     }
 
-    /* --- NEW: Backstory Section --- */
-    .backstory-section {
-      grid-area: backstory;
-      /* Will be used in a future grid update */
-      margin-bottom: 20px;
+    .auth-block {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: 20px;
     }
 
+    /* --- Backstory Section --- */
     .backstory-section h4 {
       margin-top: 0;
       margin-bottom: 10px;
@@ -156,7 +142,7 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
 
     #backstory-textarea {
       width: 100%;
-      min-height: 100px;
+      min-height: 150px;
       resize: vertical;
       background-color: var(--bg-inset);
       border: 1px dashed var(--border-color);
@@ -171,7 +157,7 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       border-color: var(--accent-gold);
     }
 
-    /* --- Modern Form Elements & Buttons --- */
+    /* --- Form Elements & Buttons --- */
     label {
       font-weight: 600;
       display: block;
@@ -362,7 +348,22 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       }
     }
 
-    /* --- NEW: Hit Dice Display --- */
+    /* --- HP, Speed, Hit Dice Display --- */
+    #hp-speed {
+      background-color: var(--bg-inset);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    #hp-speed .accent-label {
+      color: var(--accent-gold);
+    }
+
     #hit-dice {
       font-weight: 600;
     }
@@ -371,36 +372,29 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       color: var(--accent-gold);
     }
 
-    /* --- NEW: Position-Specific Sections --- */
-    .position-specific-section {
-      display: none;
-      /* Hidden by default */
-      background-color: var(--bg-inset);
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-
     /* --- Equipment Section --- */
     .equipment-section {
       background-color: var(--bg-inset);
       padding: 20px;
       border-radius: 8px;
-      margin-top: 20px;
       width: 100%;
     }
 
     .equipment-grid {
       display: flex;
-      flex-direction: column;
-      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .equipment-core {
+      position: relative;
     }
 
     .equipment-row {
-      position: relative;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      gap: 14px;
     }
 
     .equipment-slots-row {
@@ -408,11 +402,18 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       gap: 14px;
     }
 
+    #light-bearer-slots {
+      display: none;
+    }
+
+    /* Hidden by default */
     .derived-stat {
       position: absolute;
-      left: 15px;
-      top: 45%;
+      left: -200px;
+      top: 50%;
+      width: 180px;
       transform: translateY(-50%);
+      text-align: center;
       color: #fff;
       pointer-events: none;
       display: flex;
@@ -913,102 +914,159 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
   <div class="container">
     <h2>Character Sheet</h2>
 
-    <div class="character-header-grid">
-      <div class="auth-block">
-        <button onclick="signInWithGoogle()">Sign In with Google</button>
-        <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-        <button onclick="openSpecialItemsModal()">Special Items</button> <button onclick="resetCharacter()">Reset
-          Character</button>
-        <span id="user-info" style="margin-left: 10px;"></span>
+    <div class="main-layout">
+      <div class="left-column">
+        <div class="info-block">
+          <h4>Identity</h4>
+          <label>Name</label><input type="text" id="char-name" oninput="handleInputChange()">
+          <label>Race</label><input type="text" id="char-race" oninput="handleInputChange()">
+          <label>Position</label>
+          <select id="char-position" onchange="handleInputChange()">
+            <option value="Guide">Guide</option>
+            <option value="Fisherman">Fisherman</option>
+            <option value="Spear Bearer">Spear Bearer</option>
+            <option value="Wave Controller">Wave Controller</option>
+            <option value="Light Bearer">Light Bearer</option>
+            <option value="Anima">Anima</option>
+          </select>
+        </div>
+        <div class="level-block">
+          <h4>Progression</h4>
+          <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
+          <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
+          <button onclick="levelUp()" class="btn-primary">Level Up</button>
+        </div>
+        <div class="points-block">
+          <h4>Resources</h4>
+          <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
+          <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+        </div>
+        <div class="backstory-section">
+          <h4>Backstory & Notes</h4>
+          <textarea id="backstory-textarea" placeholder="Type your character's story here..."
+            oninput="handleInputChange()"></textarea>
+        </div>
+        <div class="auth-block">
+          <button onclick="signInWithGoogle()">Sign In with Google</button>
+          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+          <button onclick="openSpecialItemsModal()">Special Items</button>
+          <button onclick="resetCharacter()">Reset Character</button>
+          <span id="user-info" style="margin-left: 10px;"></span>
+        </div>
       </div>
-      <div class="info-block">
-        <h4>Identity</h4>
-        <label>Name</label><input type="text" id="char-name" oninput="handleInputChange()">
-        <label>Race</label><input type="text" id="char-race" oninput="handleInputChange()">
-        <label>Position</label>
-        <select id="char-position" onchange="handleInputChange()">
-          <option value="Guide">Guide</option>
-          <option value="Fisherman">Fisherman</option>
-          <option value="Spear Bearer">Spear Bearer</option>
-          <option value="Wave Controller">Wave Controller</option>
-          <option value="Light Bearer">Light Bearer</option>
-          <option value="Anima">Anima</option>
-        </select>
-      </div>
-      <div class="points-block">
-        <h4>Resources</h4>
-        <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
-        <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-        <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2"
-          oninput="handleInputChange()">
-      </div>
-      <div class="level-block">
-        <h4>Progression</h4>
-        <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
-        <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
-        <button onclick="levelUp()" class="btn-primary">Level Up</button>
-      </div>
-      <div class="affinities-block">
-        <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
-        <div class="affinities" id="primary-affinities"></div>
-        <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
-            id="add-secondary"></select></div>
-        <div class="affinities" id="secondary-affinities"></div>
-        <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
-            id="add-tertiary"></select></div>
-        <div class="affinities" id="tertiary-affinities"></div>
+      <div class="right-column">
+        <div id="hp-speed"></div>
+        <div class="equipment-section">
+          <h3>Equipment</h3>
+          <div class="equipment-grid">
+            <div class="equipment-core">
+              <div class="derived-stat attack">
+                <div class="derived-stat-formula"><span class="fraction"><span class="top"
+                      id="attack-formula-top"></span><span class="bottom" id="attack-formula-bot"></span></span><span
+                    id="attack-formula"></span></div>
+                <div class="derived-stat-result" id="derived-attack-result">0</div>
+              </div>
+              <div class="derived-stat defense">
+                <div class="derived-stat-formula"><span class="fraction"><span class="top"
+                      id="defense-formula-top"></span><span class="bottom" id="defense-formula-bot"></span></span><span
+                    id="defense-formula"></span></div>
+                <div class="derived-stat-result" id="derived-defense-result">0</div>
+              </div>
+              <div class="equipment-row">
+                <div class="equipment-slots-row">
+                  <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+                  <div class="slot" id="armor-slot" title="Armor"></div>
+                  <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+                </div>
+                <div class="equipment-slots-row">
+                  <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+                  <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+                </div>
+              </div>
+            </div>
+            <div id="light-bearer-slots">
+              <div class="equipment-row">
+                <div class="equipment-slots-row">
+                  <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
+                  <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="affinities-block">
+          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
+          <div class="affinities" id="primary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
+              id="add-secondary"></select></div>
+          <div class="affinities" id="secondary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
+              id="add-tertiary"></select></div>
+          <div class="affinities" id="tertiary-affinities"></div>
+        </div>
+        <h3>Stats</h3>
+        <table class="stats-table" id="stats-table">
+          <thead>
+            <tr>
+              <th>Stat</th>
+              <th>Value</th>
+              <th>+/-</th>
+            </tr>
+          </thead>
+          <tbody id="stats-body"></tbody>
+        </table>
+        <div class="skill-section" id="skill-section"></div>
       </div>
     </div>
-  </div>
 
-  <div class="backstory-section">
-    <h4>Backstory & Notes</h4>
-    <textarea id="backstory-textarea" placeholder="Type your character's story here..."
-      oninput="handleInputChange()"></textarea>
-  </div>
+    <!-- <div class="backstory-section">
+      <h4>Backstory & Notes</h4>
+      <textarea id="backstory-textarea" placeholder="Type your character's story here..."
+        oninput="handleInputChange()"></textarea>
+    </div>
 
-  <div id="hp-speed">
-    <div id="hit-dice"></div>
-  </div>
+    <div id="hp-speed">
+      <div id="hit-dice"></div>
+    </div>
 
-  <div class="equipment-section">
-    <h3>Equipment</h3>
-    <div class="equipment-grid">
-      <div class="equipment-row">
-        <div class="derived-stat attack">
-          <div class="derived-stat-formula">
-            <span class="fraction">
-              <span class="top" id="attack-formula-top"></span>
-              <span class="bottom" id="attack-formula-bot"></span>
-            </span>
-            <span id="attack-formula"></span>
+    <div class="equipment-section">
+      <h3>Equipment</h3>
+      <div class="equipment-grid">
+        <div class="equipment-row">
+          <div class="derived-stat attack">
+            <div class="derived-stat-formula">
+              <span class="fraction">
+                <span class="top" id="attack-formula-top"></span>
+                <span class="bottom" id="attack-formula-bot"></span>
+              </span>
+              <span id="attack-formula"></span>
+            </div>
+            <div class="derived-stat-result" id="derived-attack-result">0</div>
           </div>
-          <div class="derived-stat-result" id="derived-attack-result">0</div>
-        </div>
-        <div class="equipment-slots-row">
-          <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-          <div class="slot" id="armor-slot" title="Armor"></div>
-          <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-        </div>
-      </div>
-      <div class="equipment-row">
-        <div class="derived-stat defense">
-          <div class="derived-stat-formula">
-            <span class="fraction">
-              <span class="top" id="defense-formula-top"></span>
-              <span class="bottom" id="defense-formula-bot"></span>
-            </span>
-            <span id="defense-formula"></span>
+          <div class="equipment-slots-row">
+            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+            <div class="slot" id="armor-slot" title="Armor"></div>
+            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
           </div>
-          <div class="derived-stat-result" id="derived-defense-result">0</div>
         </div>
-        <div class="equipment-slots-row">
-          <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-          <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+        <div class="equipment-row">
+          <div class="derived-stat defense">
+            <div class="derived-stat-formula">
+              <span class="fraction">
+                <span class="top" id="defense-formula-top"></span>
+                <span class="bottom" id="defense-formula-bot"></span>
+              </span>
+              <span id="defense-formula"></span>
+            </div>
+            <div class="derived-stat-result" id="derived-defense-result">0</div>
+          </div>
+          <div class="equipment-slots-row">
+            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
   </div>
 
@@ -1083,7 +1141,7 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
 
   </div>
   <div id="tooltip"></div>
-  </div>
+  </div> -->
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
@@ -1264,7 +1322,7 @@ BIG ISSUE: the layout the page has changed from a sort of centered document/pape
       renderHpSpeed();
 
       const position = document.getElementById("char-position").value;
-      document.getElementById("light-bearer-section").style.display = position === 'Light Bearer' ? 'block' : 'none';
+      document.getElementById("light-bearer-slots").style.display = position === 'Light Bearer' ? 'block' : 'none';
       //future class specific section here..
     }
 
