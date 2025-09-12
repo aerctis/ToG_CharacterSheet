@@ -157,7 +157,7 @@ back).
 
     #backstory-textarea {
       width: 100%;
-      min-height: 150px;
+      min-height: 250px;
       resize: vertical;
       background-color: var(--bg-inset);
       border: 1px dashed var(--border-color);
@@ -298,6 +298,13 @@ back).
     }
 
     /* --- Improved Stats Table --- */
+    .stats-skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
     .stats-table .remove-stat-btn {
       margin-left: 8px;
     }
@@ -395,22 +402,34 @@ back).
       width: 100%;
     }
 
-    .equipment-grid {
+    .equipment-layout {
       display: flex;
       justify-content: center;
-      align-items: center;
       gap: 20px;
+    }
+
+    .equipment-main-group,
+    .equipment-extra-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .equipment-extra-group {
+      display: none;
+      /* Hidden by default */
     }
 
     .equipment-core {
       position: relative;
+      padding: 0 200px;
+      /* Add padding to make space for derived stats */
     }
 
     .equipment-row {
       display: flex;
       flex-direction: column;
       gap: 14px;
-      justify-content: center;
     }
 
     .equipment-slots-row {
@@ -418,8 +437,101 @@ back).
       gap: 14px;
     }
 
-    #light-bearer-slots {
-      display: none;
+    .accessory-row {
+      justify-content: center;
+      /* This centers the accessory slots */
+    }
+
+    .derived-stat {
+      position: absolute;
+      width: 180px;
+      left: 0;
+      /* Position relative to the padded core */
+      text-align: center;
+      color: #fff;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .attack-stat {
+      top: 25%;
+      /* Position Attack high */
+      transform: translateY(-50%);
+    }
+
+    .defense-stat {
+      top: 75%;
+      /* Position Defense low */
+      transform: translateY(-50%);
+    }
+
+    .derived-stat-formula {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .derived-stat-result {
+      color: var(--accent-gold);
+      font-weight: 600;
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    .slot {
+      width: 130px;
+      height: 130px;
+      background-color: #2a2a4a;
+      border: 2px dashed #555;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background-color .2s, border-color .2s;
+    }
+
+    .slot:hover {
+      background-color: #3a3a3a;
+    }
+
+    .slot img.item-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .slot .change-item-icon {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 24px;
+      height: 24px;
+      background-color: rgba(0, 0, 0, .6);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid #888;
+      transition: background-color .2s;
+      font-size: 14px;
+    }
+
+    .slot .change-item-icon:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .selected-weapon {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 8px var(--accent-gold);
     }
 
     /* Hidden by default */
@@ -957,7 +1069,7 @@ back).
           <h4>Resources</h4>
           <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
           <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
+          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2"
             oninput="handleInputChange()">
         </div>
         <div class="backstory-section">
@@ -976,34 +1088,38 @@ back).
       <div class="right-column">
         <div id="hp-speed"></div>
         <div class="equipment-section">
-          <h3>Equipment</h3>
-          <div class="equipment-grid">
-            <div class="equipment-core">
-              <div class="derived-stat attack">
-                <div class="derived-stat-formula"><span class="fraction"><span class="top"
-                      id="attack-formula-top"></span><span class="bottom" id="attack-formula-bot"></span></span><span
-                    id="attack-formula"></span></div>
-                <div class="derived-stat-result" id="derived-attack-result">0</div>
-              </div>
-              <div class="derived-stat defense">
-                <div class="derived-stat-formula"><span class="fraction"><span class="top"
-                      id="defense-formula-top"></span><span class="bottom" id="defense-formula-bot"></span></span><span
-                    id="defense-formula"></span></div>
-                <div class="derived-stat-result" id="derived-defense-result">0</div>
-              </div>
-              <div class="equipment-row">
-                <div class="equipment-slots-row">
-                  <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-                  <div class="slot" id="armor-slot" title="Armor"></div>
-                  <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+          <div class="equipment-layout">
+            <div class="equipment-main-group">
+              <h3>Equipment</h3>
+              <div class="equipment-core">
+                <div class="derived-stat attack-stat">
+                  <div class="derived-stat-formula"><span class="fraction"><span class="top"
+                        id="attack-formula-top"></span><span class="bottom" id="attack-formula-bot"></span></span><span
+                      id="attack-formula"></span></div>
+                  <div class="derived-stat-result" id="derived-attack-result">0</div>
                 </div>
-                <div class="equipment-slots-row">
-                  <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-                  <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+                <div class="derived-stat defense-stat">
+                  <div class="derived-stat-formula"><span class="fraction"><span class="top"
+                        id="defense-formula-top"></span><span class="bottom"
+                        id="defense-formula-bot"></span></span><span id="defense-formula"></span></div>
+                  <div class="derived-stat-result" id="derived-defense-result">0</div>
+                </div>
+                <div class="equipment-row">
+                  <div class="equipment-slots-row">
+                    <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+                    <div class="slot" id="armor-slot" title="Armor"></div>
+                    <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+                  </div>
+                  <div class="equipment-slots-row accessory-row">
+                    <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+                    <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div id="light-bearer-slots">
+
+            <div id="light-bearer-slots" class="equipment-extra-group">
+              <h3>Lighthouses</h3>
               <div class="equipment-row">
                 <div class="equipment-slots-row">
                   <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
@@ -1023,22 +1139,27 @@ back).
               id="add-tertiary"></select></div>
           <div class="affinities" id="tertiary-affinities"></div>
         </div>
-        <h3>Stats</h3>
-        <table class="stats-table" id="stats-table">
-          <thead>
-            <tr>
-              <th>Stat</th>
-              <th>Value</th>
-              <th>+/-</th>
-            </tr>
-          </thead>
-          <tbody id="stats-body"></tbody>
-        </table>
-        <div class="skill-section" id="skill-section"></div>
+        <div class="stats-skills-grid">
+          <div>
+            <h3>Stats</h3>
+            <table class="stats-table" id="stats-table">
+              <thead>
+                <tr>
+                  <th>Stat</th>
+                  <th>Value</th>
+                  <th>+/-</th>
+                </tr>
+              </thead>
+              <tbody id="stats-body"></tbody>
+            </table>
+          </div>
+          <div>
+            <div class="skill-section" id="skill-section"></div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- <div class="backstory-section">
+      <!-- <div class="backstory-section">
       <h4>Backstory & Notes</h4>
       <textarea id="backstory-textarea" placeholder="Type your character's story here..."
         oninput="handleInputChange()"></textarea>
@@ -1115,51 +1236,51 @@ back).
 
   <div class="skill-section" id="skill-section"></div>
 -->
-    <div id="skill-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-library-title">Skill Library</h3>
-        <button onclick="closeSkillLibrary()">Close</button>
+      <div id="skill-library-modal" class="modal-backdrop">
+        <div class="modal-header">
+          <h3 id="skill-library-title">Skill Library</h3>
+          <button onclick="closeSkillLibrary()">Close</button>
+        </div>
+        <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
+        <div class="modal-grid" id="skill-library-grid"></div>
       </div>
-      <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
-      <div class="modal-grid" id="skill-library-grid"></div>
-    </div>
-    <div id="equipment-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="equipment-modal-title">Equipment Library</h3>
-        <button onclick="closeEquipmentModal()">Close</button>
+      <div id="equipment-library-modal" class="modal-backdrop">
+        <div class="modal-header">
+          <h3 id="equipment-modal-title">Equipment Library</h3>
+          <button onclick="closeEquipmentModal()">Close</button>
+        </div>
+        <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
+        <div class="modal-grid" id="equipment-library-grid"></div>
       </div>
-      <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
-      <div class="modal-grid" id="equipment-library-grid"></div>
-    </div>
-    <div id="skill-info-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-info-title">Skill Details</h3>
-        <button onclick="closeSkillInfoModal()">Close</button>
+      <div id="skill-info-modal" class="modal-backdrop">
+        <div class="modal-header">
+          <h3 id="skill-info-title">Skill Details</h3>
+          <button onclick="closeSkillInfoModal()">Close</button>
+        </div>
+        <div id="skill-info-modal-content"></div>
       </div>
-      <div id="skill-info-modal-content"></div>
+      <div id="tooltip"></div>
+
+      <div id="special-items-modal" class="modal-backdrop">
+        <div class="modal-header">
+          <h3>Special Items</h3>
+          <button onclick="closeSpecialItemsModal()">Close</button>
+        </div>
+        <div id="special-items-list">
+        </div>
+        <div class="add-item-form">
+          <h4>Add New Item</h4>
+          <label>Item Name</label>
+          <input type="text" id="new-item-name" placeholder="E.g., Black March">
+          <label>Description</label>
+          <textarea id="new-item-desc" placeholder="Details about the item..."
+            style="min-height: 80px; resize: vertical;"></textarea>
+          <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
+        </div>
+      </div>
+
     </div>
     <div id="tooltip"></div>
-
-    <div id="special-items-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3>Special Items</h3>
-        <button onclick="closeSpecialItemsModal()">Close</button>
-      </div>
-      <div id="special-items-list">
-      </div>
-      <div class="add-item-form">
-        <h4>Add New Item</h4>
-        <label>Item Name</label>
-        <input type="text" id="new-item-name" placeholder="E.g., Black March">
-        <label>Description</label>
-        <textarea id="new-item-desc" placeholder="Details about the item..."
-          style="min-height: 80px; resize: vertical;"></textarea>
-        <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
-      </div>
-    </div>
-
-  </div>
-  <div id="tooltip"></div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
