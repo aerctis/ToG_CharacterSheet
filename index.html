@@ -1345,11 +1345,74 @@ there character.) (hopefully with cool design and display features.)
       renderEquipmentLibrary();
     }
 
+    async function fetchEquipmentLibrary() {
+      try {
+        const snapshot = await db.collection("items").get();
+        state.equipmentLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error("Error fetching equipment from Firestore:", error);
+        state.equipmentLibrary = [];
+        alert("Could not load equipment from the database.");
+      }
+    }
+
     // --- SKILLS ---
-    function renderSkillTiers() { /* ... updated ... */ }
-    function selectSkill(skillData) { /* ... updated ... */ }
-    function openSkillLibrary(tier, index) { /* ... updated ... */ }
-    function closeSkillLibrary() { /* ... updated ... */ }
+    function renderSkillTiers() {
+      const container = document.getElementById("skill-section");
+      container.innerHTML = "";
+      for (let tier = 1; tier <= 5; tier++) {
+        const tierDiv = document.createElement("div");
+        tierDiv.className = "tier-section";
+        tierDiv.innerHTML = `<div class="tier-header"><h4>Tier ${tier}</h4><button onclick="addSkillSlot(${tier})">+ Slot</button></div><div class="skill-slots" id="tier-${tier}-slots"></div>`;
+        const slotGrid = tierDiv.querySelector(`#tier-${tier}-slots`);
+        const skillsInTier = state.skillsByTier[tier] || [];
+        skillsInTier.forEach((skill, index) => {
+          const slot = document.createElement("div");
+          slot.className = "skill-slot";
+          if (!skill) {
+            slot.classList.add("empty");
+            slot.onclick = () => openSkillLibrary(tier, index);
+          } else {
+            // Updated to use SVG icon and new level badge style
+            slot.innerHTML = `<img src="${skill.icon}" alt="${skill.name}">
+           <div class="skill-level-badge">${skill.level || 0}</div>
+           <svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${tier}][${index}], ${tier}, ${index})" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"></path></svg>`;
+          }
+          slotGrid.appendChild(slot);
+        });
+        container.appendChild(tierDiv);
+      }
+    }
+
+    function selectSkill(skillData) {
+      const { tier, index } = state.currentSkillEdit;
+      if (tier !== null && index !== null) {
+        const newSkillInstance = JSON.parse(JSON.stringify(skillData));
+        newSkillInstance.level = 0; // Equip at level 0
+        state.skillsByTier[tier][index] = newSkillInstance;
+        openSkillInfoModal(state.skillsByTier[tier][index], tier, index);
+        closeSkillLibrary();
+        handleInputChange(); // Autosave the change
+      }
+    }
+    function openSkillLibrary(tier, index) {
+      state.currentSkillEdit = { tier, index };
+      document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${tier} Slot)`;
+      document.getElementById("skill-library-modal").classList.add("active");
+
+      // Handle the new search bar
+      const searchInput = document.getElementById('skill-search');
+      searchInput.value = ''; // Clear search on open
+      searchInput.addEventListener('input', renderSkillLibrary);
+
+      renderSkillLibrary();
+    }
+
+    function closeSkillLibrary() {
+      document.getElementById("skill-library-modal").classList.remove("active");
+      // Important: Remove the listener to avoid it running when the modal is closed
+      document.getElementById('skill-search').removeEventListener('input', renderSkillLibrary);
+    }
 
     function renderSkillLibrary() {
       const grid = document.getElementById("skill-library-grid");
@@ -1431,9 +1494,31 @@ there character.) (hopefully with cool design and display features.)
       modal.classList.add("active");
     }
 
-    function levelUpSkill(tier, index) { /* ... updated to call handleInputChange ... */ }
-    function delevelSkill(tier, index) { /* ... updated to call handleInputChange ... */ }
-    function unlearnSkill(tier, index) { /* ... updated to call handleInputChange ... */ }
+    function levelUpSkill(tier, index) {
+      const skill = state.skillsByTier[tier][index];
+      const cost = skill.costPerLevel[skill.level || 0];
+      const nextLevel = (skill.level || 0) + 1;
+      if (nextLevel <= skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, nextLevel) <= tier) {
+        skill.level = nextLevel;
+        handleInputChange(); // Autosave
+        openSkillInfoModal(skill, tier, index); // Refresh modal
+      }
+    }
+
+    function delevelSkill(tier, index) {
+      const skill = state.skillsByTier[tier][index];
+      if (skill.level > 0) {
+        skill.level--;
+        handleInputChange(); // Autosave
+        openSkillInfoModal(skill, tier, index);
+      }
+    }
+
+    function unlearnSkill(tier, index) {
+      state.skillsByTier[tier][index] = null;
+      closeSkillInfoModal();
+      handleInputChange(); // Autosave
+    }
 
     // --- EVENT LISTENERS FOR SEARCH BARS ---
     document.getElementById('skill-search').addEventListener('input', renderSkillLibrary);
@@ -1497,7 +1582,7 @@ there character.) (hopefully with cool design and display features.)
       document.getElementById("derived-attack-result").textContent = `${attack} Attack`;
       document.getElementById("derived-defense-result").textContent = `${defense} Defense`;
     }
-    
+
     async function fetchLibrariesAndUpdate() {
       await fetchEquipmentLibrary();
       await fetchSkillLibrary();
