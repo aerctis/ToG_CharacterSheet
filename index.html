@@ -1,2185 +1,386 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Character Sheet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* --- CSS Variables for Easy Theming --- */
     :root {
-      --font-family: 'Poppins', sans-serif;
-      --bg-primary: #121212;
-      /* Darker background for contrast */
-      --bg-secondary: #2a2a40;
-      --bg-inset: #1f1f2f;
-      --text-primary: #e0e0e0;
-      --text-secondary: #a0a0c0;
-      --border-color: #4a4a6a;
-      --accent-primary: #555588;
-      --accent-hover: #6a6aac;
-      --accent-gold: #ffd700;
-      --danger-color: #b82a2a;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: var(--font-family);
-      font-size: 16px;
-    }
-
-    .container {
-      background-color: var(--bg-secondary);
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      max-width: 1400px;
-      margin: 40px auto;
-    }
-
-    h2,
-    h3 {
-      text-align: center;
-      color: white;
-      font-weight: 600;
-    }
-
-    h2 {
-      margin-bottom: 24px;
-    }
-
-    h3 {
-      margin-top: 40px;
-      margin-bottom: 16px;
-    }
-
-    /* --- NEW: Main Two-Column Layout --- */
-    .main-layout {
-      display: flex;
-      gap: 30px;
-    }
-
-    .left-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .right-column {
-      flex: 2;
-    }
-
-    .info-block,
-    .points-block,
-    .level-block,
-    .affinities-block {
-      background-color: var(--bg-inset);
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-
-    .auth-block {
-      padding: 20px 0;
-      text-align: center;
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .auth-block button {
-      margin: 0;
-    }
-
-    /* --- Backstory Section --- */
-    .backstory-section h4 {
-      margin-top: 30px;
-      margin-bottom: 10px;
-      color: var(--text-secondary);
-      font-size: 1.1em;
-      text-align: center;
-    }
-
-    #backstory-textarea {
-      width: 100%;
-      min-height: 250px;
-      resize: vertical;
-      background-color: var(--bg-inset);
-      border: 1px dashed var(--border-color);
-      padding: 15px;
-      font-size: 1em;
-      line-height: 1.6;
-    }
-
-    #backstory-textarea:focus {
-      min-height: 200px;
-      outline: none;
-      border-style: solid;
-      border-color: var(--accent-gold);
-    }
-
-    /* --- Form Elements & Buttons --- */
-    label {
-      font-weight: 600;
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      color: var(--text-secondary);
-      font-size: 0.9em;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 8px 10px;
-      width: 100%;
-      font-family: var(--font-family);
-      font-size: 1em;
-    }
-
-    input[readonly] {
-      background-color: #252535;
-    }
-
-    button {
-      background-color: var(--accent-primary);
-      cursor: pointer;
-      transition: background-color 0.2s;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 15px;
-      font-family: var(--font-family);
-      font-weight: 600;
-      font-size: 0.9em;
-    }
-
-    button:hover {
-      background-color: var(--accent-hover);
-    }
-
-    button:disabled {
-      background-color: #2a2a3a;
-      color: #777;
-      cursor: not-allowed;
-    }
-
-    button.btn-primary {
-      background-color: var(--accent-gold);
-      color: black;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    button.btn-primary:hover {
-      background-color: #fffac0;
-    }
-
-    /* --- Affinity Tags Styling --- */
-    .affinities {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 50 px;
-    }
-
-    .affinities div {
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
-      border-radius: 15px;
-      padding: 5px 12px;
-      position: relative;
-      cursor: default;
-      display: flex;
-      align-items: center;
-      transition: background-color 0.2s;
-    }
-
-    .affinities div:hover {
-      background-color: #40405a;
-    }
-
-    .remove-affinity {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background-color: var(--bg-inset);
-      color: var(--text-secondary);
-      font-size: 12px;
-      margin-left: 8px;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.2s, background-color 0.2s;
-    }
-
-    .affinities div:hover .remove-affinity {
-      opacity: 1;
-    }
-
-    .remove-affinity:hover {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    .affinity-controls {
-      display: flex;
-      gap: 10px;
-    }
-
-    .affinity-controls label {
-      margin: 0;
-      align-self: center;
-    }
-
-    .affinity-controls select {
-      flex-grow: 1;
-    }
-
-    /* --- Improved Stats Table --- */
-    .stats-skills-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      align-items: start;
-      margin-top: 30px;
-
-    }
-
-    .stats-table .remove-stat-btn {
-      margin-left: 8px;
-    }
-
-    .stats-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 1.1em;
-    }
-
-    .stats-table th,
-    .stats-table td {
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      text-align: center;
-    }
-
-    .stats-table th {
-      background-color: var(--bg-inset);
-      font-weight: 600;
-    }
-
-    .stats-table tbody tr:nth-child(even) {
-      background-color: var(--bg-inset);
-    }
-
-    .stat-breakdown {
-      font-size: 0.8em;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    .stat-capped {
-      color: var(--danger-color);
-      font-weight: 600;
-      animation: pulse-red 1.5s infinite;
-    }
-
-    @keyframes pulse-red {
-
-      0%,
-      100% {
-        text-shadow: 0 0 3px rgba(255, 50, 50, 0.5);
-      }
-
-      50% {
-        text-shadow: 0 0 10px rgba(255, 50, 50, 1);
-      }
-    }
-
-    .stat-flash-error {
-      animation: flash-red-bg 0.5s ease-out;
-    }
-
-    @keyframes flash-red-bg {
-      from {
-        background-color: rgba(184, 42, 42, 0.5);
-      }
-
-      to {
-        background-color: transparent;
-      }
-    }
-
-    #hp-speed {
-      flex: 1;
-      margin-top: 0;
-      padding: 10px 15px;
-      /* Shrunk vertically */
-      line-height: 1.5;
-    }
-
-    /* --- HP, Speed, Hit Dice Display --- */
-    #hp-speed {
-      flex: 1;
-      margin-top: 0;
-      padding: 10px 15px;
-      line-height: 1.5;
-    }
-
-    #hp-speed .accent-label {
-      color: var(--accent-gold);
-    }
-
-    #hit-dice .accent-label {
-      color: var(--accent-gold);
-    }
-
-    /* --- Equipment Section --- */
-    .equipment-section {
-      background-color: var(--bg-inset);
-      padding: 20px;
-      border-radius: 8px;
-      width: 100%;
-    }
-
-    .equipment-layout {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .equipment-main-group,
-    .equipment-extra-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .equipment-extra-group {
-      display: none;
-      /* Hidden by default */
-    }
-
-    .equipment-row {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      /* Increased vertical gap */
-      justify-content: center;
-    }
-
-    .equipment-core {
-      position: relative;
-
-    }
-
-    .equipment-slots-row {
-      display: flex;
-      gap: 14px;
-    }
-
-    .accessory-row {
-      justify-content: center;
-      /* This centers the accessory slots */
-    }
-
-    .derived-stats-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .derived-stat {
-      background-color: var(--bg-inset);
-      border-radius: 8px;
-      padding: 10px 15px;
-      position: absolute;
-      font-size: 1.2em;
-      font-weight: 600;
-      text-align: center;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      left: -200px
-    }
-
-    .attack-stat {
-      top: 25%;
-      /* Position Attack high */
-      transform: translateY(-50%);
-    }
-
-    .defense-stat {
-      top: 75%;
-      /* Position Defense low */
-      transform: translateY(-50%);
-    }
-
-
-   
-    .slot:hover {
-      background-color: #3a3a3a;
-    }
-
-    .slot img.item-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    .slot .change-item-icon:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .selected-weapon {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 8px var(--accent-gold);
-    }
-
-    .slot {
-      width: 130px;
-      height: 130px;
-      background-color: #2a2a2a;
-      border: 2px dashed #555;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: background-color .2s, border-color .2s;
-    }
-
-    .slot:hover {
-      background-color: #3a3a3a;
-    }
-
-    .slot img.item-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    .slot .change-item-icon {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      width: 24px;
-      height: 24px;
-      background-color: rgba(0, 0, 0, .6);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      cursor: pointer;
-      border: 1px solid #888;
-      transition: background-color .2s;
-      font-size: 14px;
-    }
-
-    /* --- Modals --- */
-    .modal-backdrop {
-      position: fixed;
-      top: 5%;
-      left: 5%;
-      width: 90%;
-      height: 90%;
-      background-color: var(--bg-primary);
-      border: 2px solid #555;
-      border-radius: 8px;
-      z-index: 999;
-      display: none;
-      flex-direction: column;
-      padding: 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
-
-    .modal-backdrop.active {
-      display: flex;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      flex-shrink: 0;
-    }
-
-    .modal-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-    }
-
-    /* --- NEW: Special Items Modal --- */
-    .special-item {
-      background-color: var(--bg-secondary);
-      padding: 15px;
-      border-radius: 6px;
-      border-left: 3px solid var(--accent-primary);
-      margin-bottom: 10px;
-    }
-
-    .special-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      font-size: 1.1em;
-    }
-
-    .special-item-desc {
-      margin-top: 5px;
-      color: var(--text-secondary);
-      white-space: pre-wrap;
-      /* Preserves line breaks */
-    }
-
-    #special-items-list {
-      max-height: 60vh;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
-
-    .add-item-form {
-      margin-top: 20px;
-      border-top: 1px solid var(--border-color);
-      padding-top: 20px;
-    }
-
-    /* --- Library Search Bar --- */
-    .library-search {
-      width: 100%;
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 10px;
-      margin-bottom: 20px;
-      font-size: 1em;
-    }
-
-    /* --- Library Item/Skill Cards --- */
-    .item-card,
-    .skill-card {
-      background-color: #2a2a2a;
-      border: 1px solid #444;
-      border-radius: 6px;
-      padding: 12px;
-      cursor: pointer;
-      transition: background-color .2s;
-      text-align: center;
-      position: relative;
-    }
-
-    .item-card:hover,
-    .skill-card:hover {
-      background-color: #333;
-    }
-
-    .item-card img {
-      width: 100%;
-      height: 100px;
-      object-fit: contain;
-      margin-bottom: 8px;
-    }
-
-    .item-card .item-name {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .item-card.undiscovered {
-      filter: grayscale(1) brightness(.6);
-      cursor: not-allowed;
-    }
-
-    .card-button {
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      width: 24px;
-      height: 24px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      border: 1px solid #888;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-      z-index: 2;
-    }
-
-    .card-button:hover {
-      background-color: var(--accent-primary);
-    }
-
-    .card-button.owned {
-      color: var(--accent-gold);
-    }
-
-    .card-button.discover-btn {
-      background-color: var(--danger-color);
-    }
-
-    /* --- SKILLS Section --- */
-    .skill-section {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: var(--bg-inset);
-      border-radius: 8px;
-    }
-
-    .tier-section {
-      margin-bottom: 15px;
-      border-top: 1px solid #444;
-      padding-top: 10px;
-    }
-
-    .tier-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .skill-slots {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .skill-slot {
-      width: 96px;
-      height: 96px;
-      border: 2px dashed #555;
-      background-color: #2c2c2c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color .2s;
-      position: relative;
-    }
-
-    .skill-slot:hover {
-      background-color: #3a3a3a;
-    }
-
-    .skill-slot img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-
-    .skill-slot.empty::after {
-      content: '+';
-      color: #aaa;
-      font-size: 48px;
-      position: absolute;
-    }
-
-    .skill-slot .skill-level-badge {
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background: rgba(0, 0, 0, 0.7);
-      color: var(--accent-gold);
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 4px;
-      padding: 2px 5px;
-    }
-
-    .info-icon {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-      z-index: 2;
-      fill: white;
-      transition: fill 0.2s;
-    }
-
-    .info-icon:hover {
-      fill: var(--accent-gold);
-    }
-
-    .skill-card {
-      padding: 12px;
-    }
-
-    .skill-card .skill-name {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .skill-card .skill-description {
-      font-size: 12px;
-      color: #aaa;
-    }
-
-    /* --- Skill Info Modal --- */
-    #skill-info-modal-content {
-      display: flex;
-      gap: 20px;
-    }
-
-    #skill-info-modal .left-panel {
-      flex: 1;
-    }
-
-    #skill-info-modal .right-panel {
-      flex: 2;
-      overflow-y: auto;
-      max-height: 70vh;
-    }
-
-    #skill-info-modal img {
-      max-width: 150px;
-      margin: 0 auto;
-      display: block;
-      border-radius: 8px;
-    }
-
-    #skill-info-modal .level-up-controls {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid #555;
-    }
-
-    .level-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 1em;
-    }
-
-    .level-table th,
-    .level-table td {
-      border: 1px solid #444;
-      padding: 8px;
-      text-align: left;
-    }
-
-    .level-table th {
-      background-color: #3a3a55;
-    }
-
-    .level-table .current-level-row {
-      background-color: #50507a;
-      font-weight: bold;
-    }
-
-    /* --- Other --- */
-    .top-stats-bar {
-      display: flex;
-      flex-direction: column;
-      /* Stack the rows vertically */
-      gap: 10px;
-      margin-bottom: 20px;
-      background-color: var(--bg-inset);
-      border-radius: 8px;
-      padding: 15px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    #hp-speed,
-    .derived-stats-container {
-      display: flex;
-      justify-content: space-around;
-      /* Space out the items in each row */
-      align-items: center;
-      width: 100%;
-    }
-
-    .derived-stat {
-      font-size: 1.2em;
-    }
-
-    /* Remove old individual styling */
-    #hp-speed {
-      padding: 0;
-      margin: 0;
-      background-color: transparent;
-      border-radius: 0;
-      line-height: 1.2;
-    }
-
-    #hp-speed .accent-label,
-    .derived-stat .accent-label {
-      color: var(--accent-gold);
-    }
-
-    #hit-dice {
-      font-weight: 600;
-    }
-
-    select:focus {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-    }
-
-    button:active {
-      animation: button-flash 0.2s ease-out;
-    }
-
-    @keyframes button-flash {
-      0% {
-        box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
-      }
-
-      100% {
-        box-shadow: 0 0 10px 10px rgba(255, 215, 0, 0);
-      }
-    }
-
-    /* --- Print Styles --- */
-    @media print {
-      body {
-        background-color: white;
-        color: black;
-        font-size: 10pt;
-      }
-
-      .container {
-        box-shadow: none;
-        border: 1px solid #ccc;
-      }
-
-      h2,
-      h3 {
-        color: black;
-      }
-
-      .character-header-grid,
-      .auth-block,
-      .level-block button,
-      .info-block,
-      .points-block,
-      .level-block,
-      .affinities-block,
-      .equipment-section,
-      .skill-section,
-      .modal-backdrop,
-      .slot .change-item-icon,
-      .info-icon,
-      .stats-table button,
-      .tier-header button {
-        display: none;
-      }
-
-      .stats-table {
-        font-size: 1em;
-      }
-
-      .stats-table td,
-      .stats-table th {
-        padding: 5px;
-      }
-
-      .stat-breakdown {
-        display: none;
-      }
-
-      .container {
-        padding: 0;
-      }
-    }
+      --font-family: 'Inter', sans-serif;
+      --bg-primary: #111827; --bg-secondary: #1F2937; --bg-tertiary: #374151;
+      --border-color: #4B5563; --text-primary: #F9FAFB; --text-secondary: #D1D5DB;
+      --accent-primary: #3B82F6; --accent-hover: #60A5FA; --accent-gold: #F59E0B;
+      --danger-color: #EF4444; --success-color: #22C55E; --border-radius: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-family); font-size: 16px; line-height: 1.6; }
+    .container { max-width: 1800px; margin: 2rem auto; padding: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: min-content; gap: 2rem; }
+    .header { grid-column: 1 / -1; text-align: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+    .main-widgets-wrapper { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; gap: 2rem; align-items: start; }
+    .col-1, .col-2, .col-3 { display: flex; flex-direction: column; gap: 2rem; }
+    .widget { background-color: var(--bg-secondary); border-radius: var(--border-radius); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
+    .widget h3 { color: var(--text-primary); font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+    label { font-weight: 600; display: block; margin-top: 0.75rem; margin-bottom: 0.25rem; color: var(--text-secondary); font-size: 0.9em; }
+    input, select, textarea { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem 0.75rem; width: 100%; font-family: var(--font-family); font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+    input[readonly] { background-color: #2a2a3a; cursor: not-allowed; }
+    button { background-color: var(--accent-primary); cursor: pointer; transition: background-color 0.2s, transform 0.1s; color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-family: var(--font-family); font-weight: 600; font-size: 0.9em; }
+    button:hover { background-color: var(--accent-hover); }
+    button:active { transform: translateY(1px); }
+    button:disabled { background-color: var(--bg-tertiary); color: #9CA3AF; cursor: not-allowed; }
+    button.btn-gold { background-color: var(--accent-gold); color: var(--bg-primary); }
+    button.btn-danger { background-color: var(--danger-color); }
+    .auth-block { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    #user-info { margin-left: auto; font-size: 0.9em; color: var(--text-secondary); }
+    .top-stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; text-align: center; }
+    .top-stat { background-color: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--border-radius); }
+    .top-stat .label { font-size: 0.8em; color: var(--text-secondary); display: block; }
+    .top-stat .value { font-size: 1.5em; font-weight: 700; color: var(--accent-gold); }
+    .affinities-container { display: flex; flex-direction: column; gap: 1rem; }
+    .affinity-group { display: flex; align-items: center; gap: 1rem; }
+    .affinity-group label { margin: 0; flex-shrink: 0; }
+    .affinity-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .affinity-tags div { background-color: var(--bg-tertiary); color: var(--text-primary); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.9em; display: flex; align-items: center; gap: 0.5rem; }
+    .remove-affinity { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; }
+    .remove-affinity:hover { color: var(--danger-color); }
+    .equipment-grid { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .equipment-column { display: flex; flex-direction: column; gap: 1rem; }
+    .slot { width: 100px; height: 100px; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
+    .slot:hover { background-color: var(--bg-tertiary); border-color: var(--accent-hover); }
+    .slot.selected-weapon { border-color: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
+    .slot img.item-image { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+    .slot .change-item-icon { position: absolute; bottom: 5px; right: 5px; width: 24px; height: 24px; background-color: rgba(0, 0, 0, .6); border: 1px solid var(--border-color); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: background-color .2s; font-size: 14px; }
+    .slot .change-item-icon:hover { background-color: var(--accent-hover); }
+    .stats-table { width: 100%; border-collapse: collapse; font-size: 1em; }
+    .stats-table th, .stats-table td { border-bottom: 1px solid var(--border-color); padding: 0.75rem; text-align: left; }
+    .stats-table th { background-color: var(--bg-tertiary); font-weight: 600; }
+    .stats-table td:nth-child(2) { text-align: center; font-weight: bold; font-size: 1.1em;}
+    .stats-table td:last-child { text-align: right; }
+    .stats-table button { margin-left: 0.25rem; padding: 0.2rem 0.6rem; }
+    .stat-breakdown { font-size: 0.8em; color: var(--text-secondary); font-weight: 400; }
+    .stat-capped { color: var(--danger-color) !important; animation: pulse-red 1.5s infinite; }
+    @keyframes pulse-red { 0%, 100% { text-shadow: 0 0 3px rgba(239, 68, 68, 0.5); } 50% { text-shadow: 0 0 10px rgba(239, 68, 68, 1); } }
+    .stat-flash-error { animation: flash-red-bg 0.5s ease-out; }
+    @keyframes flash-red-bg { from { background-color: rgba(239, 68, 68, 0.3); } to { background-color: transparent; } }
+    .tier-section { margin-bottom: 1.5rem; }
+    .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; }
+    .skill-slot { width: 80px; height: 80px; border: 2px dashed var(--border-color); background-color: var(--bg-primary); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius); cursor: pointer; transition: background-color .2s; position: relative; }
+    .skill-slot:hover { background-color: var(--bg-tertiary); }
+    .skill-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+    .skill-slot.empty::after { content: '+'; color: var(--text-secondary); font-size: 48px; position: absolute; }
+    .skill-slot .skill-level-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0, 0, 0, 0.7); color: var(--accent-gold); font-size: 14px; font-weight: bold; border-radius: 4px; padding: 2px 5px; }
+    #backstory-textarea { width: 100%; min-height: 250px; resize: vertical; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 999; display: none; align-items: center; justify-content: center; padding: 2rem; }
+    .modal-backdrop.active { display: flex; }
+    .modal-content { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 2rem; width: 100%; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .modal-body { overflow-y: auto; padding-right: 1rem; }
+    .library-search { margin-bottom: 1.5rem; }
+    .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+    .item-card, .skill-card, .shop-item, .admin-shop-item { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1rem; cursor: pointer; transition: background-color .2s, transform 0.2s; text-align: center; position: relative; }
+    .item-card:hover, .skill-card:hover, .shop-item:hover, .admin-shop-item:hover { background-color: #4B5563; transform: translateY(-2px); }
+    .item-card img, .shop-item img, .admin-shop-item img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 0.5rem; }
+    .item-card .item-name, .skill-card .skill-name { font-weight: bold; }
+    #notification-toast { position: fixed; top: 20px; right: 20px; background-color: var(--accent-primary); color: white; padding: 1rem 1.5rem; border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; }
+    #notification-toast.show { opacity: 1; transform: translateY(0); }
+    #notification-toast.danger { background-color: var(--danger-color); }
+    #notification-toast.success { background-color: var(--success-color); }
+    #confirmation-modal .modal-content { max-width: 400px; }
+    #confirmation-modal .modal-body { margin-bottom: 1.5rem; }
+    #confirmation-modal .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; }
+    @media (max-width: 1200px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr; } .container { padding: 1rem; } }
   </style>
-
 </head>
 
 <body>
-  <div class="container">
-    <h2>Character Sheet</h2>
-<!-- test -->
-    <div class="main-layout">
-      <div class="left-column">
-        <div class="info-block">
-          <h4>Identity</h4>
-          <label>Name</label><input type="text" id="char-name" oninput="handleInputChange()">
-          <label>Race</label><input type="text" id="char-race" oninput="handleInputChange()">
-          <label>Position</label>
-          <select id="char-position" onchange="handleInputChange()">
-            <option value="Guide">Guide</option>
-            <option value="Fisherman">Fisherman</option>
-            <option value="Spear Bearer">Spear Bearer</option>
-            <option value="Wave Controller">Wave Controller</option>
-            <option value="Light Bearer">Light Bearer</option>
-            <option value="Anima">Anima</option>
-          </select>
-        </div>
-        <div class="level-block">
-          <h4>Progression</h4>
-          <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
-          <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
-          <button onclick="levelUp()" class="btn-primary">Level Up</button>
-          <button onclick="addSkillPoint()" style="width: 100%; margin-top: 10px;">+1 Skill Point</button>
-        </div>
-        <div class="points-block">
-          <h4>Resources</h4>
-          <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
-          <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
-            oninput="handleInputChange()">
-        </div>
-      </div>
-      <div class="proficiencies-block">
-        <h4>Proficiencies</h4>
-        <div id="category-proficiencies-list"></div>
-        <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
-      </div>
+    <div class="container">
+        <header class="header">
+            <h2>Character Sheet</h2>
+        </header>
 
-
-    </div>
-    <div class="right-column">
-
-      <div class="top-stats-bar">
-        <div id="hp-speed"></div>
-        <div class="derived-stats-container">
-          <div class="derived-stat" id="derived-attack-display"></div>
-          <div class="derived-stat" id="derived-defense-display"></div>
-        </div>
-      </div>
-
-      <div class="auth-block">
-        <button onclick="signInWithGoogle()">Sign In</button>
-        <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-        <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
-        <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
-        <button onclick="openSpecialItemsModal()">Special Items</button>
-        <button onclick="resetCharacter()">Reset</button>
-        <span id="user-info"></span>
-      </div>
-
-      <div class="affinities-block">
-        <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
-        <div class="affinities" id="primary-affinities"></div>
-        <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
-            id="add-secondary"></select></div>
-        <div class="affinities" id="secondary-affinities"></div>
-        <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
-            id="add-tertiary"></select></div>
-        <div class="affinities" id="tertiary-affinities"></div>
-      </div>
-
-      <div class="equipment-section">
-        <h3>Equipment</h3>
-        <div class="equipment-grid">
-          <div class="equipment-core">
-            <div class="equipment-row">
-              <div class="equipment-slots-row">
-                <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-                <div class="slot" id="armor-slot" title="Armor"></div>
-                <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-              </div>
-              <div class="equipment-slots-row accessory-row">
-                <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-                <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-              </div>
+        <div class="main-widgets-wrapper">
+            <div class="col-1">
+                <div class="widget">
+                    <h3>Identity</h3>
+                    <label for="char-name">Name</label><input type="text" id="char-name" oninput="handleInputChange()">
+                    <label for="char-race">Race</label><input type="text" id="char-race" oninput="handleInputChange()">
+                    <label for="char-position">Position</label>
+                    <select id="char-position" onchange="handleInputChange()">
+                        <option value="Guide">Guide</option><option value="Fisherman">Fisherman</option><option value="Spear Bearer">Spear Bearer</option>
+                        <option value="Wave Controller">Wave Controller</option><option value="Light Bearer">Light Bearer</option><option value="Anima">Anima</option>
+                    </select>
+                </div>
+                <div class="widget">
+                    <h3>Progression</h3>
+                    <label for="char-level">Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
+                    <button onclick="levelUp()" class="btn-gold" style="width: 100%; margin-top: 1rem;">Level Up</button>
+                    <label for="char-floor">Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
+                </div>
             </div>
-          </div>
-          <div id="light-bearer-slots">
-            <div class="equipment-row">
-              <div class="equipment-slots-row">
-                <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
-                <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
-              </div>
+            <div class="col-2">
+                <div class="widget">
+                    <h3>Resources</h3>
+                    <label for="available-stat-points">Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
+                    <label for="available-skill-points">Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+                    <button onclick="addSkillPoint()" style="width: 100%; margin-top: 1rem;">+1 Bonus Skill Point</button>
+                    <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5" oninput="handleInputChange()">
+                </div>
+                <div class="widget">
+                    <h3>Proficiencies</h3>
+                    <div id="category-proficiencies-list" class="affinity-tags"></div>
+                    <button onclick="openProficiencyModal()" style="width:100%; margin-top: 1rem;">Manage</button>
+                </div>
+                <div class="widget auth-block">
+                    <button onclick="signInWithGoogle()">Sign In</button><button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+                    <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button><button onclick="openSpecialItemsModal()">Special Items</button>
+                    <button onclick="resetCharacter()" class="btn-danger">Reset</button><button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin</button>
+                    <span id="user-info"></span>
+                </div>
             </div>
-          </div>
+            <div class="col-3">
+                 <div class="widget top-stats-bar" id="top-stats-bar"></div>
+                 <div class="widget affinities-container">
+                    <h3>Affinities</h3>
+                    <div class="affinity-group"><label for="add-primary">Primary</label><select id="add-primary"></select></div><div class="affinity-tags" id="primary-affinities"></div>
+                    <div class="affinity-group"><label for="add-secondary">Secondary</label><select id="add-secondary"></select></div><div class="affinity-tags" id="secondary-affinities"></div>
+                    <div class="affinity-group"><label for="add-tertiary">Tertiary</label><select id="add-tertiary"></select></div><div class="affinity-tags" id="tertiary-affinities"></div>
+                </div>
+                <div class="widget">
+                    <h3>Equipment</h3>
+                    <div class="equipment-grid">
+                        <div class="equipment-column"><div class="slot" id="accessory1-slot" title="Accessory 1"></div><div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div></div>
+                        <div class="equipment-column"><div class="slot" id="armor-slot" title="Armor"></div></div>
+                        <div class="equipment-column"><div class="slot" id="accessory2-slot" title="Accessory 2"></div><div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div></div>
+                        <div class="equipment-column" id="light-bearer-slots" style="display:none;"><div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div><div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-      </div>
+        <div class="widget" style="grid-column: 1 / -1;">
+            <h3>Stats</h3>
+            <table class="stats-table" id="stats-table">
+                <thead><tr><th>Stat</th><th>Value</th><th>+/-</th></tr></thead>
+                <tbody id="stats-body"></tbody>
+            </table>
+        </div>
+        <div class="widget" style="grid-column: 1 / -1;">
+            <div class="skill-section" id="skill-section"></div>
+        </div>
+        <div class="widget" style="grid-column: 1 / -1;">
+            <h3>Backstory & Notes</h3>
+            <textarea id="backstory-textarea" placeholder="Type your character's story here..." oninput="handleInputChange()"></textarea>
+        </div>
     </div>
 
-    <div class="stats-skills-grid">
-      <div>
-        <h3>Stats</h3>
-        <table class="stats-table" id="stats-table">
-          <thead>
-            <tr>
-              <th>Stat</th>
-              <th>Value</th>
-              <th>+/-</th>
-            </tr>
-          </thead>
-          <tbody id="stats-body"></tbody>
-        </table>
-      </div>
-      <div>
-        <div class="skill-section" id="skill-section"></div>
-      </div>
-    </div>
+    <!-- Modals & UI overlays -->
+    <div id="notification-toast"></div>
+    <div id="confirmation-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Confirm Action</h3></div><div class="modal-body" id="confirmation-message"></div><div class="modal-footer"><button id="confirm-btn-no">Cancel</button><button id="confirm-btn-yes" class="btn-danger">Confirm</button></div></div></div>
+    <div id="item-info-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="item-info-title">Item Details</h3><button onclick="closeModal('item-info-modal')">Close</button></div><div class="modal-body" id="item-info-modal-content"></div></div></div>
+    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="skill-library-title">Skill Library</h3><button onclick="closeSkillLibrary()">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
+    <div id="equipment-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="equipment-modal-title">Equipment Library</h3><button onclick="closeEquipmentModal()">Close</button></div><div class="modal-body"><input type="text" id="equipment-search" class="library-search" placeholder="Search equipment..."><div class="modal-grid" id="equipment-library-grid"></div></div></div></div>
+    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="skill-info-title">Skill Details</h3><button onclick="closeSkillInfoModal()">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
+    <div id="special-items-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Special Items</h3><button onclick="closeSpecialItemsModal()">Close</button></div><div class="modal-body"><div id="special-items-list"></div><div class="add-item-form" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;"><h4>Add New Item</h4><label for="new-item-name">Item Name</label><input type="text" id="new-item-name" placeholder="E.g., Black March"><label for="new-item-desc">Description</label><textarea id="new-item-desc" placeholder="Details about the item..."></textarea><button onclick="addSpecialItem()" style="margin-top: 1rem;">Add Item</button></div></div></div></div>
+    <div id="shop-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Shop</h3><button onclick="closeShopModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="shop-grid"></div></div></div></div>
+    <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeAdminPanel()">Close</button></div><div class="modal-body"><button id="shop-status-btn" onclick="toggleShopStatus()" style="margin-bottom: 1rem;">Toggle Shop</button><div class="modal-grid" id="admin-shop-grid"></div></div></div></div>
+    <div id="proficiency-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Manage Proficiencies</h3><button onclick="closeProficiencyModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="proficiency-grid"></div></div></div></div>
 
-    <div class="backstory-section">
-      <h4>Backstory & Notes</h4>
-      <textarea id="backstory-textarea" placeholder="Type your character's story here..."
-        oninput="handleInputChange()"></textarea>
-    </div>
-
-
-    <div id="shop-modal" class="modal-backdrop">...</div>
-    <div id="admin-panel-modal" class="modal-backdrop">...</div>
-    <div id="proficiency-modal" class="modal-backdrop">...</div>
-
-
-
-    <div id="skill-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-library-title">Skill Library</h3>
-        <button onclick="closeSkillLibrary()">Close</button>
-      </div>
-      <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
-      <div class="modal-grid" id="skill-library-grid"></div>
-    </div>
-    <div id="equipment-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="equipment-modal-title">Equipment Library</h3>
-        <button onclick="closeEquipmentModal()">Close</button>
-      </div>
-      <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
-      <div class="modal-grid" id="equipment-library-grid"></div>
-    </div>
-    <div id="skill-info-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-info-title">Skill Details</h3>
-        <button onclick="closeSkillInfoModal()">Close</button>
-      </div>
-      <div id="skill-info-modal-content"></div>
-    </div>
-    <div id="tooltip"></div>
-
-    <div id="special-items-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3>Special Items</h3>
-        <button onclick="closeSpecialItemsModal()">Close</button>
-      </div>
-      <div id="special-items-list">
-      </div>
-      <div class="add-item-form">
-        <h4>Add New Item</h4>
-        <label>Item Name</label>
-        <input type="text" id="new-item-name" placeholder="E.g., Black March">
-        <label>Description</label>
-        <textarea id="new-item-desc" placeholder="Details about the item..."
-          style="min-height: 80px; resize: vertical;"></textarea>
-        <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
-      </div>
-    </div>
-
-  </div>
-  <div id="tooltip"></div>
-  </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
   <script>
-
-    // --- ADMIN CONFIG ---
     const ADMIN_UID = "5pNCkPPJblRfKPvTofqa4kwENJQ2";
-
-    // --- FIREBASE SETUP ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyCr08RHyYpKBy3omDUtSmYYr3KkXxx30E4",
-      authDomain: "tog-charactersheet.firebaseapp.com",
-      projectId: "tog-charactersheet",
-      storageBucket: "tog-charactersheet.firebasestorage.app",
-      messagingSenderId: "915406998560",
-      appId: "1:915406998560:web:4edbb2e3deb9d70c0a4045",
-      measurementId: "G-ZMQF30F2FC"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyCr08RHyYpKBy3omDUtSmYYr3KkXxx30E4", authDomain: "tog-charactersheet.firebaseapp.com", projectId: "tog-charactersheet", storageBucket: "tog-charactersheet.appspot.com", messagingSenderId: "915406998560", appId: "1:915406998560:web:4edbb2e3deb9d70c0a4045", measurementId: "G-ZMQF30F2FC" };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // --- GLOBAL STATE ---
     const stats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
-    const state = {
-      isDirty: false,
-      saveTimeout: null,
-      ownedItems: [],
-      backstory: "",
-      specialItems: [],
-      ownedItems: [],
-      statValues: {},
-      manualStatPoints: {},
-      skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
-      skillBonuses: {},
-      currentSkillEdit: { tier: null, index: null },
-      skillLibrary: [],
-      equipmentLibrary: [],
-      currentEquipmentEdit: null,
-      availableStatPoints: 0,
-      availableSkillPoints: 0,
-      bonusSkillPoints: 0,
-      usedSkillPoints: 0,
-      affinities: { primary: [], secondary: [], tertiary: [] },
-      equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null },
-      selectedWeaponSlot: null,
-      currency: 0,
-      proficientSkills: [],
-      proficientCategories: [],
+    const state = { isDirty: false, saveTimeout: null, backstory: "", specialItems: [], ownedItems: [], statValues: {}, manualStatPoints: {}, skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] }, skillBonuses: {}, currentSkillEdit: { tier: null, index: null }, skillLibrary: [], equipmentLibrary: [], currentEquipmentEdit: null, availableStatPoints: 0, availableSkillPoints: 0, bonusSkillPoints: 0, usedSkillPoints: 0, affinities: { primary: [], secondary: [], tertiary: [] }, equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null }, selectedWeaponSlot: null, currency: 0, proficientSkills: [], proficientCategories: [] };
 
-    };
+    function showNotification(message, type = 'info', duration = 3000) { const t = document.getElementById('notification-toast'); t.textContent = message; t.className = 'show'; if (type === 'danger') t.classList.add('danger'); if (type === 'success') t.classList.add('success'); setTimeout(() => t.classList.remove('show'), duration); }
+    function showConfirmation(message, onConfirm) { const m = document.getElementById('confirmation-modal'); document.getElementById('confirmation-message').textContent = message; m.classList.add('active'); const c = document.getElementById('confirm-btn-yes'), n = document.getElementById('confirm-btn-no'); const close = () => { m.classList.remove('active'); c.replaceWith(c.cloneNode(true)); n.replaceWith(n.cloneNode(true)); }; document.getElementById('confirm-btn-yes').addEventListener('click', () => { onConfirm(); close(); }); document.getElementById('confirm-btn-no').addEventListener('click', close); }
 
-    // --- AUTOSAVE SYSTEM ---
-    function queueAutoSave() {
-      state.isDirty = true;
-      clearTimeout(state.saveTimeout); // Clear previous timeout
-      state.saveTimeout = setTimeout(() => {
-        if (state.isDirty) {
-          saveCharacter();
-          state.isDirty = false;
-        }
-      }, 2000); // Save 2 seconds after the last change
-    }
+    function queueAutoSave() { state.isDirty = true; clearTimeout(state.saveTimeout); state.saveTimeout = setTimeout(() => { if (state.isDirty) { saveCharacter(); state.isDirty = false; } }, 2000); }
+    function handleInputChange() { recalculateAndRenderAll(); queueAutoSave(); }
 
-    function handleInputChange() {
-      updateFromTextbox();
-      queueAutoSave();
-    }
-
-    // --- AUTH & DATA MANAGEMENT ---
-    function signInWithGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .catch(error => console.error("Login error", error));
-    }
-
-    function signOut() {
-      auth.signOut();
-    }
+    function signInWithGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => console.error("Login error", e)); }
+    function signOut() { auth.signOut(); }
 
     auth.onAuthStateChanged(user => {
+      const a = document.getElementById('admin-btn');
       if (user) {
-        document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
-        document.getElementById("logoutBtn").style.display = 'inline-block';
-        document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
-        document.getElementById('admin-btn').style.display = user.uid === ADMIN_UID ? 'inline-block' : 'none';
-        listenToGameSettings();
-        loadCharacter();
+        document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`; document.getElementById("logoutBtn").style.display = 'inline-block';
+        document.querySelectorAll("input, select, button").forEach(el => el.disabled = false); a.style.display = user.uid === ADMIN_UID ? 'inline-block' : 'none';
+        listenToGameSettings(); loadCharacter();
       } else {
-        document.getElementById("user-info").textContent = "Logged out.";
-        document.getElementById("logoutBtn").style.display = 'none';
-        document.querySelectorAll("input, select, button").forEach(el => {
-          if (el.textContent !== "Sign In with Google") el.disabled = true;
-        });
-        if (adminBtn) adminBtn.style.display = 'none';
-        if (settingsListener) settingsListener();
-        initializeState();
-        updateFromTextbox();
+        document.getElementById("user-info").textContent = "Logged out."; document.getElementById("logoutBtn").style.display = 'none';
+        document.querySelectorAll("input, select, button").forEach(el => { if (el.textContent !== "Sign In") el.disabled = true; });
+        if (a) a.style.display = 'none'; if (settingsListener) settingsListener(); initializeState(); recalculateAndRenderAll();
       }
     });
 
-    function saveCharacter() {
-      const user = auth.currentUser;
-      if (!user) return;
-      console.log("Autosaving character...", new Date().toLocaleTimeString());
-      db.collection("characters").doc(user.uid).set(getCurrentCharacterData())
-        .catch(err => console.error("Save failed:", err));
-    }
-
+    function saveCharacter() { const u = auth.currentUser; if (!u) return; console.log("Autosaving character...", new Date().toLocaleTimeString()); db.collection("characters").doc(u.uid).set(getCurrentCharacterData()).then(() => showNotification('Character saved!', 'success')).catch(e => { console.error("Save failed:", e); showNotification('Save failed!', 'danger'); }); }
     function loadCharacter() {
       const user = auth.currentUser;
-      if (user) {
-        db.collection("characters").doc(user.uid).get().then(doc => {
-          if (doc.exists) {
-            const data = doc.data();
-            document.getElementById("char-name").value = data.name || "";
-            document.getElementById("char-race").value = data.race || "";
-            document.getElementById("char-level").value = data.level || 1;
-            document.getElementById("char-floor").value = data.floor || 1;
-            document.getElementById("char-position").value = data.position || "Guide";
-            state.affinities = data.affinities || { primary: [], secondary: [], tertiary: [] };
-            state.skillsByTier = data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] };
-            state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
-            state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
-            state.selectedWeaponSlot = data.selectedWeaponSlot || null;
-            state.ownedItems = data.ownedItems || [];
-            state.backstory = data.backstory || "";
-            state.specialItems = data.specialItems || [];
-            document.getElementById('backstory-textarea').value = state.backstory;
-          } else {
-            initializeState();
-          }
-          fetchLibrariesAndUpdate();
-        }).catch(err => console.error("Load failed:", err));
-      }
+      if (!user) return;
+      db.collection("characters").doc(user.uid).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("char-name").value = data.name || ""; document.getElementById("char-race").value = data.race || "";
+          document.getElementById("char-level").value = data.level || 1; document.getElementById("char-floor").value = data.floor || 1;
+          document.getElementById("char-position").value = data.position || "Guide"; document.getElementById('backstory-textarea').value = data.backstory || "";
+          Object.assign(state, { affinities: data.affinities || {p:[],s:[],t:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || {w1:null,w2:null,a:null,ac1:null,ac2:null,l1:null,l2:null}, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
+        } else { initializeState(); }
+        fetchLibrariesAndUpdate();
+      }).catch(err => console.error("Load failed:", err));
     }
+    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
+    function resetCharacter() { showConfirmation("Are you sure? This will permanently delete this character.", () => { const u = auth.currentUser; if (u) { db.collection("characters").doc(u.uid).delete().then(() => location.reload()).catch(e => console.error("Delete failed:", e)); } }); }
 
-    function getCurrentCharacterData() {
-      return {
-        name: document.getElementById("char-name").value,
-        race: document.getElementById("char-race").value,
-        position: document.getElementById("char-position").value,
-        level: document.getElementById("char-level").value,
-        floor: document.getElementById("char-floor").value,
-        statMultiplier: document.getElementById("stat-multiplier").value,
-        affinities: state.affinities,
-        manualAdds: state.manualStatPoints,
-        skillsByTier: state.skillsByTier,
-        equipment: state.equipment,
-        selectedWeaponSlot: state.selectedWeaponSlot,
-        ownedItems: state.ownedItems,
-        backstory: document.getElementById('backstory-textarea').value,
-        specialItems: state.specialItems
-      };
-    }
-
-    // --- CORE RENDER ORCHESTRATOR ---
-    function updateFromTextbox() {
-      const level = parseInt(document.getElementById("char-level").value) || 1;
-
-      // Step 1: Calculate base stats from level, position, and affinities.
-      calculateBaseStats();
-
-      // Step 2: Apply all passive skill effects
-      applyAllSkillEffects();
-
-      // Step 3: Calculate used/available skill and stat points
-      const totalAllocatedStatPoints = Object.values(state.manualStatPoints).reduce((sum, val) => sum + val, 0);
-      state.availableStatPoints = (level - 1) - totalAllocatedStatPoints;
-      calculateUsedSkillPoints();
-      state.availableSkillPoints = (level - 1) - state.usedSkillPoints + state.bonusSkillPoints;
-
-      // Step 4: Render all UI components with the new data
-      renderAll();
-    }
-
-    function renderAll() {
-      document.getElementById("available-stat-points").value = state.availableStatPoints;
-      document.getElementById("available-skill-points").value = state.availableSkillPoints;
-      renderAffinityControls();
-      renderStats();
-      renderEquipment();
-      renderSkillTiers();
-      renderTopBarStats();
-      renderProficiencies();
-
-      const position = document.getElementById("char-position").value;
-      const lightBearerSlots = document.getElementById("light-bearer-slots");
-      lightBearerSlots.style.display = position === 'Light Bearer' ? 'flex' : 'none';
-    }
-
-    // --- STATS ---
-    function calculateBaseStats() {
-      const level = parseInt(document.getElementById("char-level").value) || 1;
-      const pos = document.getElementById("char-position").value;
-      const priList = state.affinities.primary;
-      const secList = state.affinities.secondary;
-      const terList = state.affinities.tertiary;
-
-      // Create a temporary object to hold calculated stats
-      const calculatedStats = {};
-
-      stats.forEach(stat => {
-        let total = 1; // Start with base 1 for all stats
-        for (let i = 1; i < level; i++) { // Loop up to level-1 because level 1 is the base
-          const rates = getGrowthRatesForLevel(pos, i);
-          if (priList.includes(stat)) total += rates.primary;
-          if (secList.includes(stat)) total += rates.secondary;
-          if (terList.includes(stat)) total += rates.tertiary;
-        }
-        // Add manually allocated points
-        calculatedStats[stat] = total + (state.manualStatPoints[stat] || 0);
-      });
-
-      // Update the main state
-      state.statValues = calculatedStats;
-    }
-
+    function recalculateAndRenderAll() { calculateBaseStats(); applyAllSkillEffects(); const l = parseInt(document.getElementById("char-level").value) || 1; const totalAllocated = Object.values(state.manualStatPoints).reduce((s, v) => s + v, 0); state.availableStatPoints = (l - 1) - totalAllocated; calculateUsedSkillPoints(); state.availableSkillPoints = (l - 1) - state.usedSkillPoints + state.bonusSkillPoints; renderAllUI(); }
+    function renderAllUI() { document.getElementById("available-stat-points").value = state.availableStatPoints; document.getElementById("available-skill-points").value = state.availableSkillPoints; renderAffinityControls(); renderStats(); renderEquipment(); renderSkillTiers(); renderTopBarStats(); renderProficiencies(); const p = document.getElementById("char-position").value, l = document.getElementById("light-bearer-slots"); if(l) l.style.display = p === 'Light Bearer' ? 'flex' : 'none'; }
+    
     function renderStats() {
-      const tbody = document.getElementById("stats-body");
-      tbody.innerHTML = "";
-
-      const average = stats.reduce((sum, stat) => sum + state.statValues[stat], 0) / stats.length;
-      const max = parseFloat(document.getElementById("stat-multiplier").value) * average;
-
+      const tbody = document.getElementById("stats-body"); tbody.innerHTML = "";
+      const avg = stats.reduce((s, st) => s + (state.statValues[st] || 0), 0) / stats.length, max = parseFloat(document.getElementById("stat-multiplier").value) * avg;
       stats.forEach(stat => {
-        const tr = document.createElement("tr");
-        const baseValue = state.statValues[stat] || 0;
-        const manual = state.manualStatPoints[stat] || 0;
-        const skillBonus = state.skillBonuses[stat]?.add || 0;
-        const totalValue = baseValue + skillBonus;
-        const isCapped = totalValue > max;
-
-        // We add a new "stat-value-cell" class to easily target this element
-        tr.innerHTML = `
-      <td>${stat}</td>
-      <td class="stat-value-cell ${isCapped ? 'stat-capped' : ''}">
-          ${totalValue.toFixed(1)}
-          <div class="stat-breakdown">(Base ${(baseValue - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div>
-      </td>
-      <td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>
-    `;
-
-        const addBtn = tr.querySelector('.add-stat-btn');
-        const removeBtn = tr.querySelector('.remove-stat-btn');
-
-        // Disable button only if there are no stat points available
-        if (state.availableStatPoints <= 0) {
-          addBtn.disabled = true;
-        }
-
-        addBtn.onclick = () => {
-          // Check for the cap inside the click event now
-          if (state.availableStatPoints > 0) {
-            if (totalValue + 1 <= Math.floor(max)) {
-              // Success: Increase the stat
-              state.manualStatPoints[stat]++;
-              updateFromTextbox();
-            } else {
-              // Failure: Trigger the flash effect on the table cell
-              const statCell = tr.querySelector('.stat-value-cell');
-              statCell.classList.add('stat-flash-error');
-              // Remove the class after the animation finishes
-              setTimeout(() => {
-                statCell.classList.remove('stat-flash-error');
-              }, 500);
-            }
-          }
-        };
-
-        removeBtn.onclick = () => {
-          if (state.manualStatPoints[stat] > 0) {
-            state.manualStatPoints[stat]--;
-            updateFromTextbox();
-          }
-        };
-
+        const tr = document.createElement("tr"), base = state.statValues[stat] || 0, manual = state.manualStatPoints[stat] || 0, skillBonus = state.skillBonuses[stat]?.add || 0, total = base + skillBonus, isCapped = total > max;
+        tr.innerHTML = `<td>${stat}</td><td class="stat-value-cell ${isCapped ? 'stat-capped' : ''}">${total.toFixed(1)}<div class="stat-breakdown">(Base ${(base - manual).toFixed(1)} + Manual ${manual} + Skill ${skillBonus.toFixed(1)})</div></td><td><button class="add-stat-btn">+</button><button class="remove-stat-btn">–</button></td>`;
+        const addBtn = tr.querySelector('.add-stat-btn'), remBtn = tr.querySelector('.remove-stat-btn');
+        addBtn.disabled = state.availableStatPoints <= 0; remBtn.disabled = (state.manualStatPoints[stat] || 0) <= 0;
+        addBtn.onclick = () => { if (state.availableStatPoints > 0) { if (total + 1 <= Math.floor(max)) { state.manualStatPoints[stat]++; recalculateAndRenderAll(); } else { const cell = tr.querySelector('.stat-value-cell'); cell.classList.add('stat-flash-error'); setTimeout(() => cell.classList.remove('stat-flash-error'), 500); } } };
+        remBtn.onclick = () => { if (state.manualStatPoints[stat] > 0) { state.manualStatPoints[stat]--; recalculateAndRenderAll(); } };
         tbody.appendChild(tr);
       });
     }
 
-
-
-    // --- EQUIPMENT ---
     function renderEquipment() {
-      const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
-      const tooltip = document.getElementById('tooltip');
-
-      allSlots.forEach(slotKey => {
-        const el = document.getElementById(`${slotKey}-slot`);
-        const item = state.equipment[slotKey];
-
-        el.innerHTML = "";
-        el.onmouseover = (e) => showTooltip(e, item);
-        el.onmouseout = hideTooltip;
-
-        if (item) {
-          const img = document.createElement("img");
-          img.src = item.image || "https://dummyimage.com/100x100/333/aaa&text=?";
-          img.alt = item.name || slotKey;
-          img.className = "item-image";
-          el.appendChild(img);
-        }
-
-        const changeIcon = document.createElement("div");
-        changeIcon.className = "change-item-icon";
-        changeIcon.textContent = item ? '⇄' : '+';
-        changeIcon.onclick = (e) => { e.stopPropagation(); openEquipmentModal(slotKey); };
-        el.appendChild(changeIcon);
-
-        if (slotKey === "weapon1" || slotKey === "weapon2") {
-          el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey);
-          el.onclick = () => {
-            if (state.equipment[slotKey]) {
-              state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey;
-              updateDerivedStats();
-              renderEquipment();
-            }
-          };
-        }
+      ["weapon1","weapon2","armor","accessory1","accessory2","lighthouse1","lighthouse2"].forEach(slotKey => {
+        const el = document.getElementById(`${slotKey}-slot`); if (!el) return;
+        const item = state.equipment[slotKey]; el.innerHTML = "";
+        if (item) { const i = document.createElement("img"); i.src = item.image || "https://placehold.co/100x100/1F2937/F9FAFB?text=?"; i.alt = item.name || slotKey; i.className = "item-image"; el.appendChild(i); }
+        const c = document.createElement("div"); c.className = "change-item-icon"; c.textContent = item ? '⇄' : '+'; c.onclick = e => { e.stopPropagation(); openEquipmentModal(slotKey); }; el.appendChild(c);
+        if (slotKey.includes("weapon")) { el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey); el.onclick = () => { if (state.equipment[slotKey]) { state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey; handleInputChange(); } }; }
       });
     }
 
     function renderTopBarStats() {
-      const hpSpeedEl = document.getElementById("hp-speed");
-      const derivedAttackEl = document.getElementById("derived-attack-display");
-      const derivedDefenseEl = document.getElementById("derived-defense-display");
-
-      if (!hpSpeedEl || !derivedAttackEl || !derivedDefenseEl) return;
-
-      // HP, Speed, Hit Dice Calculation
-      const floor = parseInt(document.getElementById("char-floor").value);
-      const level = parseInt(document.getElementById("char-level").value);
-      const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
-      const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
-      const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
-
-      const movePenalty = Math.max(0, 2 * floor - se);
-      let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
-      let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
-      const hitDiceCount = level;
-      const hitDiceType = 4 + 2 * Math.floor(wp / 25);
-      const hitDiceMod = Math.floor((se - 10) / 2) * level;
-
-      // Derived Stats Calculation
-      const eq = state.equipment;
-      let attack = 0;
-      let defense = 0;
-      const selectedWeaponSlot = state.selectedWeaponSlot;
-      if (selectedWeaponSlot && eq[selectedWeaponSlot]) {
-        const weapon = eq[selectedWeaponSlot];
-        const attackStatVal = state.statValues[weapon.stat] + (state.skillBonuses[weapon.stat]?.add || 0);
-        attack = Math.floor(attackStatVal / 5) + (weapon.modifier || 0);
-      }
-      if (eq.armor) {
-        const armor = eq.armor;
-        const defenseStatVal = state.statValues[armor.stat] + (state.skillBonuses[armor.stat]?.add || 0);
-        defense = Math.floor(defenseStatVal / 5) + (armor.modifier || 0);
-      }
-
-      // Update HTML
-      hpSpeedEl.innerHTML = `
-    <span><span class="accent-label">HP:</span> ${Math.round(hp)}</span>
-    <span><span class="accent-label">Movement Speed:</span> ${speed}</span>
-    <span id="hit-dice"><span class="accent-label">Hit Dice:</span> ${hitDiceCount}d${hitDiceType} + ${hitDiceMod}</span>`;
-
-      derivedAttackEl.innerHTML = `<span class="accent-label">Attack:</span> ${attack}`;
-      derivedDefenseEl.innerHTML = `<span class="accent-label">Defense:</span> ${defense}`;
-    }
-
-    function selectEquipment(item) {
-      if (!state.currentEquipmentEdit) return;
-
-      // New: Prevent equipping the same accessory twice
-      if (item.type === 'accessory') {
-        const otherSlot = state.currentEquipmentEdit === 'accessory1-slot' ? 'accessory2' : 'accessory1';
-        if (state.equipment[otherSlot] && state.equipment[otherSlot].id === item.id) {
-          alert("You cannot equip the same accessory twice.");
-          return;
-        }
-      }
-
-      equipItem(state.currentEquipmentEdit.replace('-slot', ''), item);
-      closeEquipmentModal();
-    }
-
-    function equipItem(slot, item) {
-      state.equipment[slot] = item;
-      if (item && item.type === 'weapon' && !state.selectedWeaponSlot) {
-        state.selectedWeaponSlot = slot;
-      }
-      if (!item && state.selectedWeaponSlot === slot) {
-        state.selectedWeaponSlot = null;
-      }
-      handleInputChange();
-    }
-
-    function renderEquipmentLibrary() {
-      const grid = document.getElementById("equipment-library-grid");
-      const searchTerm = document.getElementById("equipment-search").value.toLowerCase();
-      grid.innerHTML = "";
-
-      const slotType = state.currentEquipmentEdit.includes('weapon') ? 'weapon' : (state.currentEquipmentEdit.includes('armor') ? 'armor' : 'accessory');
-      const filteredItems = state.equipmentLibrary
-        .filter(item => item.type === slotType && (item.name.toLowerCase().includes(searchTerm)));
-
-      filteredItems.sort((a, b) => {
-        const scoreA = getItemScore(a);
-        const scoreB = getItemScore(b);
-        return scoreB - scoreA;
-      });
-
-      filteredItems.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "item-card";
-        const isOwned = state.ownedItems.includes(item.id);
-
-        // Using SVG icons instead of "..."
-        const infoIconSVG = `<svg class="info-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"></path></svg>`;
-        const ownedIconSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`;
-
-        let buttonsHTML = `<div onclick='event.stopPropagation(); openItemInfoModal(${JSON.stringify(item).replace(/'/g, "&apos;")})'>${infoIconSVG}</div>`;
-
-        if (item.isDiscovered) {
-          buttonsHTML += `<div class="card-button ${isOwned ? 'owned' : ''}" onclick="event.stopPropagation(); toggleItemOwnership('${item.id}')">${ownedIconSVG}</div>`;
-        }
-        if (!item.isDiscovered && auth.currentUser && auth.currentUser.uid === ADMIN_UID) {
-          buttonsHTML += `<div class="card-button discover-btn" onclick="event.stopPropagation(); discoverItem('${item.id}')">D</div>`;
-        }
-
-        if (item.isDiscovered) {
-          card.innerHTML = buttonsHTML + `<img src="${item.image}" alt="${item.name}" /><div class="item-name">${item.name}</div>`;
-          card.onclick = () => selectEquipment(item);
-        } else {
-          card.classList.add("undiscovered");
-          card.innerHTML = buttonsHTML + `<img src="https://dummyimage.com/100x100/333/aaa&text=?" alt="Undiscovered" /><div class="item-name">Undiscovered</div>`;
-        }
-        grid.appendChild(card);
-      });
-    }
-
-    function renderSkillLibrary() {
-      const grid = document.getElementById("skill-library-grid");
-      const searchTerm = document.getElementById("skill-search").value.toLowerCase();
-      grid.innerHTML = "";
-      const { tier } = state.currentSkillEdit;
-      const position = document.getElementById("char-position").value;
-
-      // Using SVG icon instead of "..."
-      const infoIconSVG = `<svg class="info-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"></path></svg>`;
-
-      state.skillLibrary
-        .filter(skill =>
-          skill.positionTags.includes(position) &&
-          getSkillTier(skill, 1) <= tier &&
-          (skill.name.toLowerCase().includes(searchTerm) || skill.skillType?.toLowerCase().includes(searchTerm))
-        )
-        .forEach(skill => {
-          const card = document.createElement("div");
-          card.className = "skill-card";
-          const skillJSON = JSON.stringify(skill).replace(/'/g, "&apos;");
-          card.innerHTML = `<div onclick='event.stopPropagation(); openSkillInfoModal(${skillJSON})'>${infoIconSVG}</div>
-                        <img src="${skill.icon}" alt="${skill.name}" onclick='selectSkill(${skillJSON})' />
-                        <div class="skill-name">${skill.name}</div>`;
-          grid.appendChild(card);
-        });
-    }
-    let settingsListener = null;
-    function listenToGameSettings() {
-      if (settingsListener) settingsListener();
-      settingsListener = db.collection("game_settings").doc("shop").onSnapshot(doc => {
-        if (doc.exists) {
-          state.gameSettings = doc.data();
-        } else {
-          state.gameSettings = { isShopOpen: false, shopItems: [] }; // Default if doc doesn't exist
-        }
-        document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen;
-      });
-    }
-
-    function getItemScore(item) {
-      if (Object.values(state.equipment).some(eq => eq && eq.id === item.id)) return 4; // Equipped
-      if (state.ownedItems.includes(item.id)) return 3; // Owned
-      if (item.isDiscovered) return 2; // Discovered
-      return 1; // Undiscovered
-    }
-
-    function toggleItemOwnership(itemId) {
-      const itemIndex = state.ownedItems.indexOf(itemId);
-      if (itemIndex > -1) {
-        state.ownedItems.splice(itemIndex, 1);
-      } else {
-        state.ownedItems.push(itemId);
-      }
-      renderEquipmentLibrary();
-      queueAutoSave();
-    }
-
-    async function discoverItem(itemId) {
-      await db.collection("items").doc(itemId).update({ isDiscovered: true });
-      const localItem = state.equipmentLibrary.find(i => i.id === itemId);
-      if (localItem) localItem.isDiscovered = true;
-      renderEquipmentLibrary();
-    }
-
-    async function fetchSkillLibrary() {
-      try {
-        const snapshot = await db.collection("skills").get();
-        state.skillLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch (error) {
-        console.error("Error fetching skill library from Firestore:", error);
-        state.skillLibrary = [];
-        alert("Could not load skills from the database.");
-      }
-    }
-
-    async function fetchEquipmentLibrary() {
-      try {
-        const snapshot = await db.collection("items").get();
-        state.equipmentLibrary = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch (error) {
-        console.error("Error fetching equipment from Firestore:", error);
-        state.equipmentLibrary = [];
-        alert("Could not load equipment from the database.");
-      }
-    }
-
-    // --- SKILLS ---
-    function renderSkillTiers() {
-      const container = document.getElementById("skill-section");
-      container.innerHTML = "";
-      for (let tier = 1; tier <= 5; tier++) {
-        const tierDiv = document.createElement("div");
-        tierDiv.className = "tier-section";
-        tierDiv.innerHTML = `<div class="tier-header"><h4>Tier ${tier}</h4><button onclick="addSkillSlot(${tier})">+ Slot</button></div><div class="skill-slots" id="tier-${tier}-slots"></div>`;
-        const slotGrid = tierDiv.querySelector(`#tier-${tier}-slots`);
-        const skillsInTier = state.skillsByTier[tier] || [];
-        skillsInTier.forEach((skill, index) => {
-          const slot = document.createElement("div");
-          slot.className = "skill-slot";
-          if (!skill) {
-            slot.classList.add("empty");
-            slot.onclick = () => openSkillLibrary(tier, index);
-          } else {
-            // Updated to use SVG icon and new level badge style
-            slot.innerHTML = `<img src="${skill.icon}" alt="${skill.name}">
-           <div class="skill-level-badge">${skill.level || 0}</div>
-           <svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${tier}][${index}], ${tier}, ${index})" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"></path></svg>`;
-          }
-          slotGrid.appendChild(slot);
-        });
-        container.appendChild(tierDiv);
-      }
-    }
-
-    function selectSkill(skillData) {
-      const { tier, index } = state.currentSkillEdit;
-      if (tier !== null && index !== null) {
-        const newSkillInstance = JSON.parse(JSON.stringify(skillData));
-        newSkillInstance.level = 0; // Equip at level 0
-        state.skillsByTier[tier][index] = newSkillInstance;
-        openSkillInfoModal(state.skillsByTier[tier][index], tier, index);
-        closeSkillLibrary();
-        handleInputChange(); // Autosave the change
-      }
-    }
-    function openSkillLibrary(tier, index) {
-      state.currentSkillEdit = { tier, index };
-      document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${tier} Slot)`;
-      document.getElementById("skill-library-modal").classList.add("active");
-
-      // Handle the new search bar
-      const searchInput = document.getElementById('skill-search');
-      searchInput.value = ''; // Clear search on open
-      searchInput.addEventListener('input', renderSkillLibrary);
-
-      renderSkillLibrary();
-    }
-
-    function closeSkillLibrary() {
-      document.getElementById("skill-library-modal").classList.remove("active");
-      // Important: Remove the listener to avoid it running when the modal is closed
-      document.getElementById('skill-search').removeEventListener('input', renderSkillLibrary);
-    }
-
-    function openSkillInfoModal(skillData, tier = null, index = null) {
-      const modal = document.getElementById("skill-info-modal");
-      document.getElementById("skill-info-title").textContent = skillData.name;
-      const content = document.getElementById("skill-info-modal-content");
-      const isProficient = state.proficientSkills.includes(skillData.id);
-      const displayData = (isProficient && skillData.proficientVersion) ? skillData.proficientVersion : skillData;
-      // THIS BLOCK WAS MISSING - It defines controlsHTML
-      let controlsHTML = '';
-      if (tier !== null && index !== null) {
-
-        const skill = state.skillsByTier[tier][index];
-        const nextLevel = (skill.level || 0) + 1;
-        const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level || 0] || 999) && getSkillTier(skill, nextLevel) <= tier;
-        controlsHTML = `<div class="level-up-controls">
-          
-            <h3>Current Level: ${skill.level || 0} / ${skill.maxLevel}</h3>
-            <div class="proficiency-toggle">
-            <button onclick="toggleSkillProficiency('${skillData.id}', ${tier}, ${index})" class="${isProficient ? 'active' : ''}">Toggle Proficiency</button></div>
-            <button onclick="levelUpSkill(${tier}, ${index})" ${!canLevelUp ? 'disabled' : ''}>Level Up (Cost: ${skill.costPerLevel[skill.level || 0] || 'N/A'} SP)</button>
-            <button onclick="delevelSkill(${tier}, ${index})" ${!skill.level || skill.level === 0 ? 'disabled' : ''}>De-level</button>
-            <button onclick="unlearnSkill(${tier}, ${index})" style="background-color: #8b0000;">Unlearn</button>
-        </div>`;
-      }
-
-      const hasEffects = skillData.effects && skillData.effects.length > 0;
-      const hasDamage = skillData.damagePerLevel && skillData.damagePerLevel.length > 0;
-
-      let tableHeader = `<tr><th>Lvl</th><th>Cost</th><th>Tier</th>`;
-      if (hasDamage) tableHeader += `<th>Damage</th>`;
-      if (hasEffects) tableHeader += `<th>Effect</th>`;
-      tableHeader += `</tr>`;
-
-      let tableBody = '';
-      for (let i = 1; i <= skillData.maxLevel; i++) {
-        const isCurrent = skillData.level === i;
-        let row = `<tr class="${isCurrent ? 'current-level-row' : ''}">
-                       <td>${i}</td>
-                       <td>${skillData.costPerLevel[i - 1]}</td>
-                       <td>${getSkillTier(skillData, i)}</td>`;
-        if (hasDamage) {
-          row += `<td>${skillData.damagePerLevel[i - 1] || '-'}</td>`;
-        }
-        if (hasEffects) {
-          const effect = skillData.effects.find(e => e.level === i);
-          let effectText = '-';
-          if (effect) {
-            effectText = `${effect.stat}: ${effect.type === 'add' ? '+' : 'x'}${effect.value}`;
-            if (effect.stat2) effectText += `, ${effect.stat2}: +${effect.value2}`;
-          }
-          row += `<td>${effectText}</td>`;
-        }
-        row += `</tr>`;
-        tableBody += row;
-      }
-
-      content.innerHTML = `
-            <div class="left-panel">
-                <img src="${skillData.icon}" alt="${skillData.name}">
-                <p><strong>Type:</strong> ${skillData.skillType || 'N/A'}</p>
-                <p>${skillData.description}</p>
-                <p><strong>Positions:</strong> ${skillData.positionTags.join(', ')}</p>
-                ${controlsHTML}
-            </div>
-            <div class="right-panel">
-                <table class="level-table">${tableHeader}${tableBody}</table>
-            </div>`;
-
-      modal.classList.add("active");
-    }
-
-    function levelUpSkill(tier, index) {
-      const skill = state.skillsByTier[tier][index];
-      const cost = skill.costPerLevel[skill.level || 0];
-      const nextLevel = (skill.level || 0) + 1;
-      if (nextLevel <= skill.maxLevel && state.availableSkillPoints >= cost && getSkillTier(skill, nextLevel) <= tier) {
-        skill.level = nextLevel;
-        handleInputChange(); // Autosave
-        openSkillInfoModal(skill, tier, index); // Refresh modal
-      }
-    }
-
-    function delevelSkill(tier, index) {
-      const skill = state.skillsByTier[tier][index];
-      if (skill.level > 0) {
-        skill.level--;
-        handleInputChange(); // Autosave
-        openSkillInfoModal(skill, tier, index);
-      }
-    }
-
-    function unlearnSkill(tier, index) {
-      state.skillsByTier[tier][index] = null;
-      closeSkillInfoModal();
-      handleInputChange(); // Autosave
-    }
-    //  ---  SPECIAL ITEMS  ---  //
-    function renderSpecialItems() {
-      const list = document.getElementById("special-items-list");
-      list.innerHTML = "";
-      if (state.specialItems.length === 0) {
-        list.innerHTML = "<p>No special items yet.</p>";
-        return;
-      }
-      state.specialItems.forEach((item, index) => {
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "special-item";
-        itemDiv.innerHTML = `
-            <div class="special-item-header">
-                <span>${item.name}</span>
-                <div>
-                    <button onclick="editSpecialItem(${index})">Edit</button>
-                    <button onclick="deleteSpecialItem(${index})" style="background-color: var(--danger-color);">Delete</button>
-                </div>
-            </div>
-            <div class="special-item-desc">${item.desc}</div>
-        `;
-        list.appendChild(itemDiv);
-      });
-    }
-
-    function addSpecialItem() {
-      const nameInput = document.getElementById("new-item-name");
-      const descInput = document.getElementById("new-item-desc");
-      if (nameInput.value.trim() === "") {
-        alert("Item name cannot be empty.");
-        return;
-      }
-      state.specialItems.push({
-        name: nameInput.value,
-        desc: descInput.value,
-      });
-      nameInput.value = "";
-      descInput.value = "";
-      renderSpecialItems();
-      queueAutoSave();
-    }
-
-    function deleteSpecialItem(index) {
-      if (confirm(`Are you sure you want to delete "${state.specialItems[index].name}"?`)) {
-        state.specialItems.splice(index, 1);
-        renderSpecialItems();
-        queueAutoSave();
-      }
-    }
-
-    function editSpecialItem(index) {
-      const item = state.specialItems[index];
-      const newName = prompt("Enter the new name for the item:", item.name);
-      if (newName === null || newName.trim() === "") return; // User cancelled or entered empty name
-
-      const newDesc = prompt("Enter the new description for the item:", item.desc);
-      if (newDesc === null) return; // User cancelled
-
-      item.name = newName;
-      item.desc = newDesc;
-      renderSpecialItems();
-      queueAutoSave();
-    }
-
-    // --- EVENT LISTENERS FOR SEARCH BARS ---
-    document.getElementById('skill-search').addEventListener('input', renderSkillLibrary);
-    document.getElementById('equipment-search').addEventListener('input', renderEquipmentLibrary);
-
-    function initializeState() {
-      state.statValues = Object.fromEntries(stats.map(stat => [stat, 1]));
-      state.manualStatPoints = Object.fromEntries(stats.map(stat => [stat, 0]));
-    }
-
-    function getGrowthTable() {
-      // This table defines stat growth per level based on class
-      return {
-        Guide: [{ range: [1, 10], primary: 1, secondary: 0.5, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 2, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 2.5, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 3, secondary: 2.5, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }],
-        Fisherman: [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 2, secondary: 2, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }],
-        "Spear Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
-        "Wave Controller": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
-        "Light Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }],
-        Anima: [{ range: [1, 10], primary: 2, secondary: 1, tertiary: 0.5 }, { range: [11, 25], primary: 2.5, secondary: 1, tertiary: 0.5 }, { range: [26, 50], primary: 3, secondary: 1, tertiary: 0.5 }, { range: [51, 80], primary: 3.5, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 4, secondary: 1.5, tertiary: 1 }, { range: [111, 140], primary: 5, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 6, secondary: 2, tertiary: 1.5 }, { range: [171, Infinity], primary: 6, secondary: 2, tertiary: 2 }]
-      };
-    }
-
-    function getGrowthRatesForLevel(position, level) {
-      const table = getGrowthTable()[position] || [];
-      return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
-    }
-
-
-    async function fetchLibrariesAndUpdate() {
-      await fetchEquipmentLibrary();
-      await fetchSkillLibrary();
-      updateFromTextbox();
-    }
-
-    function showTooltip(event, item) {
-      if (!item) return;
-      const tooltip = document.getElementById('tooltip');
-      const html = `
-            <div class="tooltip-name">${item.name}</div>
-            <div class="tooltip-stats">
-                Type: ${item.type}<br>
-                Stat: ${item.stat} | Modifier: ${item.modifier}
-            </div>
-            <div class="tooltip-effect">${item.specialEffect || 'No special effect.'}</div>
-        `;
-      tooltip.innerHTML = html;
-      tooltip.style.display = 'block';
-      tooltip.style.left = `${event.pageX + 15}px`;
-      tooltip.style.top = `${event.pageY + 15}px`;
-    }
-
-    function hideTooltip() {
-      document.getElementById('tooltip').style.display = 'none';
+      const c = document.getElementById("top-stats-bar"); if (!c) return;
+      const f = parseInt(document.getElementById("char-floor").value)||1, l = parseInt(document.getElementById("char-level").value)||1;
+      const se = (state.statValues["Shinsu Endurance"]||0)+(state.skillBonuses["Shinsu Endurance"]?.add||0), str = (state.statValues["Strength"]||0)+(state.skillBonuses["Strength"]?.add||0), wp = (state.statValues["Willpower"]||0)+(state.skillBonuses["Willpower"]?.add||0);
+      const penalty = Math.max(0, 2 * f - se), speed = 6 + l - penalty + (state.skillBonuses['Movement Speed']?.add || 0), hp = (3*se + 2*str + 1.5*wp + l*(2+Math.floor(l/25))) + (state.skillBonuses['HP']?.add||0);
+      let attack = 0, defense = 0; const selWep = state.selectedWeaponSlot ? state.equipment[state.selectedWeaponSlot] : null;
+      if (selWep) { const statVal = (state.statValues[selWep.stat]||0)+(state.skillBonuses[selWep.stat]?.add||0); attack = Math.floor(statVal/5)+(selWep.modifier||0); }
+      if (state.equipment.armor) { const statVal = (state.statValues[state.equipment.armor.stat]||0)+(state.skillBonuses[state.equipment.armor.stat]?.add||0); defense = Math.floor(statVal/5)+(state.equipment.armor.modifier||0); }
+      c.innerHTML = `<div class="top-stat"><span class="label">HP</span><span class="value">${Math.round(hp)}</span></div><div class="top-stat"><span class="label">Speed</span><span class="value">${speed}</span></div><div class="top-stat"><span class="label">Attack</span><span class="value">${attack}</span></div><div class="top-stat"><span class="label">Defense</span><span class="value">${defense}</span></div>`;
     }
 
     function renderAffinityControls() {
       ["primary", "secondary", "tertiary"].forEach(type => {
-        const container = document.getElementById(`${type}-affinities`);
-        const select = document.getElementById(`add-${type}`);
-        container.innerHTML = "";
+        const cont = document.getElementById(`${type}-affinities`), sel = document.getElementById(`add-${type}`); cont.innerHTML = "";
+        sel.innerHTML = "<option value=''>+ Add</option>" + stats.filter(s => !state.affinities.primary.includes(s) && !state.affinities.secondary.includes(s) && !state.affinities.tertiary.includes(s)).map(s => `<option value="${s}">${s}</option>`).join("");
+        (state.affinities[type]||[]).forEach(stat => { const d = document.createElement("div"); d.innerHTML = `${stat} <span class="remove-affinity">×</span>`; d.querySelector('.remove-affinity').onclick = () => { state.affinities[type] = state.affinities[type].filter(s => s !== stat); handleInputChange(); }; cont.appendChild(d); });
+        sel.onchange = e => { const v = e.target.value; if (v && !(state.affinities[type]||[]).includes(v)) { if (!state.affinities[type]) state.affinities[type]=[]; state.affinities[type].push(v); handleInputChange(); } e.target.value = ''; };
+      });
+    }
 
-        // Populate the dropdown with only unselected stats
-        select.innerHTML = "<option value=''>+ Add</option>" + stats
-          .filter(stat => !state.affinities.primary.includes(stat) && !state.affinities.secondary.includes(stat) && !state.affinities.tertiary.includes(stat))
-          .map(stat => `<option value="${stat}">${stat}</option>`).join("");
+    function renderSkillTiers() {
+      const c = document.getElementById("skill-section"); c.innerHTML = "";
+      for (let t = 1; t <= 5; t++) {
+        const d = document.createElement("div"); d.className = "tier-section"; d.innerHTML = `<div class="tier-header"><h3>Tier ${t}</h3><button onclick="addSkillSlot(${t})">+ Slot</button></div><div class="skill-slots" id="tier-${t}-slots"></div>`;
+        const g = d.querySelector(`#tier-${t}-slots`);
+        (state.skillsByTier[t]||[]).forEach((s, i) => { const slot = document.createElement("div"); slot.className = "skill-slot"; if (!s) { slot.classList.add("empty"); slot.onclick = () => openSkillLibrary(t, i); } else { slot.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick="openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})"><div class="skill-level-badge">${s.level||0}</div>`; } g.appendChild(slot); });
+        c.appendChild(d);
+      }
+    }
 
-        // Render the tags for currently selected affinities
-        (state.affinities[type] || []).forEach(stat => {
-          const div = document.createElement("div");
-          div.innerHTML = `${stat} <span class="remove-affinity">x</span>`;
+    function renderProficiencies() { document.getElementById('category-proficiencies-list').innerHTML = state.proficientCategories.length > 0 ? state.proficientCategories.map(c => `<div>${c}</div>`).join('') : `<small style="color: var(--text-secondary)">No proficiencies learned.</small>`; }
+    
+    function calculateBaseStats() { const l = parseInt(document.getElementById("char-level").value)||1, p = document.getElementById("char-position").value, cal_s = {}; stats.forEach(s => { let t = 1; for (let i = 1; i < l; i++) { const r = getGrowthRatesForLevel(p, i); if (state.affinities.primary.includes(s)) t+=r.primary; if (state.affinities.secondary.includes(s)) t+=r.secondary; if (state.affinities.tertiary.includes(s)) t+=r.tertiary; } cal_s[s] = t + (state.manualStatPoints[s]||0); }); state.statValues = cal_s; }
+    function calculateUsedSkillPoints() { let t = 0; const R = 0.8; for (const tier in state.skillsByTier) { for (const s of state.skillsByTier[tier]) { if (s && s.level > 0) { let costs = (state.proficientSkills.includes(s.id) && s.proficientVersion) ? s.proficientVersion.costPerLevel : s.costPerLevel; let cost = costs.slice(0,s.level).reduce((a,b)=>a+b,0); if(state.proficientCategories.includes(s.skillType)) cost *= R; t+=cost; } } } state.usedSkillPoints = Math.round(t); }
+    function applyAllSkillEffects() { state.skillBonuses = {}; for(const tier in state.skillsByTier) { for(const s of state.skillsByTier[tier]) { if(!s||s.level===0||!s.effects) continue; const e = s.effects.find(ef => ef.level === s.level); if(e){ [{s:'stat',t:'type',v:'value'},{s:'stat2',t:'type2',v:'value2'}].forEach(m => { const stat = e[m.s], type = e[m.t], value = e[m.v]; if(!stat||!type||value===undefined) return; if(!state.skillBonuses[stat]) state.skillBonuses[stat] = {add:0,mul:1}; if(type==='add') state.skillBonuses[stat].add+=value; if(type==='mul') state.skillBonuses[stat].mul*=value; }); } } } }
 
-          div.querySelector('.remove-affinity').onclick = () => {
-            state.affinities[type] = state.affinities[type].filter(s => s !== stat);
-            updateFromTextbox();
-          };
-          container.appendChild(div);
+    function getGrowthRatesForLevel(p, l) { return (getGrowthTable()[p] || []).find(r => l >= r.range[0] && l <= r.range[1]) || { p: 0, s: 0, t: 0 }; }
+    function getGrowthTable() { return {Guide:[{range:[1,10],primary:1,secondary:.5,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:1.5,secondary:1,tertiary:.5},{range:[51,80],primary:2,secondary:1.5,tertiary:1},{range:[81,110],primary:2.5,secondary:2,tertiary:1},{range:[111,140],primary:3,secondary:2,tertiary:1.5},{range:[141,170],primary:3,secondary:2.5,tertiary:2},{range:[171,Infinity],primary:4,secondary:3,tertiary:3}],Fisherman:[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:2,secondary:2,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:3,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:4,secondary:3,tertiary:3}],"Spear Bearer":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],"Wave Controller":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],"Light Bearer":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],Anima:[{range:[1,10],primary:2,secondary:1,tertiary:.5},{range:[11,25],primary:2.5,secondary:1,tertiary:.5},{range:[26,50],primary:3,secondary:1,tertiary:.5},{range:[51,80],primary:3.5,secondary:1.5,tertiary:1},{range:[81,110],primary:4,secondary:1.5,tertiary:1},{range:[111,140],primary:5,secondary:2,tertiary:1.5},{range:[141,170],primary:6,secondary:2,tertiary:1.5},{range:[171,Infinity],primary:6,secondary:2,tertiary:2}]};}
+    
+    function levelUp() { const e=document.getElementById("char-level"); e.value=parseInt(e.value)+1; handleInputChange(); }
+    function addSkillPoint() { state.bonusSkillPoints++; handleInputChange(); }
+    function addSkillSlot(t) { if (!state.skillsByTier[t]) state.skillsByTier[t] = []; state.skillsByTier[t].push(null); renderSkillTiers(); }
+    
+    window.onload = () => { initializeState(); };
+    function initializeState() { state.statValues = Object.fromEntries(stats.map(s => [s, 1])); state.manualStatPoints = Object.fromEntries(stats.map(s => [s, 0])); }
+    let settingsListener = null;
+    function listenToGameSettings() { if (settingsListener) settingsListener(); settingsListener = db.collection("game_settings").doc("shop").onSnapshot(d => { state.gameSettings = d.exists ? d.data() : { isShopOpen: false, shopItems: [] }; document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen; }); }
+    async function fetchLibrariesAndUpdate() { await Promise.all([fetchEquipmentLibrary(), fetchSkillLibrary()]); recalculateAndRenderAll(); }
+    async function fetchSkillLibrary() { try { const s=await db.collection("skills").get(); state.skillLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch skill lib:", e); } }
+    async function fetchEquipmentLibrary() { try { const s=await db.collection("items").get(); state.equipmentLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch equip lib:", e); } }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openSkillLibrary(t, i) { state.currentSkillEdit = { tier:t, index:i }; document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${t} Slot)`; renderSkillLibrary(); openModal("skill-library-modal"); }
+    function closeSkillLibrary() { closeModal('skill-library-modal'); }
+    function openEquipmentModal(sKey) { state.currentEquipmentEdit = sKey; const t = sKey.replace('-slot','').replace(/([A-Z])/g,' $1').replace(/^./, c => c.toUpperCase()); document.getElementById("equipment-modal-title").textContent = `Equip to ${t}`; renderEquipmentLibrary(); openModal("equipment-library-modal"); }
+    function closeEquipmentModal() { closeModal('equipment-library-modal'); }
+    function openShopModal() { renderShop(); openModal('shop-modal'); } function closeShopModal() { closeModal('shop-modal'); }
+    function openAdminPanel() { renderAdminPanel(); openModal('admin-panel-modal'); } function closeAdminPanel() { closeModal('admin-panel-modal'); }
+    function openProficiencyModal() { renderProficiencyModal(); openModal('proficiency-modal'); } function closeProficiencyModal() { closeModal('proficiency-modal'); }
+    function openSpecialItemsModal() { renderSpecialItems(); openModal('special-items-modal'); } function closeSpecialItemsModal() { closeModal('special-items-modal'); }
+    function closeSkillInfoModal() { closeModal('skill-info-modal'); }
+    
+    function openItemInfoModal(itemData) { document.getElementById('item-info-title').textContent = itemData.name; document.getElementById('item-info-modal-content').innerHTML = `<div style="text-align:center; padding-bottom: 1rem;"><img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;"></div><p><strong>Type:</strong> ${itemData.type}</p><p><strong>Stat:</strong> ${itemData.stat}</p><p><strong>Modifier:</strong> ${itemData.modifier}</p><p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; openModal('item-info-modal'); }
+    function renderEquipmentLibrary() {
+        const g=document.getElementById("equipment-library-grid"), s=document.getElementById("equipment-search").value.toLowerCase(); g.innerHTML = "";
+        const type = state.currentEquipmentEdit.includes('weapon')?'weapon':state.currentEquipmentEdit.includes('armor')?'armor':state.currentEquipmentEdit.includes('lighthouse')?'lighthouse':'accessory';
+        state.equipmentLibrary.filter(i => i.type === type && i.name.toLowerCase().includes(s)).forEach(i => {
+            const c=document.createElement("div"); c.className="item-card"; c.innerHTML=`<img src="${i.image||'https://placehold.co/100x100/1F2937/F9FAFB?text=?'}" alt="${i.name}"><div class="item-name">${i.name}</div>`; c.onclick=()=>selectEquipment(i); g.appendChild(c);
         });
-
-        // Handle adding a new affinity from the dropdown
-        select.onchange = e => {
-          const val = e.target.value;
-          if (val && !(state.affinities[type] || []).includes(val)) {
-            if (!state.affinities[type]) state.affinities[type] = [];
-            state.affinities[type].push(val);
-            updateFromTextbox();
-          }
-          e.target.value = ''; // Reset dropdown after selection
-        };
-      });
     }
-
-    function addSkillPoint() {
-      state.bonusSkillPoints++;
-      updateFromTextbox();
+    function selectEquipment(i) {
+        if (!state.currentEquipmentEdit) return; if(i.type==='accessory'){const o=state.currentEquipmentEdit==='accessory1'?'accessory2':'accessory1';if(state.equipment[o]&&state.equipment[o].id===i.id){showNotification("Cannot equip same accessory twice.","danger");return;}}
+        equipItem(state.currentEquipmentEdit.replace('-slot', ''), i); closeEquipmentModal();
     }
-
-    function levelUp() {
-      document.getElementById("char-level").value = parseInt(document.getElementById("char-level").value) + 1;
-      updateFromTextbox();
+    function equipItem(s, i) { state.equipment[s] = i; if (i&&i.type==='weapon'&&!state.selectedWeaponSlot) state.selectedWeaponSlot=s; if (!i&&state.selectedWeaponSlot===s) state.selectedWeaponSlot=null; handleInputChange(); }
+    function renderSkillLibrary() {
+      const g = document.getElementById("skill-library-grid"), search = document.getElementById("skill-search").value.toLowerCase(); g.innerHTML = ""; const { tier } = state.currentSkillEdit, pos = document.getElementById("char-position").value;
+      state.skillLibrary.filter(s => s.positionTags.includes(pos) && getSkillTier(s, 1) <= tier && (s.name.toLowerCase().includes(search) || s.skillType?.toLowerCase().includes(search))).forEach(s => { const c = document.createElement("div"); c.className = "skill-card"; const json = JSON.stringify(s).replace(/'/g, "&apos;"); c.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick='selectSkill(${json})'><div class="skill-name">${s.name}</div>`; g.appendChild(c); });
     }
-
-    function resetCharacter() {
-      if (!confirm("Are you sure? This will delete the character from the database.")) return;
-      const user = auth.currentUser;
-      if (user) {
-        db.collection("characters").doc(user.uid).delete().then(() => {
-          location.reload(); // Easiest way to reset the sheet to its initial state
-        }).catch(err => console.error("Failed to delete character:", err));
-      }
+    function selectSkill(d) { const {tier, index} = state.currentSkillEdit; if (tier!==null&&index!==null) { state.skillsByTier[tier][index] = {...d, level: 0}; openSkillInfoModal(state.skillsByTier[tier][index], tier, index); closeSkillLibrary(); handleInputChange(); } }
+    function getSkillTier(s, l) { return s.tierByLevel ? [...s.tierByLevel].reverse().find(t => l >= t.level)?.tier || 1 : 1; }
+    
+    function openSkillInfoModal(skillData, tier, index) {
+      const c = document.getElementById("skill-info-modal-content"); document.getElementById("skill-info-title").textContent=skillData.name; const p = state.proficientSkills.includes(skillData.id), s = state.skillsByTier[tier][index], nextLvl = (s.level||0)+1, canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level||0]||999) && getSkillTier(s, nextLvl) <= tier;
+      const controls = `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level||0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${skillData.id}',${tier},${index})">${p?'Un-Proficient':'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp?'disabled':''}>Lvl Up (${s.costPerLevel[s.level||0]||'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level||s.level===0?'disabled':''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
+      let table = ``; for (let i=1; i<=skillData.maxLevel; i++) { const e=skillData.effects.find(ef=>ef.level===i); let eTxt = e?`${e.stat}: ${e.type==='add'?'+':'x'}${e.value}`:'-'; if(e&&e.stat2) eTxt+=`, ${e.stat2}: +${e.value2}`; table+=`<tr ${s.level===i?'style="background-color:var(--accent-primary);"':''}><td>${i}</td><td>${skillData.costPerLevel[i-1]}</td><td>${getSkillTier(skillData,i)}</td><td>${eTxt}</td></tr>`; }
+      c.innerHTML = `<div style="display:grid; grid-template-columns:150px 1fr; gap:1.5rem;"><div><img src="${skillData.icon}" alt="${skillData.name}" style="width:100%; border-radius:8px;"><p>${skillData.description}</p>${controls}</div><div><table class="stats-table"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
     }
+    function levelUpSkill(t, i) { const s=state.skillsByTier[t][i], c=s.costPerLevel[s.level||0], nL=(s.level||0)+1; if (nL<=s.maxLevel && state.availableSkillPoints>=c && getSkillTier(s,nL)<=t){ s.level=nL; handleInputChange(); openSkillInfoModal(s,t,i); } }
+    function delevelSkill(t, i) { const s=state.skillsByTier[t][i]; if(s.level>0){ s.level--; handleInputChange(); openSkillInfoModal(s,t,i); } }
+    function unlearnSkill(t, i) { state.skillsByTier[t][i]=null; closeSkillInfoModal(); handleInputChange(); }
+    function toggleSkillProficiency(id, t, i) { const idx=state.proficientSkills.indexOf(id); if(idx>-1) state.proficientSkills.splice(idx,1); else state.proficientSkills.push(id); handleInputChange(); openSkillInfoModal(state.skillsByTier[t][i], t, i); }
+    
+    function renderSpecialItems() { const l = document.getElementById("special-items-list"); l.innerHTML = state.specialItems.length === 0 ? "<p>No special items.</p>" : state.specialItems.map((item, index) => `<div style="background-color:var(--bg-tertiary);padding:1rem;border-radius:var(--border-radius);margin-bottom:1rem;"><div style="display:flex;justify-content:space-between;align-items:center;font-weight:bold;"><span>${item.name}</span><div><button onclick="editSpecialItem(${index})">Edit</button><button onclick="deleteSpecialItem(${index})" class="btn-danger">Del</button></div></div><div style="margin-top:0.5rem;color:var(--text-secondary);white-space:pre-wrap;">${item.desc}</div></div>`).join(''); }
+    function addSpecialItem() { const n=document.getElementById("new-item-name"), d=document.getElementById("new-item-desc"); if(n.value.trim()===""){showNotification("Item name required.","danger");return;} state.specialItems.push({name:n.value,desc:d.value}); n.value="";d.value=""; renderSpecialItems(); queueAutoSave(); }
+    function deleteSpecialItem(i) { showConfirmation(`Delete "${state.specialItems[i].name}"?`, () => { state.specialItems.splice(i,1); renderSpecialItems(); queueAutoSave(); }); }
+    function editSpecialItem(i) { const item=state.specialItems[i], n=prompt("New name:",item.name); if(n===null||n.trim()==="")return; const d=prompt("New desc:",item.desc); if(d===null)return; item.name=n; item.desc=d; renderSpecialItems(); queueAutoSave(); }
+    
+    function renderProficiencyModal() { const cats=[...new Set(state.skillLibrary.map(s=>s.skillType).filter(Boolean))]; document.getElementById('proficiency-grid').innerHTML = cats.map(c=>`<div class="item-card" onclick="toggleCategoryProficiency('${c}')" style="border-color:${state.proficientCategories.includes(c)?'var(--accent-gold)':'var(--border-color)'}"><strong>${c}</strong></div>`).join(''); }
+    function toggleCategoryProficiency(c) { const i=state.proficientCategories.indexOf(c); if(i>-1) state.proficientCategories.splice(i,1); else state.proficientCategories.push(c); handleInputChange(); renderProficiencyModal(); renderProficiencies(); }
 
-    function calculateUsedSkillPoints() {
-      let total = 0;
-      const COST_REDUCTION = 0.8; // 20% reduction
-      for (const tier in state.skillsByTier) {
-        for (const skill of state.skillsByTier[tier]) {
-          if (skill && skill.level > 0) {
-            let costArray = (state.proficientSkills.includes(skill.id) && skill.proficientVersion)
-              ? skill.proficientVersion.costPerLevel
-              : skill.costPerLevel;
-            let cost = costArray.slice(0, skill.level).reduce((a, b) => a + b, 0);
-
-            if (state.proficientCategories.includes(skill.skillType)) {
-              cost *= COST_REDUCTION;
-            }
-            total += cost;
-          }
-        }
-      }
-      state.usedSkillPoints = Math.round(total);
-    }
-
-    function applyAllSkillEffects() {
-      state.skillBonuses = {};
-      for (const tier in state.skillsByTier) {
-        for (const skill of state.skillsByTier[tier]) {
-          if (!skill || skill.level === 0 || !skill.effects) continue;
-
-          const currentLevelEffect = skill.effects.find(e => e.level === skill.level);
-          if (currentLevelEffect) {
-            [{ stat: 'stat', type: 'type', value: 'value' }, { stat: 'stat2', type: 'type2', value: 'value2' }].forEach(map => {
-              const stat = currentLevelEffect[map.stat];
-              const type = currentLevelEffect[map.type];
-              const value = currentLevelEffect[map.value];
-              if (!stat || !type || value === undefined) return;
-              if (!state.skillBonuses[stat]) state.skillBonuses[stat] = { add: 0, mul: 1 };
-              if (type === 'add') state.skillBonuses[stat].add += value;
-              if (type === 'mul') state.skillBonuses[stat].mul *= value;
-            });
-          }
-        }
-      }
-    }
-
-    function getSkillTier(skill, level) {
-      if (!skill.tierByLevel) return 1;
-      return [...skill.tierByLevel].reverse().find(t => level >= t.level)?.tier || 1;
-    }
-
-    function addSkillSlot(tier) {
-      if (!state.skillsByTier[tier]) state.skillsByTier[tier] = [];
-      state.skillsByTier[tier].push(null);
-      renderSkillTiers();
-    }
-
-    function closeSkillLibrary() { document.getElementById("skill-library-modal").classList.remove("active"); }
-
-    function openEquipmentModal(slotKey) {
-      state.currentEquipmentEdit = slotKey;
-      const modal = document.getElementById("equipment-library-modal");
-      const title = slotKey.replace('slot', '').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-      document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
-      modal.classList.add("active");
-      renderEquipmentLibrary();
-    }
-
-    function openShopModal() { renderShop(); document.getElementById('shop-modal').classList.add('active'); }
-    function closeShopModal() { document.getElementById('shop-modal').classList.remove('active'); }
-
-    function renderShop() {
-      const grid = document.getElementById('shop-grid');
-      grid.innerHTML = '<h4>Loading Shop...</h4>';
-      const shopItemDetails = state.gameSettings.shopItems.map(itemData => {
-        const libraryItem = state.equipmentLibrary.find(libItem => libItem.id === itemData.id);
-        return { ...libraryItem, ...itemData };
-      });
-
-      if (shopItemDetails.length === 0) {
-        grid.innerHTML = '<h4>The shop is currently empty.</h4>';
-        return;
-      }
-
-      grid.innerHTML = shopItemDetails.map(item => `
-            <div class="shop-item">
-                <img src="${item.image}" alt="${item.name}">
-                <div class="shop-item-info">
-                    <strong>${item.name}</strong><br>
-                    <small>${item.specialEffect || 'A valuable item.'}</small>
-                </div>
-                <button onclick="buyItem('${item.id}', ${item.price})" ${state.currency < item.price ? 'disabled' : ''}>Buy (${item.price} P)</button>
-            </div>
-        `).join('');
-    }
-
-    async function buyItem(itemId, price) {
-      if (state.currency >= price) {
-        state.currency -= price;
-        state.ownedItems.push(itemId);
-
-        const itemInLibrary = state.equipmentLibrary.find(i => i.id === itemId);
-        if (itemInLibrary && !itemInLibrary.isDiscovered) {
-          await db.collection("items").doc(itemId).update({ isDiscovered: true });
-          itemInLibrary.isDiscovered = true;
-        }
-
-        handleInputChange();
-        renderShop();
-      } else {
-        alert("Not enough points!");
-      }
-    }
-
-    function openAdminPanel() { renderAdminPanel(); document.getElementById('admin-panel-modal').classList.add('active'); }
-    function closeAdminPanel() { document.getElementById('admin-panel-modal').classList.remove('active'); }
-
-    function renderAdminPanel() {
-      if (!state.gameSettings) return; 
-      document.getElementById('shop-status-btn').textContent = `Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
-      const grid = document.getElementById('admin-shop-grid');
-      grid.innerHTML = state.equipmentLibrary.map(item => `
-            <div class="admin-shop-item">
-                <img src="${item.image}" alt="${item.name}">
-                <div class="admin-shop-item-info"><strong>${item.name}</strong></div>
-                <button onclick="updateShopItem('${item.id}')">
-                    ${state.gameSettings.shopItems.some(si => si.id === item.id) ? 'Remove' : 'Add'}
-                </button>
-            </div>
-        `).join('');
-    }
-
-    async function toggleShopStatus() {
-      await db.collection("game_settings").doc("shop").update({ isShopOpen: !state.gameSettings.isShopOpen });
-    }
-
-    async function updateShopItem(itemId) {
-      const currentShopItems = state.gameSettings.shopItems;
-      const itemIndex = currentShopItems.findIndex(i => i.id === itemId);
-      const libraryItem = state.equipmentLibrary.find(i => i.id === itemId);
-
-      if (itemIndex > -1) {
-        currentShopItems.splice(itemIndex, 1);
-      } else {
-        const price = parseInt(prompt(`Enter price for ${libraryItem.name}:`, libraryItem.price || 100));
-        if (!isNaN(price)) {
-          currentShopItems.push({ id: itemId, price: price });
-        }
-      }
-      await db.collection("game_settings").doc("shop").update({ shopItems: currentShopItems });
-    }
-
-    function openProficiencyModal() { renderProficiencyModal(); document.getElementById('proficiency-modal').classList.add('active'); }
-    function closeProficiencyModal() { document.getElementById('proficiency-modal').classList.remove('active'); }
-
-    function renderProficiencyModal() {
-      const allCategories = [...new Set(state.skillLibrary.map(s => s.skillType).filter(Boolean))];
-      document.getElementById('proficiency-grid').innerHTML = allCategories.map(cat => `
-            <div class="proficiency-item">
-                <div class="proficiency-item-info"><strong>${cat}</strong></div>
-                <button onclick="toggleCategoryProficiency('${cat}')" class="${state.proficientCategories.includes(cat) ? 'active' : ''}">
-                    ${state.proficientCategories.includes(cat) ? 'Learned' : 'Learn'}
-                </button>
-            </div>
-        `).join('');
-    }
-
-    function toggleCategoryProficiency(category) {
-      const catIndex = state.proficientCategories.indexOf(category);
-      if (catIndex > -1) {
-        state.proficientCategories.splice(catIndex, 1);
-      } else {
-        state.proficientCategories.push(category);
-      }
-      handleInputChange(); // This will trigger recalculation of SP and a save
-      renderProficiencyModal();
-      renderProficiencies();
-    }
-
-    function renderProficiencies() {
-      const container = document.getElementById('category-proficiencies-list');
-      if (state.proficientCategories.length > 0) {
-        container.innerHTML = state.proficientCategories.map(cat => `<div>${cat}</div>`).join('');
-      } else {
-        container.innerHTML = `<small>No category proficiencies learned.</small>`;
-      }
-    }
-
-    function toggleSkillProficiency(skillId, tier, index) {
-      const skillIndex = state.proficientSkills.indexOf(skillId);
-      if (skillIndex > -1) {
-        state.proficientSkills.splice(skillIndex, 1);
-      } else {
-        state.proficientSkills.push(skillId);
-      }
-      handleInputChange();
-      openSkillInfoModal(state.skillsByTier[tier][index], tier, index); // Refresh the modal
-    }
-
-    // This is a placeholder function to prevent errors until a full item modal is designed.
-    function openItemInfoModal(itemData) {
-      alert(`Item Info:\nName: ${itemData.name}\nType: ${itemData.type}\nEffect: ${itemData.specialEffect || 'None'}`);
-    }
-
-    function openSpecialItemsModal() {
-      renderSpecialItems();
-      document.getElementById("special-items-modal").classList.add("active");
-    }
-
-    function closeSpecialItemsModal() {
-      document.getElementById("special-items-modal").classList.remove("active");
-    }
-
-    function closeEquipmentModal() { document.getElementById("equipment-library-modal").classList.remove("active"); }
-
-    function closeSkillInfoModal() { document.getElementById("skill-info-modal").classList.remove("active"); }
-
-    window.onload = () => {
-      initializeState();
-    };
-
-
+    function renderShop() { const g=document.getElementById('shop-grid'); g.innerHTML='<h4>Loading...</h4>'; const items=state.gameSettings.shopItems.map(itemData=>{const libItem=state.equipmentLibrary.find(li=>li.id===itemData.id); return {...libItem, ...itemData}; }); if(items.length===0){g.innerHTML='<h4>Shop is empty.</h4>';return;} g.innerHTML=items.map(i=>`<div class="shop-item"><img src="${i.image}" alt="${i.name}"><div class="shop-item-info"><strong>${i.name}</strong></div><button onclick="buyItem('${i.id}',${i.price})" ${state.currency<i.price?'disabled':''}>Buy (${i.price} P)</button></div>`).join(''); }
+    async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i=>i.id===id); if(item&&!item.isDiscovered){await db.collection("items").doc(id).update({isDiscovered:true});item.isDiscovered=true;} handleInputChange(); renderShop(); showNotification("Purchase successful!","success");} else { showNotification("Not enough points!","danger"); } }
+    function renderAdminPanel() { if(!state.gameSettings) return; document.getElementById('shop-status-btn').textContent=`Shop is ${state.gameSettings.isShopOpen?'Open':'Closed'}`; const g=document.getElementById('admin-shop-grid'); g.innerHTML = state.equipmentLibrary.map(i=>`<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${state.gameSettings.shopItems.some(si=>si.id===i.id)?'Remove':'Add'}</button></div>`).join(''); }
+    async function toggleShopStatus() { await db.collection("game_settings").doc("shop").update({isShopOpen:!state.gameSettings.isShopOpen}); }
+    async function updateShopItem(id) { const items=state.gameSettings.shopItems; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").update({shopItems:items}); }
   </script>
 </body>
-
 </html>
+
