@@ -134,6 +134,38 @@ there character.) (hopefully with cool design and display features.)
       text-align: center;
     }
 
+    /* --- NEW: Backstory Section --- */
+    .backstory-section {
+      grid-area: backstory;
+      /* Will be used in a future grid update */
+      margin-bottom: 20px;
+    }
+
+    .backstory-section h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    #backstory-textarea {
+      width: 100%;
+      min-height: 100px;
+      resize: vertical;
+      background-color: var(--bg-inset);
+      border: 1px dashed var(--border-color);
+      padding: 15px;
+      font-size: 1em;
+      line-height: 1.6;
+    }
+
+    #backstory-textarea:focus {
+      outline: none;
+      border-style: solid;
+      border-color: var(--accent-gold);
+    }
+
     /* --- Modern Form Elements & Buttons --- */
     label {
       font-weight: 600;
@@ -325,6 +357,25 @@ there character.) (hopefully with cool design and display features.)
       }
     }
 
+    /* --- NEW: Hit Dice Display --- */
+    #hit-dice {
+      font-weight: 600;
+    }
+
+    #hit-dice .accent-label {
+      color: var(--accent-gold);
+    }
+
+    /* --- NEW: Position-Specific Sections --- */
+    .position-specific-section {
+      display: none;
+      /* Hidden by default */
+      background-color: var(--bg-inset);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
     /* --- Equipment Section --- */
     .equipment-section {
       background-color: var(--bg-inset);
@@ -495,6 +546,42 @@ there character.) (hopefully with cool design and display features.)
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 16px;
+    }
+
+    /* --- NEW: Special Items Modal --- */
+    .special-item {
+      background-color: var(--bg-secondary);
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-primary);
+      margin-bottom: 10px;
+    }
+
+    .special-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .special-item-desc {
+      margin-top: 5px;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      /* Preserves line breaks */
+    }
+
+    #special-items-list {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .add-item-form {
+      margin-top: 20px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
     }
 
     /* --- Library Search Bar --- */
@@ -825,7 +912,8 @@ there character.) (hopefully with cool design and display features.)
       <div class="auth-block">
         <button onclick="signInWithGoogle()">Sign In with Google</button>
         <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-        <button onclick="resetCharacter()">Reset Character</button>
+        <button onclick="openSpecialItemsModal()">Special Items</button> <button onclick="resetCharacter()">Reset
+          Character</button>
         <span id="user-info" style="margin-left: 10px;"></span>
       </div>
       <div class="info-block">
@@ -866,86 +954,130 @@ there character.) (hopefully with cool design and display features.)
         <div class="affinities" id="tertiary-affinities"></div>
       </div>
     </div>
+  </div>
 
-    <div id="hp-speed"></div>
+  <div class="backstory-section">
+    <h4>Backstory & Notes</h4>
+    <textarea id="backstory-textarea" placeholder="Type your character's story here..."
+      oninput="handleInputChange()"></textarea>
+  </div>
 
-    <div class="equipment-section">
-      <h3>Equipment</h3>
-      <div class="equipment-grid">
-        <div class="equipment-row">
-          <div class="derived-stat attack">
-            <div class="derived-stat-formula">
-              <span class="fraction">
-                <span class="top" id="attack-formula-top"></span>
-                <span class="bottom" id="attack-formula-bot"></span>
-              </span>
-              <span id="attack-formula"></span>
-            </div>
-            <div class="derived-stat-result" id="derived-attack-result">0</div>
+  <div id="hp-speed">
+    <div id="hit-dice"></div>
+  </div>
+
+  <div class="equipment-section">
+    <h3>Equipment</h3>
+    <div class="equipment-grid">
+      <div class="equipment-row">
+        <div class="derived-stat attack">
+          <div class="derived-stat-formula">
+            <span class="fraction">
+              <span class="top" id="attack-formula-top"></span>
+              <span class="bottom" id="attack-formula-bot"></span>
+            </span>
+            <span id="attack-formula"></span>
           </div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-            <div class="slot" id="armor-slot" title="Armor"></div>
-            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-          </div>
+          <div class="derived-stat-result" id="derived-attack-result">0</div>
         </div>
-        <div class="equipment-row">
-          <div class="derived-stat defense">
-            <div class="derived-stat-formula">
-              <span class="fraction">
-                <span class="top" id="defense-formula-top"></span>
-                <span class="bottom" id="defense-formula-bot"></span>
-              </span>
-              <span id="defense-formula"></span>
-            </div>
-            <div class="derived-stat-result" id="derived-defense-result">0</div>
-          </div>
-          <div class="equipment-slots-row">
-            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-          </div>
+        <div class="equipment-slots-row">
+          <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+          <div class="slot" id="armor-slot" title="Armor"></div>
+          <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
         </div>
       </div>
-    </div>
-
-    <h3>Stats</h3>
-    <table class="stats-table" id="stats-table">
-      <thead>
-        <tr>
-          <th>Stat</th>
-          <th>Value</th>
-          <th>+/-</th>
-        </tr>
-      </thead>
-      <tbody id="stats-body"></tbody>
-    </table>
-
-    <div class="skill-section" id="skill-section"></div>
-
-    <div id="skill-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-library-title">Skill Library</h3>
-        <button onclick="closeSkillLibrary()">Close</button>
+      <div class="equipment-row">
+        <div class="derived-stat defense">
+          <div class="derived-stat-formula">
+            <span class="fraction">
+              <span class="top" id="defense-formula-top"></span>
+              <span class="bottom" id="defense-formula-bot"></span>
+            </span>
+            <span id="defense-formula"></span>
+          </div>
+          <div class="derived-stat-result" id="derived-defense-result">0</div>
+        </div>
+        <div class="equipment-slots-row">
+          <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+          <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+        </div>
       </div>
-      <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
-      <div class="modal-grid" id="skill-library-grid"></div>
     </div>
-    <div id="equipment-library-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="equipment-modal-title">Equipment Library</h3>
-        <button onclick="closeEquipmentModal()">Close</button>
+  </div>
+
+  </div>
+
+  <div id="light-bearer-section" class="position-specific-section">
+    <h3>Lighthouse</h3>
+    <div class="equipment-row">
+      <div class="equipment-slots-row">
+        <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
+        <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
       </div>
-      <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
-      <div class="modal-grid" id="equipment-library-grid"></div>
     </div>
-    <div id="skill-info-modal" class="modal-backdrop">
-      <div class="modal-header">
-        <h3 id="skill-info-title">Skill Details</h3>
-        <button onclick="closeSkillInfoModal()">Close</button>
-      </div>
-      <div id="skill-info-modal-content"></div>
+  </div>
+
+  <h3>Stats</h3>
+
+  <h3>Stats</h3>
+  <table class="stats-table" id="stats-table">
+    <thead>
+      <tr>
+        <th>Stat</th>
+        <th>Value</th>
+        <th>+/-</th>
+      </tr>
+    </thead>
+    <tbody id="stats-body"></tbody>
+  </table>
+
+  <div class="skill-section" id="skill-section"></div>
+
+  <div id="skill-library-modal" class="modal-backdrop">
+    <div class="modal-header">
+      <h3 id="skill-library-title">Skill Library</h3>
+      <button onclick="closeSkillLibrary()">Close</button>
     </div>
-    <div id="tooltip"></div>
+    <input type="text" id="skill-search" class="library-search" placeholder="Search skills...">
+    <div class="modal-grid" id="skill-library-grid"></div>
+  </div>
+  <div id="equipment-library-modal" class="modal-backdrop">
+    <div class="modal-header">
+      <h3 id="equipment-modal-title">Equipment Library</h3>
+      <button onclick="closeEquipmentModal()">Close</button>
+    </div>
+    <input type="text" id="equipment-search" class="library-search" placeholder="Search equipment...">
+    <div class="modal-grid" id="equipment-library-grid"></div>
+  </div>
+  <div id="skill-info-modal" class="modal-backdrop">
+    <div class="modal-header">
+      <h3 id="skill-info-title">Skill Details</h3>
+      <button onclick="closeSkillInfoModal()">Close</button>
+    </div>
+    <div id="skill-info-modal-content"></div>
+  </div>
+  <div id="tooltip"></div>
+
+  <div id="special-items-modal" class="modal-backdrop">
+    <div class="modal-header">
+      <h3>Special Items</h3>
+      <button onclick="closeSpecialItemsModal()">Close</button>
+    </div>
+    <div id="special-items-list">
+    </div>
+    <div class="add-item-form">
+      <h4>Add New Item</h4>
+      <label>Item Name</label>
+      <input type="text" id="new-item-name" placeholder="E.g., Black March">
+      <label>Description</label>
+      <textarea id="new-item-desc" placeholder="Details about the item..."
+        style="min-height: 80px; resize: vertical;"></textarea>
+      <button onclick="addSpecialItem()" style="margin-top: 10px;">Add Item</button>
+    </div>
+  </div>
+
+  </div>
+  <div id="tooltip"></div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
@@ -975,8 +1107,10 @@ there character.) (hopefully with cool design and display features.)
     const state = {
       isDirty: false,
       saveTimeout: null,
-      ownedItems: [], // New: tracks owned item IDs
-      // ... (rest of state properties)
+      ownedItems: [],
+      backstory: "",
+      specialItems: [],
+      ownedItems: [],
       statValues: {},
       manualStatPoints: {},
       skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] },
@@ -1063,7 +1197,10 @@ there character.) (hopefully with cool design and display features.)
             state.manualStatPoints = data.manualAdds || Object.fromEntries(stats.map(stat => [stat, 0]));
             state.equipment = data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null };
             state.selectedWeaponSlot = data.selectedWeaponSlot || null;
-            state.ownedItems = data.ownedItems || []; // Load owned items
+            state.ownedItems = data.ownedItems || [];
+            state.backstory = data.backstory || "";
+            state.specialItems = data.specialItems || [];
+            document.getElementById('backstory-textarea').value = state.backstory;
           } else {
             initializeState();
           }
@@ -1085,7 +1222,9 @@ there character.) (hopefully with cool design and display features.)
         skillsByTier: state.skillsByTier,
         equipment: state.equipment,
         selectedWeaponSlot: state.selectedWeaponSlot,
-        ownedItems: state.ownedItems, // Save owned items
+        ownedItems: state.ownedItems,
+        backstory: document.getElementById('backstory-textarea').value,
+        specialItems: state.specialItems
       };
     }
 
@@ -1118,6 +1257,10 @@ there character.) (hopefully with cool design and display features.)
       renderSkillTiers();
       updateDerivedStats();
       renderHpSpeed();
+
+      const position = document.getElementById("char-position").value;
+      document.getElementById("light-bearer-section").style.display = position === 'Light Bearer' ? 'block' : 'none';
+      //future class specific section here..
     }
 
     // --- STATS ---
@@ -1543,6 +1686,69 @@ there character.) (hopefully with cool design and display features.)
       closeSkillInfoModal();
       handleInputChange(); // Autosave
     }
+    //  ---  SPECIAL ITEMS  ---  //
+    function renderSpecialItems() {
+      const list = document.getElementById("special-items-list");
+      list.innerHTML = "";
+      if (state.specialItems.length === 0) {
+        list.innerHTML = "<p>No special items yet.</p>";
+        return;
+      }
+      state.specialItems.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "special-item";
+        itemDiv.innerHTML = `
+            <div class="special-item-header">
+                <span>${item.name}</span>
+                <div>
+                    <button onclick="editSpecialItem(${index})">Edit</button>
+                    <button onclick="deleteSpecialItem(${index})" style="background-color: var(--danger-color);">Delete</button>
+                </div>
+            </div>
+            <div class="special-item-desc">${item.desc}</div>
+        `;
+        list.appendChild(itemDiv);
+      });
+    }
+
+    function addSpecialItem() {
+      const nameInput = document.getElementById("new-item-name");
+      const descInput = document.getElementById("new-item-desc");
+      if (nameInput.value.trim() === "") {
+        alert("Item name cannot be empty.");
+        return;
+      }
+      state.specialItems.push({
+        name: nameInput.value,
+        desc: descInput.value,
+      });
+      nameInput.value = "";
+      descInput.value = "";
+      renderSpecialItems();
+      queueAutoSave();
+    }
+
+    function deleteSpecialItem(index) {
+      if (confirm(`Are you sure you want to delete "${state.specialItems[index].name}"?`)) {
+        state.specialItems.splice(index, 1);
+        renderSpecialItems();
+        queueAutoSave();
+      }
+    }
+
+    function editSpecialItem(index) {
+      const item = state.specialItems[index];
+      const newName = prompt("Enter the new name for the item:", item.name);
+      if (newName === null || newName.trim() === "") return; // User cancelled or entered empty name
+
+      const newDesc = prompt("Enter the new description for the item:", item.desc);
+      if (newDesc === null) return; // User cancelled
+
+      item.name = newName;
+      item.desc = newDesc;
+      renderSpecialItems();
+      queueAutoSave();
+    }
 
     // --- EVENT LISTENERS FOR SEARCH BARS ---
     document.getElementById('skill-search').addEventListener('input', renderSkillLibrary);
@@ -1645,9 +1851,15 @@ there character.) (hopefully with cool design and display features.)
       let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
       let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
 
-      // Updated to include spans with the new class for yellow accents
+      const hitDiceCount = level;
+      const hitDiceType = 4 + 2 * Math.floor(wp / 25); // d4, d6 at 25 Will, d8 at 50, etc.
+      const hitDiceMod = Math.floor((se - 10) / 2) * level;
+      const hitDiceDisplay = `${hitDiceCount}d${hitDiceType} + ${hitDiceMod}`;
+
       document.getElementById("hp-speed").innerHTML =
-        `<span class="accent-label">HP:</span> ${Math.round(hp)}<br><span class="accent-label">Movement Speed:</span> ${speed}`;
+        `<span class="accent-label">HP:</span> ${Math.round(hp)}<br>
+     <span class="accent-label">Movement Speed:</span> ${speed}<br>
+     <div id="hit-dice"><span class="accent-label">Hit Dice:</span> ${hitDiceDisplay}</div>`;
     }
 
     function renderAffinityControls() {
@@ -1765,6 +1977,15 @@ there character.) (hopefully with cool design and display features.)
     // This is a placeholder function to prevent errors until a full item modal is designed.
     function openItemInfoModal(itemData) {
       alert(`Item Info:\nName: ${itemData.name}\nType: ${itemData.type}\nEffect: ${itemData.specialEffect || 'None'}`);
+    }
+
+    function openSpecialItemsModal() {
+      renderSpecialItems();
+      document.getElementById("special-items-modal").classList.add("active");
+    }
+
+    function closeSpecialItemsModal() {
+      document.getElementById("special-items-modal").classList.remove("active");
     }
 
     function closeEquipmentModal() { document.getElementById("equipment-library-modal").classList.remove("active"); }
