@@ -1030,6 +1030,16 @@ back).
           <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
             oninput="handleInputChange()">
         </div>
+        <div class="affinities-block">
+          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
+          <div class="affinities" id="primary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
+              id="add-secondary"></select></div>
+          <div class="affinities" id="secondary-affinities"></div>
+          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
+              id="add-tertiary"></select></div>
+          <div class="affinities" id="tertiary-affinities"></div>
+        </div>
         <div class="proficiencies-block">
           <h4>Proficiencies</h4>
           <div id="category-proficiencies-list"></div>
@@ -1070,22 +1080,15 @@ back).
             </div>
           </div>
         </div>
-        <div class="affinities-block">
-          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
-          <div class="affinities" id="primary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
-              id="add-secondary"></select></div>
-          <div class="affinities" id="secondary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
-              id="add-tertiary"></select></div>
-          <div class="affinities" id="tertiary-affinities"></div>
-        </div>
+
         <div class="auth-block">
-          <button onclick="signInWithGoogle()">Sign In with Google</button>
+          <button onclick="signInWithGoogle()">Sign In</button>
           <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+          <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
+          <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
           <button onclick="openSpecialItemsModal()">Special Items</button>
-          <button onclick="resetCharacter()">Reset Character</button>
-          <span id="user-info" style="margin-left: 10px;"></span>
+          <button onclick="resetCharacter()">Reset</button>
+          <span id="user-info"></span>
         </div>
       </div>
     </div>
@@ -1343,15 +1346,15 @@ back).
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
       renderAffinityControls();
-      renderProficiencies();
       renderStats();
       renderEquipment();
       renderSkillTiers();
       renderTopBarStats();
+      renderProficiencies();
 
       const position = document.getElementById("char-position").value;
-      document.getElementById("light-bearer-slots").style.display = position === 'Light Bearer' ? 'block' : 'none';
-      //future class specific section here..
+      const lightBearerSlots = document.getElementById("light-bearer-slots");
+      lightBearerSlots.style.display = position === 'Light Bearer' ? 'flex' : 'none';
     }
 
     // --- STATS ---
@@ -1490,6 +1493,8 @@ back).
       const hpSpeedEl = document.getElementById("hp-speed");
       const derivedAttackEl = document.getElementById("derived-attack-display");
       const derivedDefenseEl = document.getElementById("derived-defense-display");
+
+      if (!hpSpeedEl || !derivedAttackEl || !derivedDefenseEl) return;
 
       // HP, Speed, Hit Dice Calculation
       const floor = parseInt(document.getElementById("char-floor").value);
@@ -2075,6 +2080,136 @@ back).
       document.getElementById("equipment-modal-title").textContent = `Equip to ${title}`;
       modal.classList.add("active");
       renderEquipmentLibrary();
+    }
+
+    function openShopModal() { renderShop(); document.getElementById('shop-modal').classList.add('active'); }
+    function closeShopModal() { document.getElementById('shop-modal').classList.remove('active'); }
+
+    function renderShop() {
+      const grid = document.getElementById('shop-grid');
+      grid.innerHTML = '<h4>Loading Shop...</h4>';
+      const shopItemDetails = state.gameSettings.shopItems.map(itemData => {
+        const libraryItem = state.equipmentLibrary.find(libItem => libItem.id === itemData.id);
+        return { ...libraryItem, ...itemData };
+      });
+
+      if (shopItemDetails.length === 0) {
+        grid.innerHTML = '<h4>The shop is currently empty.</h4>';
+        return;
+      }
+
+      grid.innerHTML = shopItemDetails.map(item => `
+            <div class="shop-item">
+                <img src="${item.image}" alt="${item.name}">
+                <div class="shop-item-info">
+                    <strong>${item.name}</strong><br>
+                    <small>${item.specialEffect || 'A valuable item.'}</small>
+                </div>
+                <button onclick="buyItem('${item.id}', ${item.price})" ${state.currency < item.price ? 'disabled' : ''}>Buy (${item.price} P)</button>
+            </div>
+        `).join('');
+    }
+
+    async function buyItem(itemId, price) {
+      if (state.currency >= price) {
+        state.currency -= price;
+        state.ownedItems.push(itemId);
+
+        const itemInLibrary = state.equipmentLibrary.find(i => i.id === itemId);
+        if (itemInLibrary && !itemInLibrary.isDiscovered) {
+          await db.collection("items").doc(itemId).update({ isDiscovered: true });
+          itemInLibrary.isDiscovered = true;
+        }
+
+        handleInputChange();
+        renderShop();
+      } else {
+        alert("Not enough points!");
+      }
+    }
+
+    function openAdminPanel() { renderAdminPanel(); document.getElementById('admin-panel-modal').classList.add('active'); }
+    function closeAdminPanel() { document.getElementById('admin-panel-modal').classList.remove('active'); }
+
+    function renderAdminPanel() {
+      document.getElementById('shop-status-btn').textContent = `Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
+      const grid = document.getElementById('admin-shop-grid');
+      grid.innerHTML = state.equipmentLibrary.map(item => `
+            <div class="admin-shop-item">
+                <img src="${item.image}" alt="${item.name}">
+                <div class="admin-shop-item-info"><strong>${item.name}</strong></div>
+                <button onclick="updateShopItem('${item.id}')">
+                    ${state.gameSettings.shopItems.some(si => si.id === item.id) ? 'Remove' : 'Add'}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    async function toggleShopStatus() {
+      await db.collection("game_settings").doc("shop").update({ isShopOpen: !state.gameSettings.isShopOpen });
+    }
+
+    async function updateShopItem(itemId) {
+      const currentShopItems = state.gameSettings.shopItems;
+      const itemIndex = currentShopItems.findIndex(i => i.id === itemId);
+      const libraryItem = state.equipmentLibrary.find(i => i.id === itemId);
+
+      if (itemIndex > -1) {
+        currentShopItems.splice(itemIndex, 1);
+      } else {
+        const price = parseInt(prompt(`Enter price for ${libraryItem.name}:`, libraryItem.price || 100));
+        if (!isNaN(price)) {
+          currentShopItems.push({ id: itemId, price: price });
+        }
+      }
+      await db.collection("game_settings").doc("shop").update({ shopItems: currentShopItems });
+    }
+
+    function openProficiencyModal() { renderProficiencyModal(); document.getElementById('proficiency-modal').classList.add('active'); }
+    function closeProficiencyModal() { document.getElementById('proficiency-modal').classList.remove('active'); }
+
+    function renderProficiencyModal() {
+      const allCategories = [...new Set(state.skillLibrary.map(s => s.skillType).filter(Boolean))];
+      document.getElementById('proficiency-grid').innerHTML = allCategories.map(cat => `
+            <div class="proficiency-item">
+                <div class="proficiency-item-info"><strong>${cat}</strong></div>
+                <button onclick="toggleCategoryProficiency('${cat}')" class="${state.proficientCategories.includes(cat) ? 'active' : ''}">
+                    ${state.proficientCategories.includes(cat) ? 'Learned' : 'Learn'}
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function toggleCategoryProficiency(category) {
+      const catIndex = state.proficientCategories.indexOf(category);
+      if (catIndex > -1) {
+        state.proficientCategories.splice(catIndex, 1);
+      } else {
+        state.proficientCategories.push(category);
+      }
+      handleInputChange(); // This will trigger recalculation of SP and a save
+      renderProficiencyModal();
+      renderProficiencies();
+    }
+
+    function renderProficiencies() {
+      const container = document.getElementById('category-proficiencies-list');
+      if (state.proficientCategories.length > 0) {
+        container.innerHTML = state.proficientCategories.map(cat => `<div>${cat}</div>`).join('');
+      } else {
+        container.innerHTML = `<small>No category proficiencies learned.</small>`;
+      }
+    }
+
+    function toggleSkillProficiency(skillId, tier, index) {
+      const skillIndex = state.proficientSkills.indexOf(skillId);
+      if (skillIndex > -1) {
+        state.proficientSkills.splice(skillIndex, 1);
+      } else {
+        state.proficientSkills.push(skillId);
+      }
+      handleInputChange();
+      openSkillInfoModal(state.skillsByTier[tier][index], tier, index); // Refresh the modal
     }
 
     // This is a placeholder function to prevent errors until a full item modal is designed.
