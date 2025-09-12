@@ -37,10 +37,10 @@
     button.btn-danger { background-color: var(--danger-color); }
     .auth-block { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
     #user-info { margin-left: auto; font-size: 0.9em; color: var(--text-secondary); }
-    .top-stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; text-align: center; }
+    .top-stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; text-align: center; }
     .top-stat { background-color: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--border-radius); }
     .top-stat .label { font-size: 0.8em; color: var(--text-secondary); display: block; }
-    .top-stat .value { font-size: 1.5em; font-weight: 700; color: var(--accent-gold); }
+    .top-stat .value { font-size: 1.3em; font-weight: 700; color: var(--accent-gold); }
     .affinities-container { display: flex; flex-direction: column; gap: 1rem; }
     .affinity-group { display: flex; align-items: center; gap: 1rem; }
     .affinity-group label { margin: 0; flex-shrink: 0; }
@@ -50,7 +50,7 @@
     .remove-affinity:hover { color: var(--danger-color); }
     .equipment-grid { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; }
     .equipment-column { display: flex; flex-direction: column; gap: 1rem; }
-    .slot { width: 100px; height: 100px; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
+    .slot { width: 120px; height: 120px; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
     .slot:hover { background-color: var(--bg-tertiary); border-color: var(--accent-hover); }
     .slot.selected-weapon { border-color: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
     .slot img.item-image { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
@@ -69,12 +69,14 @@
     @keyframes flash-red-bg { from { background-color: rgba(239, 68, 68, 0.3); } to { background-color: transparent; } }
     .tier-section { margin-bottom: 1.5rem; }
     .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-    .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; }
-    .skill-slot { width: 80px; height: 80px; border: 2px dashed var(--border-color); background-color: var(--bg-primary); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius); cursor: pointer; transition: background-color .2s; position: relative; }
+    .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
+    .skill-slot { width: 100px; height: 100px; border: 2px dashed var(--border-color); background-color: var(--bg-primary); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius); cursor: pointer; transition: background-color .2s; position: relative; }
     .skill-slot:hover { background-color: var(--bg-tertiary); }
     .skill-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
     .skill-slot.empty::after { content: '+'; color: var(--text-secondary); font-size: 48px; position: absolute; }
     .skill-slot .skill-level-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0, 0, 0, 0.7); color: var(--accent-gold); font-size: 14px; font-weight: bold; border-radius: 4px; padding: 2px 5px; }
+    .info-icon { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; cursor: pointer; z-index: 2; fill: white; transition: fill 0.2s; }
+    .info-icon:hover { fill: var(--accent-gold); }
     #backstory-textarea { width: 100%; min-height: 250px; resize: vertical; }
     .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 999; display: none; align-items: center; justify-content: center; padding: 2rem; }
     .modal-backdrop.active { display: flex; }
@@ -130,7 +132,7 @@
                     <label for="available-stat-points">Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
                     <label for="available-skill-points">Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
                     <button onclick="addSkillPoint()" style="width: 100%; margin-top: 1rem;">+1 Bonus Skill Point</button>
-                    <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5" oninput="handleInputChange()">
+                    <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2.0" oninput="handleInputChange()">
                 </div>
                 <div class="widget">
                     <h3>Proficiencies</h3>
@@ -159,6 +161,7 @@
                         <div class="equipment-column"><div class="slot" id="armor-slot" title="Armor"></div></div>
                         <div class="equipment-column"><div class="slot" id="accessory2-slot" title="Accessory 2"></div><div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div></div>
                         <div class="equipment-column" id="light-bearer-slots" style="display:none;"><div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div><div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div></div>
+                        <div class="equipment-column" id="anima-slots" style="display:none;"><div class="slot" id="beast1-slot" title="Beast 1"></div><div class="slot" id="beast2-slot" title="Beast 2"></div></div>
                     </div>
                 </div>
             </div>
@@ -191,6 +194,7 @@
     <div id="shop-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Shop</h3><button onclick="closeShopModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="shop-grid"></div></div></div></div>
     <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeAdminPanel()">Close</button></div><div class="modal-body"><button id="shop-status-btn" onclick="toggleShopStatus()" style="margin-bottom: 1rem;">Toggle Shop</button><div class="modal-grid" id="admin-shop-grid"></div></div></div></div>
     <div id="proficiency-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Manage Proficiencies</h3><button onclick="closeProficiencyModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="proficiency-grid"></div></div></div></div>
+    <div id="bestiary-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="bestiary-modal-title">Bestiary</h3><button onclick="closeBestiaryModal()">Close</button></div><div class="modal-body"><div class="modal-grid" id="bestiary-grid"></div></div></div></div>
 
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
@@ -204,7 +208,7 @@
     const db = firebase.firestore();
 
     const stats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
-    const state = { isDirty: false, saveTimeout: null, backstory: "", specialItems: [], ownedItems: [], statValues: {}, manualStatPoints: {}, skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] }, skillBonuses: {}, currentSkillEdit: { tier: null, index: null }, skillLibrary: [], equipmentLibrary: [], currentEquipmentEdit: null, availableStatPoints: 0, availableSkillPoints: 0, bonusSkillPoints: 0, usedSkillPoints: 0, affinities: { primary: [], secondary: [], tertiary: [] }, equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null }, selectedWeaponSlot: null, currency: 0, proficientSkills: [], proficientCategories: [] };
+    const state = { isDirty: false, saveTimeout: null, backstory: "", specialItems: [], ownedItems: [], statValues: {}, manualStatPoints: {}, skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] }, skillBonuses: {}, currentSkillEdit: { tier: null, index: null }, skillLibrary: [], equipmentLibrary: [], bestiaryLibrary: [], ownedBeasts: {}, currentBeastEdit: null, currentEquipmentEdit: null, availableStatPoints: 0, availableSkillPoints: 0, bonusSkillPoints: 0, usedSkillPoints: 0, affinities: { primary: [], secondary: [], tertiary: [] }, equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: null, currency: 0, proficientSkills: [], proficientCategories: [] };
 
     function showNotification(message, type = 'info', duration = 3000) { const t = document.getElementById('notification-toast'); t.textContent = message; t.className = 'show'; if (type === 'danger') t.classList.add('danger'); if (type === 'success') t.classList.add('success'); setTimeout(() => t.classList.remove('show'), duration); }
     function showConfirmation(message, onConfirm) { const m = document.getElementById('confirmation-modal'); document.getElementById('confirmation-message').textContent = message; m.classList.add('active'); const c = document.getElementById('confirm-btn-yes'), n = document.getElementById('confirm-btn-no'); const close = () => { m.classList.remove('active'); c.replaceWith(c.cloneNode(true)); n.replaceWith(n.cloneNode(true)); }; document.getElementById('confirm-btn-yes').addEventListener('click', () => { onConfirm(); close(); }); document.getElementById('confirm-btn-no').addEventListener('click', close); }
@@ -238,16 +242,17 @@
           document.getElementById("char-name").value = data.name || ""; document.getElementById("char-race").value = data.race || "";
           document.getElementById("char-level").value = data.level || 1; document.getElementById("char-floor").value = data.floor || 1;
           document.getElementById("char-position").value = data.position || "Guide"; document.getElementById('backstory-textarea').value = data.backstory || "";
-          Object.assign(state, { affinities: data.affinities || {p:[],s:[],t:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || {w1:null,w2:null,a:null,ac1:null,ac2:null,l1:null,l2:null}, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
+          document.getElementById('stat-multiplier').value = data.statMultiplier || 2.0;
+          Object.assign(state, { affinities: data.affinities || {primary:[],secondary:[],tertiary:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], ownedBeasts: data.ownedBeasts || {}, proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
         } else { initializeState(); }
         fetchLibrariesAndUpdate();
       }).catch(err => console.error("Load failed:", err));
     }
-    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
+    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, ownedBeasts: state.ownedBeasts, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
     function resetCharacter() { showConfirmation("Are you sure? This will permanently delete this character.", () => { const u = auth.currentUser; if (u) { db.collection("characters").doc(u.uid).delete().then(() => location.reload()).catch(e => console.error("Delete failed:", e)); } }); }
 
     function recalculateAndRenderAll() { calculateBaseStats(); applyAllSkillEffects(); const l = parseInt(document.getElementById("char-level").value) || 1; const totalAllocated = Object.values(state.manualStatPoints).reduce((s, v) => s + v, 0); state.availableStatPoints = (l - 1) - totalAllocated; calculateUsedSkillPoints(); state.availableSkillPoints = (l - 1) - state.usedSkillPoints + state.bonusSkillPoints; renderAllUI(); }
-    function renderAllUI() { document.getElementById("available-stat-points").value = state.availableStatPoints; document.getElementById("available-skill-points").value = state.availableSkillPoints; renderAffinityControls(); renderStats(); renderEquipment(); renderSkillTiers(); renderTopBarStats(); renderProficiencies(); const p = document.getElementById("char-position").value, l = document.getElementById("light-bearer-slots"); if(l) l.style.display = p === 'Light Bearer' ? 'flex' : 'none'; }
+    function renderAllUI() { document.getElementById("available-stat-points").value = state.availableStatPoints; document.getElementById("available-skill-points").value = state.availableSkillPoints; renderAffinityControls(); renderStats(); renderEquipment(); renderSkillTiers(); renderTopBarStats(); renderProficiencies(); const p = document.getElementById("char-position").value; document.getElementById("light-bearer-slots").style.display = p === 'Light Bearer' ? 'flex' : 'none'; document.getElementById("anima-slots").style.display = p === 'Anima' ? 'flex' : 'none'; }
     
     function renderStats() {
       const tbody = document.getElementById("stats-body"); tbody.innerHTML = "";
@@ -264,24 +269,28 @@
     }
 
     function renderEquipment() {
-      ["weapon1","weapon2","armor","accessory1","accessory2","lighthouse1","lighthouse2"].forEach(slotKey => {
+      ["weapon1","weapon2","armor","accessory1","accessory2","lighthouse1","lighthouse2","beast1","beast2"].forEach(slotKey => {
         const el = document.getElementById(`${slotKey}-slot`); if (!el) return;
         const item = state.equipment[slotKey]; el.innerHTML = "";
         if (item) { const i = document.createElement("img"); i.src = item.image || "https://placehold.co/100x100/1F2937/F9FAFB?text=?"; i.alt = item.name || slotKey; i.className = "item-image"; el.appendChild(i); }
-        const c = document.createElement("div"); c.className = "change-item-icon"; c.textContent = item ? '⇄' : '+'; c.onclick = e => { e.stopPropagation(); openEquipmentModal(slotKey); }; el.appendChild(c);
+        const c = document.createElement("div"); c.className = "change-item-icon"; c.textContent = item ? '⇄' : '+'; 
+        if (slotKey.includes("beast")) { c.onclick = e => { e.stopPropagation(); openBestiaryModal(slotKey); }; }
+        else { c.onclick = e => { e.stopPropagation(); openEquipmentModal(slotKey); }; }
+        el.appendChild(c);
         if (slotKey.includes("weapon")) { el.classList.toggle("selected-weapon", state.selectedWeaponSlot === slotKey); el.onclick = () => { if (state.equipment[slotKey]) { state.selectedWeaponSlot = (state.selectedWeaponSlot === slotKey) ? null : slotKey; handleInputChange(); } }; }
       });
     }
 
     function renderTopBarStats() {
       const c = document.getElementById("top-stats-bar"); if (!c) return;
-      const f = parseInt(document.getElementById("char-floor").value)||1, l = parseInt(document.getElementById("char-level").value)||1;
+      const l = parseInt(document.getElementById("char-level").value)||1;
       const se = (state.statValues["Shinsu Endurance"]||0)+(state.skillBonuses["Shinsu Endurance"]?.add||0), str = (state.statValues["Strength"]||0)+(state.skillBonuses["Strength"]?.add||0), wp = (state.statValues["Willpower"]||0)+(state.skillBonuses["Willpower"]?.add||0);
-      const penalty = Math.max(0, 2 * f - se), speed = 6 + l - penalty + (state.skillBonuses['Movement Speed']?.add || 0), hp = (3*se + 2*str + 1.5*wp + l*(2+Math.floor(l/25))) + (state.skillBonuses['HP']?.add||0);
+      const penalty = Math.max(0, 2 * (parseInt(document.getElementById("char-floor").value)||1) - se), speed = 6 + l - penalty + (state.skillBonuses['Movement Speed']?.add || 0), hp = (3*se + 2*str + 1.5*wp + l*(2+Math.floor(l/25))) + (state.skillBonuses['HP']?.add||0);
+      const hitDiceCount = l, hitDiceType = 4 + 2 * Math.floor(wp / 25), hitDiceMod = Math.floor((se-10)/2) * l;
       let attack = 0, defense = 0; const selWep = state.selectedWeaponSlot ? state.equipment[state.selectedWeaponSlot] : null;
       if (selWep) { const statVal = (state.statValues[selWep.stat]||0)+(state.skillBonuses[selWep.stat]?.add||0); attack = Math.floor(statVal/5)+(selWep.modifier||0); }
       if (state.equipment.armor) { const statVal = (state.statValues[state.equipment.armor.stat]||0)+(state.skillBonuses[state.equipment.armor.stat]?.add||0); defense = Math.floor(statVal/5)+(state.equipment.armor.modifier||0); }
-      c.innerHTML = `<div class="top-stat"><span class="label">HP</span><span class="value">${Math.round(hp)}</span></div><div class="top-stat"><span class="label">Speed</span><span class="value">${speed}</span></div><div class="top-stat"><span class="label">Attack</span><span class="value">${attack}</span></div><div class="top-stat"><span class="label">Defense</span><span class="value">${defense}</span></div>`;
+      c.innerHTML = `<div class="top-stat"><span class="label">HP</span><span class="value">${Math.round(hp)}</span></div><div class="top-stat"><span class="label">Speed</span><span class="value">${speed}</span></div><div class="top-stat"><span class="label">Attack</span><span class="value">${attack}</span></div><div class="top-stat"><span class="label">Defense</span><span class="value">${defense}</span></div><div class="top-stat"><span class="label">Hit Dice</span><span class="value">${hitDiceCount}d${hitDiceType}+${hitDiceMod}</span></div>`;
     }
 
     function renderAffinityControls() {
@@ -298,7 +307,7 @@
       for (let t = 1; t <= 5; t++) {
         const d = document.createElement("div"); d.className = "tier-section"; d.innerHTML = `<div class="tier-header"><h3>Tier ${t}</h3><button onclick="addSkillSlot(${t})">+ Slot</button></div><div class="skill-slots" id="tier-${t}-slots"></div>`;
         const g = d.querySelector(`#tier-${t}-slots`);
-        (state.skillsByTier[t]||[]).forEach((s, i) => { const slot = document.createElement("div"); slot.className = "skill-slot"; if (!s) { slot.classList.add("empty"); slot.onclick = () => openSkillLibrary(t, i); } else { slot.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick="openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})"><div class="skill-level-badge">${s.level||0}</div>`; } g.appendChild(slot); });
+        (state.skillsByTier[t]||[]).forEach((s, i) => { const slot = document.createElement("div"); slot.className = "skill-slot"; if (!s) { slot.classList.add("empty"); slot.onclick = () => openSkillLibrary(t, i); } else { slot.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick="openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})"><div class="skill-level-badge">${s.level||0}</div><svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`; } g.appendChild(slot); });
         c.appendChild(d);
       }
     }
@@ -320,9 +329,10 @@
     function initializeState() { state.statValues = Object.fromEntries(stats.map(s => [s, 1])); state.manualStatPoints = Object.fromEntries(stats.map(s => [s, 0])); }
     let settingsListener = null;
     function listenToGameSettings() { if (settingsListener) settingsListener(); settingsListener = db.collection("game_settings").doc("shop").onSnapshot(d => { state.gameSettings = d.exists ? d.data() : { isShopOpen: false, shopItems: [] }; document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen; }); }
-    async function fetchLibrariesAndUpdate() { await Promise.all([fetchEquipmentLibrary(), fetchSkillLibrary()]); recalculateAndRenderAll(); }
+    async function fetchLibrariesAndUpdate() { await Promise.all([fetchEquipmentLibrary(), fetchSkillLibrary(), fetchBestiaryLibrary()]); recalculateAndRenderAll(); }
     async function fetchSkillLibrary() { try { const s=await db.collection("skills").get(); state.skillLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch skill lib:", e); } }
     async function fetchEquipmentLibrary() { try { const s=await db.collection("items").get(); state.equipmentLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch equip lib:", e); } }
+    async function fetchBestiaryLibrary() { try { const s=await db.collection("beasts").get(); state.bestiaryLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch bestiary lib:", e); } }
 
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -335,6 +345,8 @@
     function openProficiencyModal() { renderProficiencyModal(); openModal('proficiency-modal'); } function closeProficiencyModal() { closeModal('proficiency-modal'); }
     function openSpecialItemsModal() { renderSpecialItems(); openModal('special-items-modal'); } function closeSpecialItemsModal() { closeModal('special-items-modal'); }
     function closeSkillInfoModal() { closeModal('skill-info-modal'); }
+    function openBestiaryModal(slotKey) { state.currentBeastEdit = slotKey; renderBestiaryLibrary(); openModal('bestiary-modal'); }
+    function closeBestiaryModal() { closeModal('bestiary-modal'); }
     
     function openItemInfoModal(itemData) { document.getElementById('item-info-title').textContent = itemData.name; document.getElementById('item-info-modal-content').innerHTML = `<div style="text-align:center; padding-bottom: 1rem;"><img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;"></div><p><strong>Type:</strong> ${itemData.type}</p><p><strong>Stat:</strong> ${itemData.stat}</p><p><strong>Modifier:</strong> ${itemData.modifier}</p><p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; openModal('item-info-modal'); }
     function renderEquipmentLibrary() {
@@ -360,7 +372,7 @@
       const c = document.getElementById("skill-info-modal-content"); document.getElementById("skill-info-title").textContent=skillData.name; const p = state.proficientSkills.includes(skillData.id), s = state.skillsByTier[tier][index], nextLvl = (s.level||0)+1, canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level||0]||999) && getSkillTier(s, nextLvl) <= tier;
       const controls = `<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level||0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${skillData.id}',${tier},${index})">${p?'Un-Proficient':'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp?'disabled':''}>Lvl Up (${s.costPerLevel[s.level||0]||'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level||s.level===0?'disabled':''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
       let table = ``; for (let i=1; i<=skillData.maxLevel; i++) { const e=skillData.effects.find(ef=>ef.level===i); let eTxt = e?`${e.stat}: ${e.type==='add'?'+':'x'}${e.value}`:'-'; if(e&&e.stat2) eTxt+=`, ${e.stat2}: +${e.value2}`; table+=`<tr ${s.level===i?'style="background-color:var(--accent-primary);"':''}><td>${i}</td><td>${skillData.costPerLevel[i-1]}</td><td>${getSkillTier(skillData,i)}</td><td>${eTxt}</td></tr>`; }
-      c.innerHTML = `<div style="display:grid; grid-template-columns:150px 1fr; gap:1.5rem;"><div><img src="${skillData.icon}" alt="${skillData.name}" style="width:100%; border-radius:8px;"><p>${skillData.description}</p>${controls}</div><div><table class="stats-table"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
+      c.innerHTML = `<div style="display:grid; grid-template-columns:200px 1fr; gap:1.5rem;"><div><img src="${skillData.icon}" alt="${skillData.name}" style="width:100%; border-radius:8px;"><p style="font-size:0.9em; margin-top:1rem;">${skillData.description}</p>${controls}</div><div><table class="stats-table" style="font-size:0.9em;"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
     }
     function levelUpSkill(t, i) { const s=state.skillsByTier[t][i], c=s.costPerLevel[s.level||0], nL=(s.level||0)+1; if (nL<=s.maxLevel && state.availableSkillPoints>=c && getSkillTier(s,nL)<=t){ s.level=nL; handleInputChange(); openSkillInfoModal(s,t,i); } }
     function delevelSkill(t, i) { const s=state.skillsByTier[t][i]; if(s.level>0){ s.level--; handleInputChange(); openSkillInfoModal(s,t,i); } }
@@ -376,10 +388,31 @@
     function toggleCategoryProficiency(c) { const i=state.proficientCategories.indexOf(c); if(i>-1) state.proficientCategories.splice(i,1); else state.proficientCategories.push(c); handleInputChange(); renderProficiencyModal(); renderProficiencies(); }
 
     function renderShop() { const g=document.getElementById('shop-grid'); g.innerHTML='<h4>Loading...</h4>'; const items=state.gameSettings.shopItems.map(itemData=>{const libItem=state.equipmentLibrary.find(li=>li.id===itemData.id); return {...libItem, ...itemData}; }); if(items.length===0){g.innerHTML='<h4>Shop is empty.</h4>';return;} g.innerHTML=items.map(i=>`<div class="shop-item"><img src="${i.image}" alt="${i.name}"><div class="shop-item-info"><strong>${i.name}</strong></div><button onclick="buyItem('${i.id}',${i.price})" ${state.currency<i.price?'disabled':''}>Buy (${i.price} P)</button></div>`).join(''); }
-    async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i=>i.id===id); if(item&&!item.isDiscovered){await db.collection("items").doc(id).update({isDiscovered:true});item.isDiscovered=true;} handleInputChange(); renderShop(); showNotification("Purchase successful!","success");} else { showNotification("Not enough points!","danger"); } }
+    async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i=>i.id===id); if(item&&!item.isDiscovered){await db.collection("items").doc(id).set({isDiscovered:true}, {merge:true});item.isDiscovered=true;} handleInputChange(); renderShop(); showNotification("Purchase successful!","success");} else { showNotification("Not enough points!","danger"); } }
     function renderAdminPanel() { if(!state.gameSettings) return; document.getElementById('shop-status-btn').textContent=`Shop is ${state.gameSettings.isShopOpen?'Open':'Closed'}`; const g=document.getElementById('admin-shop-grid'); g.innerHTML = state.equipmentLibrary.map(i=>`<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${state.gameSettings.shopItems.some(si=>si.id===i.id)?'Remove':'Add'}</button></div>`).join(''); }
-    async function toggleShopStatus() { await db.collection("game_settings").doc("shop").update({isShopOpen:!state.gameSettings.isShopOpen}); }
-    async function updateShopItem(id) { const items=state.gameSettings.shopItems; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").update({shopItems:items}); }
+    async function toggleShopStatus() { await db.collection("game_settings").doc("shop").set({ isShopOpen: !state.gameSettings.isShopOpen }, { merge: true }); }
+    async function updateShopItem(id) { const items=[...(state.gameSettings.shopItems||[])]; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").set({ shopItems:items }, { merge: true }); }
+
+    function renderBestiaryLibrary() {
+        const grid = document.getElementById('bestiary-grid');
+        grid.innerHTML = "";
+        state.bestiaryLibrary.forEach(beast => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `<img src="${beast.image}" alt="${beast.name}"><div><strong>${beast.name}</strong></div>`;
+            card.onclick = () => selectBeast(beast);
+            grid.appendChild(card);
+        });
+    }
+    function selectBeast(beast) {
+        if (!state.currentBeastEdit) return;
+        if (!state.ownedBeasts[beast.id]) {
+            state.ownedBeasts[beast.id] = { level: 1 };
+        }
+        state.equipment[state.currentBeastEdit.replace('-slot', '')] = beast;
+        handleInputChange();
+        closeBestiaryModal();
+    }
   </script>
 </body>
 </html>
