@@ -438,19 +438,7 @@
     }
 
 
-    .slot {
-      width: 130px;
-      height: 130px;
-      background-color: #2a2a4a;
-      border: 2px dashed #555;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: background-color .2s, border-color .2s;
-    }
-
+   
     .slot:hover {
       background-color: #3a3a3a;
     }
@@ -460,25 +448,6 @@
       height: 100%;
       object-fit: contain;
       pointer-events: none;
-    }
-
-    .slot .change-item-icon {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      width: 24px;
-      height: 24px;
-      background-color: rgba(0, 0, 0, .6);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      cursor: pointer;
-      border: 1px solid #888;
-      transition: background-color .2s;
-      font-size: 14px;
     }
 
     .slot .change-item-icon:hover {
@@ -531,15 +500,6 @@
       border: 1px solid #888;
       transition: background-color .2s;
       font-size: 14px;
-    }
-
-    .slot .change-item-icon:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .selected-weapon {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 8px var(--accent-gold);
     }
 
     /* --- Modals --- */
@@ -998,71 +958,72 @@
           <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
             oninput="handleInputChange()">
         </div>
-         </div><div class="proficiencies-block">
-          <h4>Proficiencies</h4>
-          <div id="category-proficiencies-list"></div>
-          <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
-        </div>
-        
-        
       </div>
-      <div class="right-column">
+      <div class="proficiencies-block">
+        <h4>Proficiencies</h4>
+        <div id="category-proficiencies-list"></div>
+        <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
+      </div>
 
-        <div class="top-stats-bar">
-          <div id="hp-speed"></div>
-          <div class="derived-stats-container">
-            <div class="derived-stat" id="derived-attack-display"></div>
-            <div class="derived-stat" id="derived-defense-display"></div>
+
+    </div>
+    <div class="right-column">
+
+      <div class="top-stats-bar">
+        <div id="hp-speed"></div>
+        <div class="derived-stats-container">
+          <div class="derived-stat" id="derived-attack-display"></div>
+          <div class="derived-stat" id="derived-defense-display"></div>
+        </div>
+      </div>
+
+      <div class="auth-block">
+        <button onclick="signInWithGoogle()">Sign In</button>
+        <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+        <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
+        <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
+        <button onclick="openSpecialItemsModal()">Special Items</button>
+        <button onclick="resetCharacter()">Reset</button>
+        <span id="user-info"></span>
+      </div>
+
+      <div class="affinities-block">
+        <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
+        <div class="affinities" id="primary-affinities"></div>
+        <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
+            id="add-secondary"></select></div>
+        <div class="affinities" id="secondary-affinities"></div>
+        <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
+            id="add-tertiary"></select></div>
+        <div class="affinities" id="tertiary-affinities"></div>
+      </div>
+
+      <div class="equipment-section">
+        <h3>Equipment</h3>
+        <div class="equipment-grid">
+          <div class="equipment-core">
+            <div class="equipment-row">
+              <div class="equipment-slots-row">
+                <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+                <div class="slot" id="armor-slot" title="Armor"></div>
+                <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+              </div>
+              <div class="equipment-slots-row accessory-row">
+                <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+                <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+              </div>
+            </div>
+          </div>
+          <div id="light-bearer-slots">
+            <div class="equipment-row">
+              <div class="equipment-slots-row">
+                <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
+                <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
+              </div>
+            </div>
           </div>
         </div>
 
-         <div class="auth-block">
-          <button onclick="signInWithGoogle()">Sign In</button>
-          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-          <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button>
-          <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin Panel</button>
-          <button onclick="openSpecialItemsModal()">Special Items</button>
-          <button onclick="resetCharacter()">Reset</button>
-          <span id="user-info"></span>
-        </div>
-        
-        <div class="affinities-block">
-          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
-          <div class="affinities" id="primary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
-              id="add-secondary"></select></div>
-          <div class="affinities" id="secondary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
-              id="add-tertiary"></select></div>
-          <div class="affinities" id="tertiary-affinities"></div>
-        </div>
-
-        <div class="equipment-section">
-          <h3>Equipment</h3>
-          <div class="equipment-grid">
-            <div class="equipment-core">
-              <div class="equipment-row">
-                <div class="equipment-slots-row">
-                  <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-                  <div class="slot" id="armor-slot" title="Armor"></div>
-                  <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-                </div>
-                <div class="equipment-slots-row accessory-row">
-                  <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-                  <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-                </div>
-              </div>
-            </div>
-            <div id="light-bearer-slots">
-              <div class="equipment-row">
-                <div class="equipment-slots-row">
-                  <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
-                  <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-     
       </div>
     </div>
 
@@ -1190,7 +1151,11 @@
       usedSkillPoints: 0,
       affinities: { primary: [], secondary: [], tertiary: [] },
       equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null },
-      selectedWeaponSlot: null
+      selectedWeaponSlot: null,
+      currency: 0,
+      proficientSkills: [],
+      proficientCategories: [],
+
     };
 
     // --- AUTOSAVE SYSTEM ---
@@ -1235,6 +1200,8 @@
         document.querySelectorAll("input, select, button").forEach(el => {
           if (el.textContent !== "Sign In with Google") el.disabled = true;
         });
+        if (adminBtn) adminBtn.style.display = 'none';
+        if (settingsListener) settingsListener();
         initializeState();
         updateFromTextbox();
       }
@@ -1606,13 +1573,16 @@
           grid.appendChild(card);
         });
     }
-
+    let settingsListener = null;
     function listenToGameSettings() {
-      db.collection("game_settings").doc("shop").onSnapshot(doc => {
+      if (settingsListener) settingsListener();
+      settingsListener = db.collection("game_settings").doc("shop").onSnapshot(doc => {
         if (doc.exists) {
           state.gameSettings = doc.data();
-          document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen;
+        } else {
+          state.gameSettings = { isShopOpen: false, shopItems: [] }; // Default if doc doesn't exist
         }
+        document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen;
       });
     }
 
@@ -2105,6 +2075,7 @@
     function closeAdminPanel() { document.getElementById('admin-panel-modal').classList.remove('active'); }
 
     function renderAdminPanel() {
+      if (!state.gameSettings) return; 
       document.getElementById('shop-status-btn').textContent = `Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
       const grid = document.getElementById('admin-shop-grid');
       grid.innerHTML = state.equipmentLibrary.map(item => `
