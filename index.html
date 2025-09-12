@@ -116,30 +116,20 @@ back).
       background-color: var(--bg-inset);
       padding: 15px;
       border-radius: 8px;
-    }
-
-    .info-block h4,
-    .points-block h4,
-    .level-block h4,
-    .affinities-block h4 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: var(--text-secondary);
-      font-size: 0.9em;
-      text-align: center;
+      margin-top: 20px;
     }
 
     .auth-block {
-      padding: 10px;
+      padding: 20px 0;
       text-align: center;
-      border-top: none;
       margin-top: 20px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
       align-items: center;
-
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .auth-block button {
@@ -531,37 +521,6 @@ back).
     .selected-weapon {
       border-color: var(--accent-gold);
       box-shadow: 0 0 8px var(--accent-gold);
-    }
-
-
-    .fraction {
-      display: inline-block;
-      text-align: center;
-      font-size: .8em;
-      vertical-align: middle;
-      line-height: 1.2;
-    }
-
-    .fraction .top {
-      display: block;
-      padding: 0 2px;
-      margin-bottom: 4px;
-      position: relative;
-    }
-
-    .fraction .top::after {
-      content: "";
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: #fff;
-    }
-
-    .fraction .bottom {
-      display: block;
-      padding: 0 2px;
     }
 
     .slot {
@@ -1071,6 +1030,11 @@ back).
           <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="1.5"
             oninput="handleInputChange()">
         </div>
+        <div class="proficiencies-block">
+          <h4>Proficiencies</h4>
+          <div id="category-proficiencies-list"></div>
+          <button onclick="openProficiencyModal()" style="width:100%; margin-top: 15px;">Manage</button>
+        </div>
       </div>
       <div class="right-column">
         <div class="top-stats-bar">
@@ -1151,129 +1115,10 @@ back).
         oninput="handleInputChange()"></textarea>
     </div>
 
-    <!-- <div class="main-layout">
-      <div class="left-column">
-        <div class="info-block">
-          <h4>Identity</h4>
-          <label>Name</label><input type="text" id="char-name" oninput="handleInputChange()">
-          <label>Race</label><input type="text" id="char-race" oninput="handleInputChange()">
-          <label>Position</label>
-          <select id="char-position" onchange="handleInputChange()">
-            <option value="Guide">Guide</option>
-            <option value="Fisherman">Fisherman</option>
-            <option value="Spear Bearer">Spear Bearer</option>
-            <option value="Wave Controller">Wave Controller</option>
-            <option value="Light Bearer">Light Bearer</option>
-            <option value="Anima">Anima</option>
-          </select>
-        </div>
-        <div class="level-block">
-          <h4>Progression</h4>
-          <label>Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
-          <label>Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
-          <button onclick="levelUp()" class="btn-primary">Level Up</button>
-          <button onclick="addSkillPoint()" style="width: 100%; margin-top: 10px;">+1 Skill Point</button>
-        </div>
-        <div class="points-block">
-          <h4>Resources</h4>
-          <label>Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
-          <label>Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
-          <label>Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2"
-            oninput="handleInputChange()">
-        </div>
-        <div class="backstory-section">
-          <h4>Backstory & Notes</h4>
-          <textarea id="backstory-textarea" placeholder="Type your character's story here..."
-            oninput="handleInputChange()"></textarea>
-        </div>
-        <div class="auth-block">
-          <button onclick="signInWithGoogle()">Sign In with Google</button>
-          <button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
-          <button onclick="openSpecialItemsModal()">Special Items</button>
-          <button onclick="resetCharacter()">Reset Character</button>
-          <span id="user-info" style="margin-left: 10px;"></span>
-        </div>
-      </div>
-      <div class="right-column">
-        <div id="hp-speed"></div>
-        <div class="equipment-section">
-          <div class="equipment-layout">
-            <div class="equipment-main-group">
-              <h3>Equipment</h3>
-              <div class="equipment-core">
-                <div class="derived-stat attack-stat">
-                  <div class="derived-stat-formula"><span class="fraction"><span class="top"
-                        id="attack-formula-top"></span><span class="bottom" id="attack-formula-bot"></span></span><span
-                      id="attack-formula"></span></div>
-                  <div class="derived-stat-result" id="derived-attack-result">0</div>
-                </div>
-                <div class="derived-stat defense-stat">
-                  <div class="derived-stat-formula"><span class="fraction"><span class="top"
-                        id="defense-formula-top"></span><span class="bottom"
-                        id="defense-formula-bot"></span></span><span id="defense-formula"></span></div>
-                  <div class="derived-stat-result" id="derived-defense-result">0</div>
-                </div>
-                <div class="equipment-row">
-                  <div class="equipment-slots-row">
-                    <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-                    <div class="slot" id="armor-slot" title="Armor"></div>
-                    <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-                  </div>
-                  <div class="equipment-slots-row accessory-row">
-                    <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-                    <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div id="light-bearer-slots" class="equipment-extra-group">
-              <h3>Lighthouses</h3>
-              <div class="equipment-row">
-                <div class="equipment-slots-row">
-                  <div class="slot" id="lighthouse1-slot" title="Lighthouse 1"></div>
-                  <div class="slot" id="lighthouse2-slot" title="Lighthouse 2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="affinities-block">
-          <div class="affinity-controls"><label>Primary Stats</label><select id="add-primary"></select></div>
-          <div class="affinities" id="primary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Secondary Stats</label><select
-              id="add-secondary"></select></div>
-          <div class="affinities" id="secondary-affinities"></div>
-          <div class="affinity-controls" style="margin-top: 15px;"><label>Tertiary Stats</label><select
-              id="add-tertiary"></select></div>
-          <div class="affinities" id="tertiary-affinities"></div>
-        </div>
-      </div>
-    </div>
-    <div class="stats-skills-grid">
-      <div>
-        <h3>Stats</h3>
-        <table class="stats-table" id="stats-table">
-          <thead>
-            <tr>
-              <th>Stat</th>
-              <th>Value</th>
-              <th>+/-</th>
-            </tr>
-          </thead>
-          <tbody id="stats-body"></tbody>
-        </table>
-      </div>
-      <div>
-        <div class="skill-section" id="skill-section"></div>
-      </div>
-    </div> -->
-
-
-
-
-
-
+    <div id="shop-modal" class="modal-backdrop">...</div>
+    <div id="admin-panel-modal" class="modal-backdrop">...</div>
+    <div id="proficiency-modal" class="modal-backdrop">...</div>
 
 
 
@@ -1405,6 +1250,8 @@ back).
         document.getElementById("user-info").textContent = `Logged in as ${user.displayName}`;
         document.getElementById("logoutBtn").style.display = 'inline-block';
         document.querySelectorAll("input, select, button").forEach(el => el.disabled = false);
+        document.getElementById('admin-btn').style.display = user.uid === ADMIN_UID ? 'inline-block' : 'none';
+        listenToGameSettings();
         loadCharacter();
       } else {
         document.getElementById("user-info").textContent = "Logged out.";
@@ -1496,6 +1343,7 @@ back).
       document.getElementById("available-stat-points").value = state.availableStatPoints;
       document.getElementById("available-skill-points").value = state.availableSkillPoints;
       renderAffinityControls();
+      renderProficiencies();
       renderStats();
       renderEquipment();
       renderSkillTiers();
@@ -1781,6 +1629,15 @@ back).
         });
     }
 
+    function listenToGameSettings() {
+      db.collection("game_settings").doc("shop").onSnapshot(doc => {
+        if (doc.exists) {
+          state.gameSettings = doc.data();
+          document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen;
+        }
+      });
+    }
+
     function getItemScore(item) {
       if (Object.values(state.equipment).some(eq => eq && eq.id === item.id)) return 4; // Equipped
       if (state.ownedItems.includes(item.id)) return 3; // Owned
@@ -1890,15 +1747,20 @@ back).
       const modal = document.getElementById("skill-info-modal");
       document.getElementById("skill-info-title").textContent = skillData.name;
       const content = document.getElementById("skill-info-modal-content");
-
+      const isProficient = state.proficientSkills.includes(skillData.id);
+      const displayData = (isProficient && skillData.proficientVersion) ? skillData.proficientVersion : skillData;
       // THIS BLOCK WAS MISSING - It defines controlsHTML
       let controlsHTML = '';
       if (tier !== null && index !== null) {
+
         const skill = state.skillsByTier[tier][index];
         const nextLevel = (skill.level || 0) + 1;
         const canLevelUp = nextLevel <= skill.maxLevel && state.availableSkillPoints >= (skill.costPerLevel[skill.level || 0] || 999) && getSkillTier(skill, nextLevel) <= tier;
         controlsHTML = `<div class="level-up-controls">
+          
             <h3>Current Level: ${skill.level || 0} / ${skill.maxLevel}</h3>
+            <div class="proficiency-toggle">
+            <button onclick="toggleSkillProficiency('${skillData.id}', ${tier}, ${index})" class="${isProficient ? 'active' : ''}">Toggle Proficiency</button></div>
             <button onclick="levelUpSkill(${tier}, ${index})" ${!canLevelUp ? 'disabled' : ''}>Level Up (Cost: ${skill.costPerLevel[skill.level || 0] || 'N/A'} SP)</button>
             <button onclick="delevelSkill(${tier}, ${index})" ${!skill.level || skill.level === 0 ? 'disabled' : ''}>De-level</button>
             <button onclick="unlearnSkill(${tier}, ${index})" style="background-color: #8b0000;">Unlearn</button>
@@ -2152,14 +2014,23 @@ back).
 
     function calculateUsedSkillPoints() {
       let total = 0;
+      const COST_REDUCTION = 0.8; // 20% reduction
       for (const tier in state.skillsByTier) {
         for (const skill of state.skillsByTier[tier]) {
           if (skill && skill.level > 0) {
-            total += skill.costPerLevel.slice(0, skill.level).reduce((a, b) => a + b, 0);
+            let costArray = (state.proficientSkills.includes(skill.id) && skill.proficientVersion)
+              ? skill.proficientVersion.costPerLevel
+              : skill.costPerLevel;
+            let cost = costArray.slice(0, skill.level).reduce((a, b) => a + b, 0);
+
+            if (state.proficientCategories.includes(skill.skillType)) {
+              cost *= COST_REDUCTION;
+            }
+            total += cost;
           }
         }
       }
-      state.usedSkillPoints = total;
+      state.usedSkillPoints = Math.round(total);
     }
 
     function applyAllSkillEffects() {
