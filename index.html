@@ -1499,8 +1499,7 @@ back).
       renderStats();
       renderEquipment();
       renderSkillTiers();
-      updateDerivedStats();
-      renderHpSpeed();
+      renderTopBarStats();
 
       const position = document.getElementById("char-position").value;
       document.getElementById("light-bearer-slots").style.display = position === 'Light Bearer' ? 'block' : 'none';
@@ -1597,6 +1596,8 @@ back).
       });
     }
 
+
+
     // --- EQUIPMENT ---
     function renderEquipment() {
       const allSlots = ["weapon1", "weapon2", "armor", "accessory1", "accessory2"];
@@ -1635,6 +1636,51 @@ back).
           };
         }
       });
+    }
+
+    function renderTopBarStats() {
+      const hpSpeedEl = document.getElementById("hp-speed");
+      const derivedAttackEl = document.getElementById("derived-attack-display");
+      const derivedDefenseEl = document.getElementById("derived-defense-display");
+
+      // HP, Speed, Hit Dice Calculation
+      const floor = parseInt(document.getElementById("char-floor").value);
+      const level = parseInt(document.getElementById("char-level").value);
+      const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
+      const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
+      const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
+
+      const movePenalty = Math.max(0, 2 * floor - se);
+      let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
+      let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
+      const hitDiceCount = level;
+      const hitDiceType = 4 + 2 * Math.floor(wp / 25);
+      const hitDiceMod = Math.floor((se - 10) / 2) * level;
+
+      // Derived Stats Calculation
+      const eq = state.equipment;
+      let attack = 0;
+      let defense = 0;
+      const selectedWeaponSlot = state.selectedWeaponSlot;
+      if (selectedWeaponSlot && eq[selectedWeaponSlot]) {
+        const weapon = eq[selectedWeaponSlot];
+        const attackStatVal = state.statValues[weapon.stat] + (state.skillBonuses[weapon.stat]?.add || 0);
+        attack = Math.floor(attackStatVal / 5) + (weapon.modifier || 0);
+      }
+      if (eq.armor) {
+        const armor = eq.armor;
+        const defenseStatVal = state.statValues[armor.stat] + (state.skillBonuses[armor.stat]?.add || 0);
+        defense = Math.floor(defenseStatVal / 5) + (armor.modifier || 0);
+      }
+
+      // Update HTML
+      hpSpeedEl.innerHTML = `
+    <span><span class="accent-label">HP:</span> ${Math.round(hp)}</span>
+    <span><span class="accent-label">Movement Speed:</span> ${speed}</span>
+    <span id="hit-dice"><span class="accent-label">Hit Dice:</span> ${hitDiceCount}d${hitDiceType} + ${hitDiceMod}</span>`;
+
+      derivedAttackEl.innerHTML = `<span class="accent-label">Attack:</span> ${attack}`;
+      derivedDefenseEl.innerHTML = `<span class="accent-label">Defense:</span> ${defense}`;
     }
 
     function selectEquipment(item) {
@@ -2020,28 +2066,6 @@ back).
       return table.find(r => level >= r.range[0] && level <= r.range[1]) || { primary: 0, secondary: 0, tertiary: 0 };
     }
 
-    function updateDerivedStats() {
-      const eq = state.equipment;
-      let attack = 0;
-      let defense = 0;
-
-      const selectedWeaponSlot = state.selectedWeaponSlot;
-      if (selectedWeaponSlot && eq[selectedWeaponSlot]) {
-        const weapon = eq[selectedWeaponSlot];
-        const baseStat = state.statValues[weapon.stat] + (state.skillBonuses[weapon.stat]?.add || 0);
-        attack = Math.floor(baseStat / 5) + (weapon.modifier || 0);
-      }
-
-      if (eq.armor) {
-        const armor = eq.armor;
-        const baseStat = state.statValues[armor.stat] + (state.skillBonuses[armor.stat]?.add || 0);
-        defense = Math.floor(baseStat / 5) + (armor.modifier || 0);
-      }
-
-      // Update the new, simplified display elements
-      document.getElementById("derived-attack-display").innerHTML = `<span class="accent-label">Attack:</span> ${attack}`;
-      document.getElementById("derived-defense-display").innerHTML = `<span class="accent-label">Defense:</span> ${defense}`;
-    }
 
     async function fetchLibrariesAndUpdate() {
       await fetchEquipmentLibrary();
@@ -2068,28 +2092,6 @@ back).
 
     function hideTooltip() {
       document.getElementById('tooltip').style.display = 'none';
-    }
-
-    function renderHpSpeed() {
-      const floor = parseInt(document.getElementById("char-floor").value);
-      const level = parseInt(document.getElementById("char-level").value);
-      const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
-      const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
-      const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
-
-      const movePenalty = Math.max(0, 2 * floor - se);
-      let speed = 6 + level - movePenalty + (state.skillBonuses['Movement Speed']?.add || 0);
-      let hp = (3 * se + 2 * str + 1.5 * wp + level * (2 + Math.floor(level / 25))) + (state.skillBonuses['HP']?.add || 0);
-
-      const hitDiceCount = level;
-      const hitDiceType = 4 + 2 * Math.floor(wp / 25); // d4, d6 at 25 Will, d8 at 50, etc.
-      const hitDiceMod = Math.floor((se - 10) / 2) * level;
-      const hitDiceDisplay = `${hitDiceCount}d${hitDiceType} + ${hitDiceMod}`;
-
-      document.getElementById("hp-speed").innerHTML =
-        `<span class="accent-label">HP:</span> ${Math.round(hp)}<br>
-     <span class="accent-label">Movement Speed:</span> ${speed}<br>
-     <div id="hit-dice"><span class="accent-label">Hit Dice:</span> ${hitDiceDisplay}</div>`;
     }
 
     function renderAffinityControls() {
