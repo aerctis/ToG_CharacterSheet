@@ -12,8 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
 
-
-
+    
 /* 
     
 Fix this skill issue (modal not opening when clicking on skill slot):
@@ -56,8 +55,6 @@ Maybe in the future:
 MSPaint on side
 Calculator(maybe)
 Mobile version (maybe in the future) */
-
-
     :root {
       --font-family: 'Inter', sans-serif;
       --border-radius: 4px;
@@ -80,33 +77,33 @@ Mobile version (maybe in the future) */
     }
 
     body[data-theme="crimson-night"] {
-      --bg-primary: #120B14;
-      --bg-secondary: #201323;
-      --bg-tertiary: #311D36;
-      --border-color: #5C3E63;
-      --text-primary: #FCE7F3;
-      --text-secondary: #E9D5E5;
-      --accent-gold: #D946EF;
+      --bg-primary: #110515;
+      --bg-secondary: #240d2b;
+      --bg-tertiary: #3b1546;
+      --border-color: #6d28d9;
+      --text-primary: #fdf4ff;
+      --text-secondary: #e9d5ff;
+      --accent-gold: #d946ef;
       --accent-gold-transparent: rgba(217, 70, 239, 0.1);
-      --accent-gold-hover: #E879F9;
-      --danger-color: #F43F5E;
-      --success-color: #34D399;
-      --highlight-color: var(--accent-gold);
+      --accent-gold-hover: #e879f9;
+      --danger-color: #f43f5e;
+      --success-color: #34d399;
+      --highlight-color: #a855f7;
     }
     
     body[data-theme="arcane-blue"] {
-        --bg-primary: #0B121C;
-        --bg-secondary: #131F30;
-        --bg-tertiary: #1E293B;
-        --border-color: #334155;
-        --text-primary: #E2E8F0;
-        --text-secondary: #94A3B8;
-        --accent-gold: #38BDF8;
+        --bg-primary: #08111B;
+        --bg-secondary: #0f1e2f;
+        --bg-tertiary: #192c43;
+        --border-color: #2b496e;
+        --text-primary: #f0f9ff;
+        --text-secondary: #cbd5e1;
+        --accent-gold: #38bdf8;
         --accent-gold-transparent: rgba(56, 189, 248, 0.1);
-        --accent-gold-hover: #7DD3FC;
-        --danger-color: #F43F5E;
-        --success-color: #4ADE80;
-        --highlight-color: var(--accent-gold);
+        --accent-gold-hover: #7dd3fc;
+        --danger-color: #fb7185;
+        --success-color: #4ade80;
+        --highlight-color: #0ea5e9;
     }
 
     body[data-theme="royal-red"] {
@@ -116,29 +113,28 @@ Mobile version (maybe in the future) */
         --border-color: #6B2D2D;
         --text-primary: #FEE2E2;
         --text-secondary: #FCA5A5;
-        --accent-gold: #EF4444;
+        --accent-gold: #F87171;
         --accent-gold-transparent: rgba(239, 68, 68, 0.1);
-        --accent-gold-hover: #F87171;
+        --accent-gold-hover: #ef4444;
         --danger-color: #F97316;
         --success-color: #34D399;
-        --highlight-color: var(--accent-gold);
+        --highlight-color: #dc2626;
     }
 
     body[data-theme="forest-green"] {
-        --bg-primary: #0A110D;
-        --bg-secondary: #111E16;
-        --bg-tertiary: #1A2F22;
-        --border-color: #2F523D;
-        --text-primary: #D1FAE5;
-        --text-secondary: #A7F3D0;
-        --accent-gold: #34D399;
+        --bg-primary: #06100a;
+        --bg-secondary: #0c1f13;
+        --bg-tertiary: #112e1c;
+        --border-color: #15803d;
+        --text-primary: #ecfdf5;
+        --text-secondary: #a7f3d0;
+        --accent-gold: #34d399;
         --accent-gold-transparent: rgba(52, 211, 153, 0.1);
-        --accent-gold-hover: #6EE7B7;
-        --danger-color: #F43F5E;
-        --success-color: #A3E635;
-        --highlight-color: var(--accent-gold);
+        --accent-gold-hover: #6ee7b7;
+        --danger-color: #fb923c;
+        --success-color: #a3e635;
+        --highlight-color: #22c55e;
     }
-
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -167,10 +163,10 @@ Mobile version (maybe in the future) */
     .top-stat-group { background-color: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--border-radius); text-align: center; }
     .top-stat-group .label { font-size: 0.8em; color: var(--text-secondary); display: block; }
     .top-stat-group .value { font-size: 1.3em; font-weight: 700; color: var(--highlight-color); }
-    #hp-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
-    #hp-controls button { padding: 0.1rem 0.5rem; }
-    #hp-adjust-amount { width: 60px; text-align: center; -moz-appearance: textfield; }
-    #hp-adjust-amount::-webkit-outer-spin-button, #hp-adjust-amount::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .hp-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
+    .hp-controls button { padding: 0.1rem 0.5rem; }
+    .hp-adjust-amount { width: 60px; text-align: center; -moz-appearance: textfield; }
+    .hp-adjust-amount::-webkit-outer-spin-button, .hp-adjust-amount::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .affinities-container { display: flex; flex-direction: column; gap: 1rem; }
     .affinity-group { display: flex; align-items: center; gap: 1rem; }
     .affinity-group label { margin: 0; flex-shrink: 0; }
@@ -188,7 +184,7 @@ Mobile version (maybe in the future) */
     .slot .change-item-icon:hover { background-color: var(--highlight-color); }
     .stats-table { width: 100%; border-collapse: collapse; font-size: 1em; }
     .stats-table th, .stats-table td { border-bottom: 1px solid var(--border-color); padding: 0.75rem; text-align: left; vertical-align: middle; }
-    .stats-table th { background-color: var(--bg-tertiary); font-weight: 600; }
+    .stats-table th { background-color: var(--bg-tertiary); font-weight: 600; text-align: center;}
     .stats-table td:first-child { font-weight: 600; font-size: 1.1em; }
     .stats-table td:nth-child(2) { text-align: center; font-weight: bold; font-size: 1.1em;}
     .stats-table td:last-child { text-align: right; }
@@ -202,7 +198,7 @@ Mobile version (maybe in the future) */
     .spirit-tank-container { position: relative; background-color: var(--bg-primary); border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; }
     .spirit-tank-fluid { position: absolute; bottom: 0; left: 0; right: 0; background-color: var(--highlight-color); transition: height 0.5s ease-in-out; }
     .spirit-tank-container .spirit-tooltip { position: absolute; top: 50%; left: 120%; transform: translateY(-50%) translateX(-10px); background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: var(--border-radius); opacity: 0; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; }
-    .spirit-tank-container:hover .spirit-tooltip { opacity: 1; transform: translateY(-50%); }
+    .spirit-tank-container:hover .spirit-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
     .tier-section { margin-bottom: 1.5rem; }
     .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.5rem; }
     .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
@@ -211,8 +207,9 @@ Mobile version (maybe in the future) */
     .skill-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
     .skill-slot.empty::after { content: '+'; color: var(--text-secondary); font-size: 48px; position: absolute; }
     .skill-slot .skill-level-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0, 0, 0, 0.7); color: var(--highlight-color); font-size: 14px; font-weight: bold; border-radius: 4px; padding: 2px 5px; }
-    .skill-charges { position: absolute; bottom: 4px; left: 4px; display: flex; gap: 2px; }
-    .skill-charges .charge-dot { width: 8px; height: 8px; background-color: var(--highlight-color); border-radius: 50%; border: 1px solid var(--bg-primary); }
+    .skill-charges { position: absolute; top: 4px; left: 4px; display: flex; flex-direction: column; gap: 4px; }
+    .skill-charges .charge-box { width: 12px; height: 12px; background-color: var(--bg-primary); border: 1px solid var(--highlight-color); cursor: pointer; }
+    .skill-charges .charge-box.used { background-color: transparent; }
     .info-icon { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; cursor: pointer; z-index: 2; fill: white; transition: fill 0.2s; }
     .info-icon:hover { fill: var(--highlight-color); }
     #backstory-textarea { width: 100%; min-height: 250px; resize: vertical; }
@@ -240,12 +237,15 @@ Mobile version (maybe in the future) */
     .special-item-header div { display: flex; gap: 0.5rem; }
     #skill-info-modal-content .controls { display: flex; flex-direction: column; gap: 0.5rem; }
     #skill-info-modal-content .controls button { width: 100%; }
+    #skill-info-modal-content .skill-meta { margin-top: 1rem; font-size: 0.9em; display: flex; flex-direction: column; gap: 0.5rem; }
     .currency-display { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center; }
     .currency-display .label { font-size: 0.9em; color: var(--text-secondary); }
     .currency-display .value { font-size: 2em; font-weight: 700; color: var(--highlight-color); letter-spacing: 0.05em; }
     #theme-switcher { position: fixed; top: 20px; left: 20px; z-index: 1000; }
     #theme-toggle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     #theme-options { display: none; position: absolute; top: 50px; left: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem; flex-direction: column; gap: 0.5rem; }
+    #custom-theme-creator { border-top: 1px solid var(--border-color); margin-top: 0.5rem; padding-top: 0.5rem; }
+    #custom-theme-creator label { font-size: 0.8em; }
     .theme-option { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); }
     @media (max-width: 1200px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 768px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr; } .container { padding: 1rem; } }
@@ -263,6 +263,10 @@ Mobile version (maybe in the future) */
             <div class="theme-option" data-theme="arcane-blue" style="background: #38BDF8;"></div>
             <div class="theme-option" data-theme="royal-red" style="background: #EF4444;"></div>
             <div class="theme-option" data-theme="forest-green" style="background: #34D399;"></div>
+            <div id="custom-theme-creator">
+                <label>Highlight</label><input type="color" id="custom-highlight" value="#F59E0B">
+                <label>Background</label><input type="color" id="custom-bg-secondary" value="#1C1917">
+            </div>
         </div>
     </div>
     <div class="container">
@@ -517,9 +521,9 @@ Mobile version (maybe in the future) */
             <div class="top-stat-group" style="grid-column: 1 / -1;">
                 <span class="label">HEALTH</span>
                 <div class="value">${state.currentHP} / ${maxHP}</div>
-                <div id="hp-controls">
+                <div class="hp-controls">
                     <button onclick="adjustCurrentHP(false)">-</button>
-                    <input type="number" id="hp-adjust-amount" placeholder="Amt">
+                    <input type="number" class="hp-adjust-amount" placeholder="Amt">
                     <button onclick="adjustCurrentHP(true)">+</button>
                 </div>
             </div>
@@ -531,7 +535,7 @@ Mobile version (maybe in the future) */
     }
 
     function adjustCurrentHP(isHealing) {
-        const input = document.getElementById('hp-adjust-amount');
+        const input = document.querySelector('.hp-adjust-amount');
         const amount = parseInt(input.value);
         if (isNaN(amount) || amount <= 0) { showNotification("Please enter a valid amount.", "danger"); return; }
         const maxHP = parseInt(document.getElementById('top-stats-bar').querySelector('.value').textContent.split('/')[1].trim());
@@ -567,13 +571,17 @@ Mobile version (maybe in the future) */
                     slot.classList.add("empty"); 
                     slot.onclick = () => openSkillLibrary(t, i); 
                 } else { 
+                    const displaySkill = state.proficientSkills.includes(s.id) && s.proficientVersion ? s.proficientVersion : s;
                     let chargesHTML = '';
                     if (s.charges) {
                         chargesHTML += '<div class="skill-charges">';
-                        for(let i = 0; i < s.charges; i++) chargesHTML += '<div class="charge-dot"></div>';
+                        for(let chargeIdx = 0; chargeIdx < s.charges; chargeIdx++) {
+                           const isUsed = s.usedCharges > chargeIdx;
+                           chargesHTML += `<div class="charge-box ${isUsed ? 'used' : ''}" onclick="event.stopPropagation(); toggleSkillCharge(${t},${i},${chargeIdx})"></div>`;
+                        }
                         chargesHTML += '</div>';
                     }
-                    slot.innerHTML = `<img src="${s.icon}" alt="${s.name}"><div class="skill-level-badge">${s.level||0}</div><svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>${chargesHTML}`; 
+                    slot.innerHTML = `<img src="${displaySkill.icon || s.icon}" alt="${displaySkill.name}"><div class="skill-level-badge">${s.level||0}</div><svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>${chargesHTML}`; 
                 } 
                 g.appendChild(slot); 
             });
@@ -585,7 +593,7 @@ Mobile version (maybe in the future) */
     
     function calculateBaseStats() { const l = parseInt(document.getElementById("char-level").value)||1, p = document.getElementById("char-position").value, cal_s = {}; stats.forEach(s => { let t = 1; for (let i = 1; i < l; i++) { const r = getGrowthRatesForLevel(p, i); if (state.affinities.primary.includes(s)) t+=r.primary; if (state.affinities.secondary.includes(s)) t+=r.secondary; if (state.affinities.tertiary.includes(s)) t+=r.tertiary; } cal_s[s] = t + (state.manualStatPoints[s]||0); }); state.statValues = cal_s; }
     function calculateUsedSkillPoints() { let t = 0; const R = 0.8; for (const tier in state.skillsByTier) { for (const s of state.skillsByTier[tier]) { if (s && s.level > 0) { let costs = (state.proficientSkills.includes(s.id) && s.proficientVersion) ? s.proficientVersion.costPerLevel : s.costPerLevel; let cost = costs.slice(0,s.level).reduce((a,b)=>a+b,0); if(state.proficientCategories.includes(s.skillType)) cost *= R; t+=cost; } } } state.usedSkillPoints = Math.round(t); }
-    function applyAllSkillEffects() { state.skillBonuses = {}; for(const tier in state.skillsByTier) { for(const s of state.skillsByTier[tier]) { if(!s||s.level===0||!s.effects) continue; const e = s.effects.find(ef => ef.level === s.level); if(e){ [{s:'stat',t:'type',v:'value'},{s:'stat2',t:'type2',v:'value2'}].forEach(m => { const stat = e[m.s], type = e[m.t], value = e[m.v]; if(!stat||!type||value===undefined) return; if(!state.skillBonuses[stat]) state.skillBonuses[stat] = {add:0,mul:1}; if(type==='add') state.skillBonuses[stat].add+=value; if(type==='mul') state.skillBonuses[stat].mul*=value; }); } } } }
+    function applyAllSkillEffects() { state.skillBonuses = {}; for(const tier in state.skillsByTier) { for(const s of state.skillsByTier[tier]) { if(!s||s.level===0||!s.effects) continue; const displaySkill = state.proficientSkills.includes(s.id) && s.proficientVersion ? s.proficientVersion : s; const e = displaySkill.effects.find(ef => ef.level === s.level); if(e){ [{s:'stat',t:'type',v:'value'},{s:'stat2',t:'type2',v:'value2'}].forEach(m => { const stat = e[m.s], type = e[m.t], value = e[m.v]; if(!stat||!type||value===undefined) return; if(!state.skillBonuses[stat]) state.skillBonuses[stat] = {add:0,mul:1}; if(type==='add') state.skillBonuses[stat].add+=value; if(type==='mul') state.skillBonuses[stat].mul*=value; }); } } } }
     function calculateSpirit() {
         let usedSpirit = 0;
         let spiritBonus = 0;
@@ -640,7 +648,20 @@ Mobile version (maybe in the future) */
     function openBestiaryModal(slotKey) { state.currentBeastEdit = slotKey; renderBestiaryLibrary(); openModal('bestiary-modal'); }
     function openSellModal() { renderSellableItems(); openModal('sell-modal'); }
     
-    function openItemInfoModal(itemData) { document.getElementById('item-info-title').textContent = itemData.name; document.getElementById('item-info-modal-content').innerHTML = `<div style="text-align:center; padding-bottom: 1rem;"><img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;"></div><p><strong>Type:</strong> ${itemData.type}</p><p><strong>Stat:</strong> ${itemData.stat}</p><p><strong>Modifier:</strong> ${itemData.modifier}</p><p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; openModal('item-info-modal'); }
+    function openItemInfoModal(itemData) { 
+        document.getElementById('item-info-title').textContent = itemData.name; 
+        document.getElementById('item-info-modal-content').innerHTML = `
+            <div style="text-align:center; padding-bottom: 1rem;">
+                <img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;">
+            </div>
+            <p><strong>Type:</strong> ${itemData.type}</p>
+            ${itemData.stat ? `<p><strong>Stat:</strong> ${itemData.stat}</p>` : ''}
+            ${itemData.modifier ? `<p><strong>Modifier:</strong> ${itemData.modifier}</p>` : ''}
+            ${itemData.spiritBonus ? `<p><strong>Spirit Bonus:</strong> +${itemData.spiritBonus}</p>` : ''}
+            <p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; 
+        openModal('item-info-modal'); 
+    }
+
     function renderEquipmentLibrary() {
         const grid = document.getElementById("equipment-library-grid");
         const search = document.getElementById("equipment-search").value.toLowerCase();
@@ -648,7 +669,7 @@ Mobile version (maybe in the future) */
         const typeFilter = state.currentEquipmentEdit.includes('weapon') ? 'weapon' : state.currentEquipmentEdit.includes('armor') ? 'armor' : state.currentEquipmentEdit.includes('lighthouse') ? 'lighthouse' : 'accessory';
         
         state.equipmentLibrary
-            .filter(item => item.type === typeFilter && item.name.toLowerCase().includes(search))
+            .filter(item => item.isDiscovered && item.type === typeFilter && item.name.toLowerCase().includes(search))
             .forEach(item => {
                 const card = document.createElement("div");
                 card.className = "item-card";
@@ -657,6 +678,7 @@ Mobile version (maybe in the future) */
                     <img src="${item.image || 'https://placehold.co/100x100/1F2937/F9FAFB?text=?'}" alt="${item.name}">
                     <div class="item-name">${item.name}</div>
                     <div class="item-card-buttons">
+                        <button onclick="event.stopPropagation(); openItemInfoModal(state.equipmentLibrary.find(i=>i.id === '${item.id}'))">Info</button>
                         ${isOwned ? `<button onclick="event.stopPropagation(); selectEquipment(state.equipmentLibrary.find(i=>i.id === '${item.id}'))">Equip</button>` : `<button onclick="event.stopPropagation(); acquireItem('${item.id}')">Acquire</button>`}
                     </div>
                 `;
@@ -686,20 +708,42 @@ Mobile version (maybe in the future) */
       const g = document.getElementById("skill-library-grid"), search = document.getElementById("skill-search").value.toLowerCase(); g.innerHTML = ""; const { tier } = state.currentSkillEdit, pos = document.getElementById("char-position").value;
       state.skillLibrary.filter(s => s.positionTags.includes(pos) && getSkillTier(s, 1) <= tier && (s.name.toLowerCase().includes(search) || s.skillType?.toLowerCase().includes(search))).forEach(s => { const c = document.createElement("div"); c.className = "skill-card"; const json = JSON.stringify(s).replace(/'/g, "&apos;"); c.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick='selectSkill(${json})'><div class="skill-name">${s.name}</div>`; g.appendChild(c); });
     }
-    function selectSkill(d) { const {tier, index} = state.currentSkillEdit; if (tier!==null&&index!==null) { state.skillsByTier[tier][index] = {...d, level: 0}; openSkillInfoModal(state.skillsByTier[tier][index], tier, index); closeModal('skill-library-modal'); handleInputChange(); } }
+    function selectSkill(d) {
+        const {tier, index} = state.currentSkillEdit;
+        if (tier === null || index === null) return;
+        if (Object.values(state.skillsByTier).flat().some(s => s && s.id === d.id)) { showNotification("Skill already equipped.", "danger"); return; }
+        if (d.spiritCost && d.spiritCost > state.spirit) { showNotification("Not enough Spirit to equip this skill.", "danger"); return; }
+        const newSkill = {...d, level: 0, usedCharges: 0};
+        state.skillsByTier[tier][index] = newSkill;
+        openSkillInfoModal(state.skillsByTier[tier][index], tier, index); 
+        closeModal('skill-library-modal'); 
+        handleInputChange(); 
+    }
     function getSkillTier(s, l) { return s.tierByLevel ? [...s.tierByLevel].reverse().find(t => l >= t.level)?.tier || 1 : 1; }
     
     function openSkillInfoModal(skillData, tier, index) {
-      const c = document.getElementById("skill-info-modal-content"); document.getElementById("skill-info-title").textContent=skillData.name; const p = state.proficientSkills.includes(skillData.id), s = state.skillsByTier[tier][index], nextLvl = (s.level||0)+1, canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level||0]||999) && getSkillTier(s, nextLvl) <= tier;
-      const controls = `<div class="controls" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level||0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${skillData.id}',${tier},${index})">${p?'Un-Proficient':'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp?'disabled':''}>Lvl Up (${s.costPerLevel[s.level||0]||'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level||s.level===0?'disabled':''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
-      let table = ``; for (let i=1; i<=skillData.maxLevel; i++) { const e=skillData.effects.find(ef=>ef.level===i); let eTxt = e?`${e.stat}: ${e.type==='add'?'+':'x'}${e.value}`:'-'; if(e&&e.stat2) eTxt+=`, ${e.stat2}: +${e.value2}`; table+=`<tr ${s.level===i?'style="background-color:var(--highlight-color); color: var(--bg-primary);"':''}><td>${i}</td><td>${skillData.costPerLevel[i-1]}</td><td>${getSkillTier(skillData,i)}</td><td>${eTxt}</td></tr>`; }
-      c.innerHTML = `<div style="display:grid; grid-template-columns:250px 1fr; gap:1.5rem;"><div><img src="${skillData.icon}" alt="${skillData.name}" style="width:100%; border-radius:8px;"><p style="font-size:0.9em; margin-top:1rem;">${skillData.description}</p>${controls}</div><div style="overflow-x:auto;"><table class="stats-table" style="font-size:0.9em;"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
+      const c = document.getElementById("skill-info-modal-content"); 
+      const isProficient = state.proficientSkills.includes(skillData.id);
+      const s = state.skillsByTier[tier][index];
+      const displaySkill = isProficient && s.proficientVersion ? s.proficientVersion : s;
+      document.getElementById("skill-info-title").textContent = displaySkill.name;
+      const nextLvl = (s.level||0)+1;
+      const canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level||0]||999) && getSkillTier(s, nextLvl) <= tier;
+      const controls = `<div class="controls" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level||0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${s.id}',${tier},${index})">${isProficient?'Remove Proficiency':'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp?'disabled':''}>Lvl Up (${s.costPerLevel[s.level||0]||'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level||s.level===0?'disabled':''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
+      let table = ``; for (let i=1; i<=s.maxLevel; i++) { const e= (displaySkill.effects || s.effects).find(ef=>ef.level===i); let eTxt = e?`${e.stat}: ${e.type==='add'?'+':'x'}${e.value}`:'-'; if(e&&e.stat2) eTxt+=`, ${e.stat2}: +${e.value2}`; table+=`<tr ${s.level===i?'style="background-color:var(--highlight-color); color: var(--bg-primary);"':''}><td>${i}</td><td>${s.costPerLevel[i-1]}</td><td>${getSkillTier(s,i)}</td><td>${eTxt}</td></tr>`; }
+      const meta = `<div class="skill-meta">
+            <span><strong>Type:</strong> ${s.skillType || 'N/A'}</span>
+            ${s.spiritCost ? `<span><strong>Spirit Cost:</strong> ${s.spiritCost}</span>` : ''}
+            <span><strong>Positions:</strong> ${s.positionTags.join(', ')}</span>
+        </div>`;
+      c.innerHTML = `<div style="display:grid; grid-template-columns:250px 1fr; gap:1.5rem;"><div><img src="${displaySkill.icon || s.icon}" alt="${displaySkill.name}" style="width:100%; border-radius:8px;"><p style="font-size:0.9em; margin-top:1rem;">${displaySkill.description}</p>${meta}${controls}</div><div style="overflow-x:auto;"><table class="stats-table" style="font-size:0.9em;"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
     }
     function levelUpSkill(t, i) { const s=state.skillsByTier[t][i], c=s.costPerLevel[s.level||0], nL=(s.level||0)+1; if (nL<=s.maxLevel && state.availableSkillPoints>=c && getSkillTier(s,nL)<=t){ s.level=nL; handleInputChange(); openSkillInfoModal(s,t,i); } }
     function delevelSkill(t, i) { const s=state.skillsByTier[t][i]; if(s.level>0){ s.level--; handleInputChange(); openSkillInfoModal(s,t,i); } }
     function unlearnSkill(t, i) { state.skillsByTier[t][i]=null; closeModal('skill-info-modal'); handleInputChange(); }
     function toggleSkillProficiency(id, t, i) { const idx=state.proficientSkills.indexOf(id); if(idx>-1) state.proficientSkills.splice(idx,1); else state.proficientSkills.push(id); handleInputChange(); openSkillInfoModal(state.skillsByTier[t][i], t, i); }
-    
+    function toggleSkillCharge(tier, index, chargeIndex) { const skill = state.skillsByTier[tier][index]; if(!skill) return; if(skill.usedCharges > chargeIndex) { skill.usedCharges = chargeIndex; } else { skill.usedCharges = chargeIndex + 1; } renderSkillTiers(); queueAutoSave(); }
+
     function renderSpecialItems() { const l = document.getElementById("special-items-list"); l.innerHTML = state.specialItems.length === 0 ? "<p>No special items.</p>" : state.specialItems.map((item, index) => `<div class="special-item" style="background-color:var(--bg-tertiary);padding:1rem;border-radius:var(--border-radius);margin-bottom:1rem;"><div class="special-item-header" style="display:flex;justify-content:space-between;align-items:center;font-weight:bold;"><span>${item.name}</span><div><button onclick="editSpecialItem(${index})">Edit</button><button onclick="deleteSpecialItem(${index})" class="btn-danger">Del</button></div></div><div style="margin-top:0.5rem;color:var(--text-secondary);white-space:pre-wrap;">${item.desc}</div></div>`).join(''); }
     function addSpecialItem() { const n=document.getElementById("new-item-name"), d=document.getElementById("new-item-desc"); if(n.value.trim()===""){showNotification("Item name required.","danger");return;} state.specialItems.push({name:n.value,desc:d.value}); n.value="";d.value=""; renderSpecialItems(); queueAutoSave(); }
     function deleteSpecialItem(i) { showConfirmation(`Delete "${state.specialItems[i].name}"?`, () => { state.specialItems.splice(i,1); renderSpecialItems(); queueAutoSave(); }); }
@@ -781,6 +825,8 @@ Mobile version (maybe in the future) */
         toggle.addEventListener('click', () => { options.style.display = options.style.display === 'flex' ? 'none' : 'flex'; });
         document.querySelectorAll('.theme-option').forEach(el => { el.addEventListener('click', (e) => { document.body.dataset.theme = e.target.dataset.theme; options.style.display = 'none'; }); });
         document.addEventListener('click', (e) => { if (!toggle.contains(e.target) && !options.contains(e.target)) options.style.display = 'none'; });
+        document.getElementById('custom-highlight').addEventListener('input', (e) => { document.body.style.setProperty('--highlight-color', e.target.value); });
+        document.getElementById('custom-bg-secondary').addEventListener('input', (e) => { document.body.style.setProperty('--bg-secondary', e.target.value); });
     }
   </script>
 </body>
