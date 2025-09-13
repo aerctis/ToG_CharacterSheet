@@ -1,4 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+
+
+/* 
+    
 Fix this skill issue (modal not opening when clicking on skill slot):
 Uncaught TypeError: Cannot set properties of null (setting 'textContent')
 at openSkillLibrary (ToG_CharacterSheet/:383:144)
@@ -38,25 +52,19 @@ Certain skills have charges (can track in skill section (not in modal) underneat
 Maybe in the future:
 MSPaint on side
 Calculator(maybe)
-Mobile version (maybe in the future)
+Mobile version (maybe in the future) */
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Character Sheet</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
+
     :root {
       --font-family: 'Inter', sans-serif;
+      --border-radius: 4px;
+    }
+    
+    /* --- THEME DEFINITIONS --- */
+    body, body[data-theme="dark-gold"] {
       --bg-primary: #0C0A09;
-      /* Deeper Background */
       --bg-secondary: #1C1917;
-      /* Sharper, Darker Boxes */
       --bg-tertiary: #292524;
       --border-color: #57534E;
       --text-primary: #F2F2F2;
@@ -66,907 +74,279 @@ Mobile version (maybe in the future)
       --accent-gold-hover: #FBBF24;
       --danger-color: #DC2626;
       --success-color: #16A34A;
-      --border-radius: 4px;
-      /* Sharper Corners */
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: var(--font-family);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1800px;
-      margin: 2rem auto;
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: min-content;
-      gap: 2rem;
-    }
-
-    .header {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 1rem;
-    }
-
-    .main-widgets-wrapper {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: subgrid;
-      gap: 2rem;
-      align-items: start;
-    }
-
-    .col-1,
-    .col-2,
-    .col-3 {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .widget {
-      background-color: var(--bg-secondary);
-      border-radius: var(--border-radius);
-      padding: 1.5rem;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .widget h3 {
-      color: var(--accent-gold);
-      font-weight: 600;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border-color);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    label {
-      font-weight: 600;
-      display: block;
-      margin-top: 0.75rem;
-      margin-bottom: 0.25rem;
-      color: var(--text-secondary);
-      font-size: 0.9em;
-    }
-
-    input,
-    select,
-    textarea {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 0.5rem 0.75rem;
-      width: 100%;
-      font-family: var(--font-family);
-      font-size: 1em;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 0 3px var(--accent-gold-transparent);
-    }
-
-    input[readonly] {
-      background-color: var(--bg-tertiary);
-      cursor: not-allowed;
-    }
-
-    button {
-      background-color: var(--bg-tertiary);
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-      color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 0.5rem 1rem;
-      font-family: var(--font-family);
-      font-weight: 600;
-      font-size: 0.9em;
-    }
-
-    button:hover {
-      background-color: #44403C;
-      border-color: #78716C;
-    }
-
-    button:active {
-      transform: translateY(1px);
-      animation: button-flash 0.2s ease-out;
-    }
-
-    @keyframes button-flash {
-      0% {
-        box-shadow: 0 0 0 0 var(--accent-gold-transparent);
-      }
-
-      100% {
-        box-shadow: 0 0 10px 10px rgba(245, 158, 11, 0);
-      }
-    }
-
-    button:disabled {
-      background-color: var(--bg-tertiary);
-      color: #78716C;
-      cursor: not-allowed;
-    }
-
-    button.btn-gold {
-      background-color: var(--accent-gold);
-      color: var(--bg-primary);
-      border-color: var(--accent-gold);
-    }
-
-    button.btn-gold:hover {
-      background-color: var(--accent-gold-hover);
-    }
-
-    button.btn-danger {
-      background-color: var(--danger-color);
-      border-color: var(--danger-color);
-      color: var(--text-primary);
-    }
-
-    .auth-block {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    #user-info {
-      margin-left: auto;
-      font-size: 0.9em;
-      color: var(--text-secondary);
-    }
-
-    .top-stats-bar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 1rem;
-      text-align: center;
-    }
-
-    .top-stat {
-      background-color: var(--bg-tertiary);
-      padding: 0.75rem;
-      border-radius: var(--border-radius);
-    }
-
-    .top-stat .label {
-      font-size: 0.8em;
-      color: var(--text-secondary);
-      display: block;
-    }
-
-    .top-stat .value {
-      font-size: 1.3em;
-      font-weight: 700;
-      color: var(--accent-gold);
-    }
-
-    .affinities-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .affinity-group {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .affinity-group label {
-      margin: 0;
-      flex-shrink: 0;
-    }
-
-    .affinity-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-
-    .affinity-tags div {
-      background-color: var(--bg-tertiary);
-      color: var(--text-primary);
-      border-radius: 999px;
-      padding: 0.25rem 0.75rem;
-      font-size: 0.9em;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .remove-affinity {
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: color 0.2s;
-    }
-
-    .remove-affinity:hover {
-      color: var(--danger-color);
-    }
-
-    .equipment-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1rem;
-    }
-
-    .position-slots {
-      grid-column: 1 / -1;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .slot {
-      width: 100%;
-      aspect-ratio: 1/1;
-      background-color: var(--bg-primary);
-      border: 2px dashed var(--border-color);
-      border-radius: var(--border-radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: background-color .2s, border-color .2s;
-    }
-
-    .slot:hover {
-      background-color: var(--bg-tertiary);
-      border-color: var(--accent-hover);
-    }
-
-    .slot.selected-weapon {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 8px var(--accent-gold);
-    }
-
-    .slot img.item-image {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    .slot .change-item-icon {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      width: 24px;
-      height: 24px;
-      background-color: rgba(0, 0, 0, .6);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color .2s;
-      font-size: 14px;
-    }
-
-    .slot .change-item-icon:hover {
-      background-color: var(--accent-hover);
-    }
-
-    .stats-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 1em;
-    }
-
-    .stats-table th,
-    .stats-table td {
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.75rem;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    .stats-table th {
-      background-color: var(--bg-tertiary);
-      font-weight: 600;
-    }
-
-    .stats-table td:first-child {
-      font-weight: 600;
-      font-size: 1.1em;
-    }
-
-    .stats-table td:nth-child(2) {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-
-    .stats-table td:last-child {
-      text-align: right;
-    }
-
-    .stats-table td:last-child button {
-      margin-left: 0.5rem;
-      padding: 0.4rem 0.8rem;
-      font-size: 1.1em;
-    }
-
-    .stat-breakdown {
-      font-size: 0.8em;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-
-    .stat-capped {
-      color: var(--danger-color) !important;
-      animation: pulse-red 1.5s infinite;
-    }
-
-    @keyframes pulse-red {
-
-      0%,
-      100% {
-        text-shadow: 0 0 3px rgba(239, 68, 68, 0.5);
-      }
-
-      50% {
-        text-shadow: 0 0 10px rgba(239, 68, 68, 1);
-      }
-    }
-
-    .stat-flash-error {
-      animation: flash-red-bg 0.5s ease-out;
-    }
-
-    @keyframes flash-red-bg {
-      from {
-        background-color: rgba(239, 68, 68, 0.3);
-      }
-
-      to {
-        background-color: transparent;
-      }
-    }
-
-    .tier-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .tier-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .skill-slots {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 1rem;
-    }
-
-    .skill-slot {
-      width: 100px;
-      height: 100px;
-      border: 2px dashed var(--border-color);
-      background-color: var(--bg-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      transition: background-color .2s;
-      position: relative;
-    }
-
-    .skill-slot:hover {
-      background-color: var(--bg-tertiary);
-    }
-
-    .skill-slot img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-
-    .skill-slot.empty::after {
-      content: '+';
-      color: var(--text-secondary);
-      font-size: 48px;
-      position: absolute;
-    }
-
-    .skill-slot .skill-level-badge {
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background: rgba(0, 0, 0, 0.7);
-      color: var(--accent-gold);
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 4px;
-      padding: 2px 5px;
-    }
-
-    .info-icon {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-      z-index: 2;
-      fill: white;
-      transition: fill 0.2s;
-    }
-
-    .info-icon:hover {
-      fill: var(--accent-gold);
-    }
-
-    #backstory-textarea {
-      width: 100%;
-      min-height: 250px;
-      resize: vertical;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .modal-backdrop.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 2rem;
-      width: 100%;
-      max-width: 90vw;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .modal-header h3 {
-      color: var(--accent-gold);
-    }
-
-    .modal-body {
-      overflow-y: auto;
-      padding-right: 1rem;
-    }
-
-    .library-search {
-      margin-bottom: 1.5rem;
-    }
-
-    .modal-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-
-    .item-card,
-    .skill-card,
-    .shop-item,
-    .admin-shop-item {
-      background-color: var(--bg-tertiary);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 1rem;
-      cursor: pointer;
-      transition: background-color .2s, transform 0.2s, border-color 0.2s;
-      text-align: center;
-      position: relative;
-    }
-
-    .item-card:hover,
-    .skill-card:hover,
-    .shop-item:hover,
-    .admin-shop-item:hover {
-      background-color: #44403C;
-      transform: translateY(-2px);
-      border-color: var(--accent-gold);
-    }
-
-    .item-card img,
-    .shop-item img,
-    .admin-shop-item img {
-      width: 100%;
-      height: 100px;
-      object-fit: contain;
-      margin-bottom: 0.5rem;
-    }
-
-    .item-card .item-name,
-    .skill-card .skill-name {
-      font-weight: bold;
-    }
-
-    #notification-toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: var(--accent-primary);
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      z-index: 1001;
-      opacity: 0;
-      transform: translateY(-20px);
-      transition: opacity 0.3s, transform 0.3s;
-    }
-
-    #notification-toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #notification-toast.danger {
-      background-color: var(--danger-color);
-    }
-
-    #notification-toast.success {
-      background-color: var(--success-color);
-    }
-
-    #confirmation-modal .modal-content {
-      max-width: 400px;
-    }
-
-    #confirmation-modal .modal-body {
-      margin-bottom: 1.5rem;
-    }
-
-    #confirmation-modal .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.5rem;
-    }
-
-    .special-item-header div {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    #skill-info-modal-content .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    #skill-info-modal-content .controls button {
-      width: 100%;
-    }
-
-    .currency-display {
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border-color);
-      text-align: center;
-    }
-
-    .currency-display .label {
-      font-size: 0.9em;
-      color: var(--text-secondary);
-    }
-
-    .currency-display .value {
-      font-size: 2em;
-      font-weight: 700;
-      color: var(--accent-gold);
-      letter-spacing: 0.05em;
-    }
-
-    @media (max-width: 1200px) {
-
-      .container,
-      .main-widgets-wrapper {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-
-      .container,
-      .main-widgets-wrapper {
-        grid-template-columns: 1fr;
-      }
-
-      .container {
-        padding: 1rem;
-      }
-    }
+      --highlight-color: var(--accent-gold);
+    }
+
+    body[data-theme="crimson-night"] {
+      --bg-primary: #120B14;
+      --bg-secondary: #201323;
+      --bg-tertiary: #311D36;
+      --border-color: #5C3E63;
+      --text-primary: #FCE7F3;
+      --text-secondary: #E9D5E5;
+      --accent-gold: #D946EF;
+      --accent-gold-transparent: rgba(217, 70, 239, 0.1);
+      --accent-gold-hover: #E879F9;
+      --danger-color: #F43F5E;
+      --success-color: #34D399;
+      --highlight-color: var(--accent-gold);
+    }
+    
+    body[data-theme="arcane-blue"] {
+        --bg-primary: #0B121C;
+        --bg-secondary: #131F30;
+        --bg-tertiary: #1E293B;
+        --border-color: #334155;
+        --text-primary: #E2E8F0;
+        --text-secondary: #94A3B8;
+        --accent-gold: #38BDF8;
+        --accent-gold-transparent: rgba(56, 189, 248, 0.1);
+        --accent-gold-hover: #7DD3FC;
+        --danger-color: #F43F5E;
+        --success-color: #4ADE80;
+        --highlight-color: var(--accent-gold);
+    }
+
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-family); font-size: 16px; line-height: 1.6; transition: background-color 0.3s; }
+    .container { max-width: 1800px; margin: 2rem auto; padding: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: min-content; gap: 2rem; }
+    .header { grid-column: 1 / -1; text-align: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; }
+    .main-widgets-wrapper { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; gap: 2rem; align-items: start; }
+    .col-1, .col-2, .col-3 { display: flex; flex-direction: column; gap: 2rem; }
+    .widget { background-color: var(--bg-secondary); border-radius: var(--border-radius); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .widget h3 { color: var(--highlight-color); font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); text-transform: uppercase; letter-spacing: 0.05em; }
+    label { font-weight: 600; display: block; margin-top: 0.75rem; margin-bottom: 0.25rem; color: var(--text-secondary); font-size: 0.9em; }
+    input, select, textarea { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem 0.75rem; width: 100%; font-family: var(--font-family); font-size: 1em; transition: border-color 0.2s, box-shadow 0.2s; accent-color: var(--highlight-color); }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--highlight-color); box-shadow: 0 0 0 3px var(--accent-gold-transparent); }
+    input[readonly] { background-color: var(--bg-tertiary); cursor: not-allowed; }
+    button { background-color: var(--bg-tertiary); cursor: pointer; transition: background-color 0.2s, transform 0.1s, border-color 0.2s; color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem 1rem; font-family: var(--font-family); font-weight: 600; font-size: 0.9em; }
+    button:hover { background-color: #44403C; border-color: #78716C; }
+    button:active { transform: translateY(1px); animation: button-flash 0.2s ease-out; }
+    @keyframes button-flash { 0% { box-shadow: 0 0 0 0 var(--accent-gold-transparent); } 100% { box-shadow: 0 0 10px 10px rgba(245, 158, 11, 0); } }
+    button:disabled { background-color: var(--bg-tertiary); color: #78716C; cursor: not-allowed; border-color: var(--border-color); }
+    button.btn-gold { background-color: var(--accent-gold); color: var(--bg-primary); border-color: var(--accent-gold); }
+    button.btn-gold:hover { background-color: var(--accent-gold-hover); }
+    button.btn-danger { background-color: var(--danger-color); border-color: var(--danger-color); color: var(--text-primary); }
+    .auth-block { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    #user-info { margin-left: auto; font-size: 0.9em; color: var(--text-secondary); }
+    .top-stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .top-stat-group { background-color: var(--bg-tertiary); padding: 0.75rem; border-radius: var(--border-radius); text-align: center; }
+    .top-stat-group .label { font-size: 0.8em; color: var(--text-secondary); display: block; }
+    .top-stat-group .value { font-size: 1.3em; font-weight: 700; color: var(--highlight-color); }
+    #hp-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
+    #hp-controls button { padding: 0.1rem 0.5rem; }
+    #current-hp-input { width: 60px; text-align: center; -moz-appearance: textfield; }
+    #current-hp-input::-webkit-outer-spin-button, #current-hp-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .affinities-container { display: flex; flex-direction: column; gap: 1rem; }
+    .affinity-group { display: flex; align-items: center; gap: 1rem; }
+    .affinity-group label { margin: 0; flex-shrink: 0; }
+    .affinity-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .affinity-tags div { background-color: var(--bg-tertiary); color: var(--text-primary); border-radius: 999px; padding: 0.25rem 0.75rem; font-size: 0.9em; display: flex; align-items: center; gap: 0.5rem; }
+    .remove-affinity { cursor: pointer; color: var(--text-secondary); transition: color 0.2s; }
+    .remove-affinity:hover { color: var(--danger-color); }
+    .equipment-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    .position-slots { grid-column: 1 / -1; display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+    .slot { width: 100%; aspect-ratio: 1/1; background-color: var(--bg-primary); border: 2px dashed var(--border-color); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; position: relative; transition: background-color .2s, border-color .2s; }
+    .slot:hover { background-color: var(--bg-tertiary); border-color: var(--accent-gold-hover); }
+    .slot.selected-weapon { border-color: var(--highlight-color); box-shadow: 0 0 8px var(--highlight-color); }
+    .slot img.item-image { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+    .slot .change-item-icon { position: absolute; bottom: 5px; right: 5px; width: 24px; height: 24px; background-color: rgba(0, 0, 0, .6); border: 1px solid var(--border-color); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: background-color .2s; font-size: 14px; }
+    .slot .change-item-icon:hover { background-color: var(--highlight-color); }
+    .stats-table { width: 100%; border-collapse: collapse; font-size: 1em; }
+    .stats-table th, .stats-table td { border-bottom: 1px solid var(--border-color); padding: 0.75rem; text-align: left; vertical-align: middle; }
+    .stats-table th { background-color: var(--bg-tertiary); font-weight: 600; }
+    .stats-table td:first-child { font-weight: 600; font-size: 1.1em; }
+    .stats-table td:nth-child(2) { text-align: center; font-weight: bold; font-size: 1.1em;}
+    .stats-table td:last-child { text-align: right; }
+    .stats-table td:last-child button { margin-left: 0.5rem; padding: 0.4rem 0.8rem; font-size: 1.1em; }
+    .stat-breakdown { font-size: 0.8em; color: var(--text-secondary); font-weight: 400; }
+    .stat-capped { color: var(--danger-color) !important; animation: pulse-red 1.5s infinite; }
+    @keyframes pulse-red { 0%, 100% { text-shadow: 0 0 3px rgba(239, 68, 68, 0.5); } 50% { text-shadow: 0 0 10px rgba(239, 68, 68, 1); } }
+    .stat-flash-error { animation: flash-red-bg 0.5s ease-out; }
+    @keyframes flash-red-bg { from { background-color: rgba(239, 68, 68, 0.3); } to { background-color: transparent; } }
+    .skills-wrapper { display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; }
+    .spirit-tank-container { position: relative; background-color: var(--bg-primary); border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; }
+    .spirit-tank-fluid { position: absolute; bottom: 0; left: 0; right: 0; background-color: var(--highlight-color); transition: height 0.5s ease-in-out; }
+    .spirit-tank-container:hover .spirit-tooltip { opacity: 1; transform: translateY(-50%); }
+    .spirit-tooltip { position: absolute; top: 50%; left: 120%; transform: translateY(-50%) translateX(-10px); background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: var(--border-radius); opacity: 0; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; }
+    .tier-section { margin-bottom: 1.5rem; }
+    .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.5rem; }
+    .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
+    .skill-slot { width: 100px; height: 100px; border: 2px dashed var(--border-color); background-color: var(--bg-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--border-radius); cursor: pointer; transition: background-color .2s; position: relative; }
+    .skill-slot:hover { background-color: var(--bg-tertiary); }
+    .skill-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+    .skill-slot.empty::after { content: '+'; color: var(--text-secondary); font-size: 48px; position: absolute; }
+    .skill-slot .skill-level-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0, 0, 0, 0.7); color: var(--highlight-color); font-size: 14px; font-weight: bold; border-radius: 4px; padding: 2px 5px; }
+    .skill-charges { position: absolute; bottom: 4px; left: 4px; display: flex; gap: 2px; }
+    .skill-charges .charge-dot { width: 8px; height: 8px; background-color: var(--highlight-color); border-radius: 50%; border: 1px solid var(--bg-primary); }
+    .info-icon { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; cursor: pointer; z-index: 2; fill: white; transition: fill 0.2s; }
+    .info-icon:hover { fill: var(--highlight-color); }
+    #backstory-textarea { width: 100%; min-height: 250px; resize: vertical; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 999; display: none; align-items: center; justify-content: center; padding: 2rem; }
+    .modal-backdrop.active { display: flex; }
+    .modal-content { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 2rem; width: 100%; max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .modal-header h3 { color: var(--highlight-color); }
+    .modal-body { overflow-y: auto; padding-right: 1rem; }
+    .library-search { margin-bottom: 1.5rem; }
+    .modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+    .item-card, .skill-card, .shop-item, .admin-shop-item { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1rem; cursor: pointer; transition: background-color .2s, transform 0.2s, border-color 0.2s; text-align: center; position: relative; }
+    .item-card:hover, .skill-card:hover, .shop-item:hover, .admin-shop-item:hover { background-color: #44403C; transform: translateY(-2px); border-color: var(--highlight-color); }
+    .item-card img, .shop-item img, .admin-shop-item img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 0.5rem; }
+    .item-card .item-name, .skill-card .skill-name { font-weight: bold; }
+    .item-card-buttons { position: absolute; top: 5px; right: 5px; display: flex; flex-direction: column; gap: 4px; }
+    .item-card-buttons button { padding: 4px; line-height: 1; font-size: 12px; }
+    #notification-toast { position: fixed; top: 20px; right: 20px; background-color: var(--highlight-color); color: white; padding: 1rem 1.5rem; border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; }
+    #notification-toast.show { opacity: 1; transform: translateY(0); }
+    #notification-toast.danger { background-color: var(--danger-color); }
+    #notification-toast.success { background-color: var(--success-color); }
+    #confirmation-modal .modal-content { max-width: 400px; }
+    #confirmation-modal .modal-body { margin-bottom: 1.5rem; }
+    #confirmation-modal .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; }
+    .special-item-header div { display: flex; gap: 0.5rem; }
+    #skill-info-modal-content .controls { display: flex; flex-direction: column; gap: 0.5rem; }
+    #skill-info-modal-content .controls button { width: 100%; }
+    .currency-display { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); text-align: center; }
+    .currency-display .label { font-size: 0.9em; color: var(--text-secondary); }
+    .currency-display .value { font-size: 2em; font-weight: 700; color: var(--highlight-color); letter-spacing: 0.05em; }
+    #theme-switcher { position: fixed; top: 20px; left: 20px; z-index: 1000; }
+    #theme-toggle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    #theme-options { display: none; position: absolute; top: 50px; left: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.5rem; flex-direction: column; gap: 0.5rem; }
+    .theme-option { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); }
+    @media (max-width: 1200px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .container, .main-widgets-wrapper { grid-template-columns: 1fr; } .container { padding: 1rem; } }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <header class="header">
-      <h2>Character Sheet</h2>
-    </header>
+    <div id="theme-switcher">
+        <button id="theme-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <div id="theme-options">
+            <div class="theme-option" data-theme="dark-gold" style="background: #F59E0B;"></div>
+            <div class="theme-option" data-theme="crimson-night" style="background: #D946EF;"></div>
+            <div class="theme-option" data-theme="arcane-blue" style="background: #38BDF8;"></div>
+        </div>
+    </div>
+    <div class="container">
+        <header class="header">
+            <h2>Character Sheet</h2>
+        </header>
 
-    <div class="main-widgets-wrapper">
-      <div class="col-1">
-        <div class="widget">
-          <h3>Identity</h3>
-          <label for="char-name">Name</label><input type="text" id="char-name" oninput="handleInputChange()">
-          <label for="char-race">Race</label><input type="text" id="char-race" oninput="handleInputChange()">
-          <label for="char-position">Position</label>
-          <select id="char-position" onchange="handleInputChange()">
-            <option value="Guide">Guide</option>
-            <option value="Fisherman">Fisherman</option>
-            <option value="Spear Bearer">Spear Bearer</option>
-            <option value="Wave Controller">Wave Controller</option>
-            <option value="Light Bearer">Light Bearer</option>
-            <option value="Anima">Anima</option>
-          </select>
-        </div>
-        <div class="widget">
-          <h3>Progression</h3>
-          <label for="char-level">Level</label><input type="number" id="char-level" min="1" value="1"
-            oninput="handleInputChange()">
-          <button onclick="levelUp()" class="btn-gold" style="width: 100%; margin-top: 1rem;">Level Up</button>
-          <label for="char-floor">Floor</label><input type="number" id="char-floor" min="1" value="1"
-            oninput="handleInputChange()">
-        </div>
-        <div class="widget affinities-container">
-          <h3>Affinities</h3>
-          <div class="affinity-group"><label for="add-primary">Primary</label><select id="add-primary"></select></div>
-          <div class="affinity-tags" id="primary-affinities"></div>
-          <div class="affinity-group"><label for="add-secondary">Secondary</label><select id="add-secondary"></select>
-          </div>
-          <div class="affinity-tags" id="secondary-affinities"></div>
-          <div class="affinity-group"><label for="add-tertiary">Tertiary</label><select id="add-tertiary"></select>
-          </div>
-          <div class="affinity-tags" id="tertiary-affinities"></div>
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="widget">
-          <h3>Resources</h3>
-          <label for="available-stat-points">Available Stat Points</label><input type="number"
-            id="available-stat-points" value="0" readonly>
-          <label for="available-skill-points">Available Skill Points</label><input type="number"
-            id="available-skill-points" value="0" readonly>
-          <button onclick="addSkillPoint()" style="width: 100%; margin-top: 1rem;">+1 Bonus Skill Point</button>
-          <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1"
-            step="0.1" value="2.0" oninput="handleInputChange()">
-          <div class="currency-display">
-            <span class="label">POINTS</span>
-            <div id="currency-value" class="value">0</div>
-          </div>
-        </div>
-        <div class="widget">
-          <h3>Proficiencies</h3>
-          <div id="category-proficiencies-list" class="affinity-tags"></div>
-          <button onclick="openProficiencyModal()" style="width:100%; margin-top: 1rem;">Manage</button>
-        </div>
-        <div class="widget auth-block">
-          <button onclick="signInWithGoogle()">Sign In</button><button onclick="signOut()" id="logoutBtn"
-            style="display:none;">Sign Out</button>
-          <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button><button onclick="openSellModal()">Sell
-            Items</button>
-          <button onclick="openSpecialItemsModal()">Special Items</button><button onclick="resetCharacter()"
-            class="btn-danger">Reset</button>
-          <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin</button>
-          <span id="user-info"></span>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="widget top-stats-bar" id="top-stats-bar"></div>
-        <div class="widget">
-          <h3>Equipment</h3>
-          <div class="equipment-grid">
-            <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
-            <div class="slot" id="armor-slot" title="Armor"></div>
-            <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
-            <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
-            <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
-            <div class="position-slots">
-              <div class="slot" id="lighthouse1-slot" title="Lighthouse 1" data-position="Light Bearer"></div>
-              <div class="slot" id="lighthouse2-slot" title="Lighthouse 2" data-position="Light Bearer"></div>
-              <div class="slot" id="beast1-slot" title="Beast 1" data-position="Anima"></div>
-              <div class="slot" id="beast2-slot" title="Beast 2" data-position="Anima"></div>
+        <div class="main-widgets-wrapper">
+            <div class="col-1">
+                <div class="widget">
+                    <h3>Identity</h3>
+                    <label for="char-name">Name</label><input type="text" id="char-name" oninput="handleInputChange()">
+                    <label for="char-race">Race</label><input type="text" id="char-race" oninput="handleInputChange()">
+                    <label for="char-position">Position</label>
+                    <select id="char-position" onchange="handleInputChange()">
+                        <option value="Guide">Guide</option><option value="Fisherman">Fisherman</option><option value="Spear Bearer">Spear Bearer</option>
+                        <option value="Wave Controller">Wave Controller</option><option value="Light Bearer">Light Bearer</option><option value="Anima">Anima</option>
+                    </select>
+                </div>
+                <div class="widget">
+                    <h3>Progression</h3>
+                    <label for="char-level">Level</label><input type="number" id="char-level" min="1" value="1" oninput="handleInputChange()">
+                    <button onclick="levelUp()" class="btn-gold" style="width: 100%; margin-top: 1rem;">Level Up</button>
+                    <label for="char-floor">Floor</label><input type="number" id="char-floor" min="1" value="1" oninput="handleInputChange()">
+                </div>
+                 <div class="widget affinities-container">
+                    <h3>Affinities</h3>
+                    <div class="affinity-group"><label for="add-primary">Primary</label><select id="add-primary"></select></div><div class="affinity-tags" id="primary-affinities"></div>
+                    <div class="affinity-group"><label for="add-secondary">Secondary</label><select id="add-secondary"></select></div><div class="affinity-tags" id="secondary-affinities"></div>
+                    <div class="affinity-group"><label for="add-tertiary">Tertiary</label><select id="add-tertiary"></select></div><div class="affinity-tags" id="tertiary-affinities"></div>
+                </div>
             </div>
-          </div>
+            <div class="col-2">
+                <div class="widget">
+                    <h3>Resources</h3>
+                    <label for="available-stat-points">Available Stat Points</label><input type="number" id="available-stat-points" value="0" readonly>
+                    <label for="available-skill-points">Available Skill Points</label><input type="number" id="available-skill-points" value="0" readonly>
+                    <button onclick="addSkillPoint()" style="width: 100%; margin-top: 1rem;">+1 Bonus Skill Point</button>
+                    <label for="stat-multiplier">Stat Point Multiplier</label><input type="number" id="stat-multiplier" min="1" step="0.1" value="2.0" oninput="handleInputChange()">
+                    <div class="currency-display">
+                        <span class="label">POINTS</span>
+                        <div id="currency-value" class="value">0</div>
+                        <div style="display:flex; gap: 0.5rem; justify-content:center; margin-top: 0.5rem;">
+                            <input type="number" id="currency-adjust-amount" placeholder="Amount" style="width: 100px;">
+                            <button onclick="adjustCurrency(true)">Add</button>
+                            <button onclick="adjustCurrency(false)">Sub</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget">
+                    <h3>Proficiencies</h3>
+                    <div id="category-proficiencies-list" class="affinity-tags"></div>
+                    <button onclick="openProficiencyModal()" style="width:100%; margin-top: 1rem;">Manage</button>
+                </div>
+                <div class="widget auth-block">
+                    <button onclick="signInWithGoogle()">Sign In</button><button onclick="signOut()" id="logoutBtn" style="display:none;">Sign Out</button>
+                    <button onclick="openShopModal()" id="shop-btn" disabled>Shop</button><button onclick="openSellModal()">Sell Items</button>
+                    <button onclick="openSpecialItemsModal()">Special Items</button><button onclick="resetCharacter()" class="btn-danger">Reset</button>
+                    <button onclick="openAdminPanel()" id="admin-btn" style="display:none;">Admin</button>
+                    <span id="user-info"></span>
+                </div>
+            </div>
+            <div class="col-3">
+                 <div class="widget" id="top-stats-bar"></div>
+                <div class="widget">
+                    <h3>Equipment</h3>
+                    <div class="equipment-grid">
+                        <div class="slot" id="weapon1-slot" title="Weapon Slot 1"></div>
+                        <div class="slot" id="armor-slot" title="Armor"></div>
+                        <div class="slot" id="weapon2-slot" title="Weapon Slot 2"></div>
+                        <div class="slot" id="accessory1-slot" title="Accessory 1"></div>
+                        <div class="slot" id="accessory2-slot" title="Accessory 2"></div>
+                        <div class="position-slots">
+                            <div class="slot" id="lighthouse1-slot" title="Lighthouse 1" data-position="Light Bearer"></div>
+                            <div class="slot" id="lighthouse2-slot" title="Lighthouse 2" data-position="Light Bearer"></div>
+                            <div class="slot" id="beast1-slot" title="Beast 1" data-position="Anima"></div>
+                            <div class="slot" id="beast2-slot" title="Beast 2" data-position="Anima"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="widget" style="grid-column: 1 / -1;">
+            <h3>Stats</h3>
+            <table class="stats-table" id="stats-table">
+                <thead><tr><th>Stat</th><th>Value</th><th>+/-</th></tr></thead>
+                <tbody id="stats-body"></tbody>
+            </table>
+        </div>
+        <div class="widget" style="grid-column: 1 / -1;">
+            <div class="skills-wrapper">
+                <div class="spirit-tank-container">
+                    <div class="spirit-tank-fluid" id="spirit-fluid"></div>
+                    <div class="spirit-tooltip" id="spirit-tooltip">0 / 50</div>
+                </div>
+                <div class="skill-section" id="skill-section"></div>
+            </div>
+        </div>
+        <div class="widget" style="grid-column: 1 / -1;">
+            <h3>Backstory & Notes</h3>
+            <textarea id="backstory-textarea" placeholder="Type your character's story here..." oninput="handleInputChange()"></textarea>
+        </div>
     </div>
 
-    <div class="widget" style="grid-column: 1 / -1;">
-      <h3>Stats</h3>
-      <table class="stats-table" id="stats-table">
-        <thead>
-          <tr>
-            <th>Stat</th>
-            <th>Value</th>
-            <th>+/-</th>
-          </tr>
-        </thead>
-        <tbody id="stats-body"></tbody>
-      </table>
-    </div>
-    <div class="widget" style="grid-column: 1 / -1;">
-      <div class="skill-section" id="skill-section"></div>
-    </div>
-    <div class="widget" style="grid-column: 1 / -1;">
-      <h3>Backstory & Notes</h3>
-      <textarea id="backstory-textarea" placeholder="Type your character's story here..."
-        oninput="handleInputChange()"></textarea>
-    </div>
-  </div>
-
-  <!-- Modals & UI overlays -->
-  <div id="notification-toast"></div>
-  <div id="confirmation-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Confirm Action</h3>
-      </div>
-      <div class="modal-body" id="confirmation-message"></div>
-      <div class="modal-footer"><button id="confirm-btn-no">Cancel</button><button id="confirm-btn-yes"
-          class="btn-danger">Confirm</button></div>
-    </div>
-  </div>
-  <div id="item-info-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="item-info-title">Item Details</h3><button onclick="closeModal('item-info-modal')">Close</button>
-      </div>
-      <div class="modal-body" id="item-info-modal-content"></div>
-    </div>
-  </div>
-  <div id="skill-library-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Skill Library</h3><button onclick="closeSkillLibrary()">Close</button>
-      </div>
-      <div class="modal-body"><input type="text" id="skill-search" class="library-search"
-          placeholder="Search skills...">
-        <div class="modal-grid" id="skill-library-grid"></div>
-      </div>
-    </div>
-  </div>
-  <div id="equipment-library-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="equipment-modal-title">Equipment Library</h3><button onclick="closeEquipmentModal()">Close</button>
-      </div>
-      <div class="modal-body"><input type="text" id="equipment-search" class="library-search"
-          placeholder="Search equipment...">
-        <div class="modal-grid" id="equipment-library-grid"></div>
-      </div>
-    </div>
-  </div>
-  <div id="skill-info-modal" class="modal-backdrop">
-    <div class="modal-content" style="max-width: 1000px;">
-      <div class="modal-header">
-        <h3>Skill Details</h3><button onclick="closeSkillInfoModal()">Close</button>
-      </div>
-      <div class="modal-body" id="skill-info-modal-content"></div>
-    </div>
-  </div>
-  <div id="special-items-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Special Items</h3><button onclick="closeSpecialItemsModal()">Close</button>
-      </div>
-      <div class="modal-body">
-        <div id="special-items-list"></div>
-        <div class="add-item-form"
-          style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-          <h4>Add New Item</h4><label for="new-item-name">Item Name</label><input type="text" id="new-item-name"
-            placeholder="E.g., Black March"><label for="new-item-desc">Description</label><textarea id="new-item-desc"
-            placeholder="Details about the item..."></textarea><button onclick="addSpecialItem()"
-            style="margin-top: 1rem;">Add Item</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="shop-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Shop</h3><button onclick="closeShopModal()">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-grid" id="shop-grid"></div>
-      </div>
-    </div>
-  </div>
-  <div id="admin-panel-modal" class="modal-backdrop">
-    <div class="modal-content" style="max-width: 1200px;">
-      <div class="modal-header">
-        <h3>Admin Panel</h3><button onclick="closeAdminPanel()">Close</button>
-      </div>
-      <div class="modal-body" id="admin-panel-body"></div>
-    </div>
-  </div>
-  <div id="proficiency-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Manage Proficiencies</h3><button onclick="closeProficiencyModal()">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-grid" id="proficiency-grid"></div>
-      </div>
-    </div>
-  </div>
-  <div id="bestiary-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Bestiary</h3><button onclick="closeBestiaryModal()">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-grid" id="bestiary-grid"></div>
-      </div>
-    </div>
-  </div>
-  <div id="sell-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Sell Items</h3><button onclick="closeModal('sell-modal')">Close</button>
-      </div>
-      <div class="modal-body">
-        <p>Select an item from your inventory to list for sale.</p>
-        <div class="modal-grid" id="sell-grid"></div>
-      </div>
-    </div>
-  </div>
+    <!-- Modals & UI overlays -->
+    <div id="notification-toast"></div>
+    <div id="confirmation-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Confirm Action</h3></div><div class="modal-body" id="confirmation-message"></div><div class="modal-footer"><button id="confirm-btn-no">Cancel</button><button id="confirm-btn-yes" class="btn-danger">Confirm</button></div></div></div>
+    <div id="item-info-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="item-info-title">Item Details</h3><button onclick="closeModal('item-info-modal')">Close</button></div><div class="modal-body" id="item-info-modal-content"></div></div></div>
+    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Skill Library</h3><button onclick="closeModal('skill-library-modal')">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
+    <div id="equipment-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="equipment-modal-title">Equipment Library</h3><button onclick="closeModal('equipment-library-modal')">Close</button></div><div class="modal-body"><input type="text" id="equipment-search" class="library-search" placeholder="Search equipment..."><div class="modal-grid" id="equipment-library-grid"></div></div></div></div>
+    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1000px;"><div class="modal-header"><h3>Skill Details</h3><button onclick="closeModal('skill-info-modal')">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
+    <div id="special-items-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Special Items</h3><button onclick="closeModal('special-items-modal')">Close</button></div><div class="modal-body"><div id="special-items-list"></div><div class="add-item-form" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;"><h4>Add New Item</h4><label for="new-item-name">Item Name</label><input type="text" id="new-item-name" placeholder="E.g., Black March"><label for="new-item-desc">Description</label><textarea id="new-item-desc" placeholder="Details about the item..."></textarea><button onclick="addSpecialItem()" style="margin-top: 1rem;">Add Item</button></div></div></div></div>
+    <div id="shop-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Shop</h3><button onclick="closeModal('shop-modal')">Close</button></div><div class="modal-body"><div class="modal-grid" id="shop-grid"></div></div></div></div>
+    <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1200px;"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeModal('admin-panel-modal')">Close</button></div><div class="modal-body" id="admin-panel-body"></div></div></div>
+    <div id="proficiency-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Manage Proficiencies</h3><button onclick="closeModal('proficiency-modal')">Close</button></div><div class="modal-body"><div class="modal-grid" id="proficiency-grid"></div></div></div></div>
+    <div id="bestiary-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Bestiary</h3><button onclick="closeModal('bestiary-modal')">Close</button></div><div class="modal-body"><div class="modal-grid" id="bestiary-grid"></div></div></div></div>
+    <div id="sell-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Sell Items</h3><button onclick="closeModal('sell-modal')">Close</button></div><div class="modal-body"><p>Select an item from your inventory to list for sale.</p><div class="modal-grid" id="sell-grid"></div></div></div></div>
 
 
   <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
@@ -980,7 +360,7 @@ Mobile version (maybe in the future)
     const db = firebase.firestore();
 
     const stats = ["Strength", "Shinsu Control", "Shinsu Endurance", "Perception", "Willpower", "Technique", "Insight", "Authority"];
-    const state = { isDirty: false, saveTimeout: null, backstory: "", specialItems: [], ownedItems: [], statValues: {}, manualStatPoints: {}, skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] }, skillBonuses: {}, currentSkillEdit: { tier: null, index: null }, skillLibrary: [], equipmentLibrary: [], bestiaryLibrary: [], ownedBeasts: {}, currentBeastEdit: null, currentEquipmentEdit: null, availableStatPoints: 0, availableSkillPoints: 0, bonusSkillPoints: 0, usedSkillPoints: 0, affinities: { primary: [], secondary: [], tertiary: [] }, equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: null, currency: 0, proficientSkills: [], proficientCategories: [] };
+    const state = { isDirty: false, saveTimeout: null, backstory: "", specialItems: [], ownedItems: [], statValues: {}, manualStatPoints: {}, skillsByTier: { 1: [], 2: [], 3: [], 4: [], 5: [] }, skillBonuses: {}, currentSkillEdit: { tier: null, index: null }, skillLibrary: [], equipmentLibrary: [], bestiaryLibrary: [], ownedBeasts: {}, currentBeastEdit: null, currentEquipmentEdit: null, availableStatPoints: 0, availableSkillPoints: 0, bonusSkillPoints: 0, usedSkillPoints: 0, affinities: { primary: [], secondary: [], tertiary: [] }, equipment: { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: null, currency: 0, currentHP: 0, spirit: 50, maxSpirit: 50, proficientSkills: [], proficientCategories: [] };
 
     function showNotification(message, type = 'info', duration = 3000) { const t = document.getElementById('notification-toast'); t.textContent = message; t.className = 'show'; if (type === 'danger') t.classList.add('danger'); if (type === 'success') t.classList.add('success'); setTimeout(() => t.classList.remove('show'), duration); }
     function showConfirmation(message, onConfirm) { const m = document.getElementById('confirmation-modal'); document.getElementById('confirmation-message').textContent = message; m.classList.add('active'); const c = document.getElementById('confirm-btn-yes'), n = document.getElementById('confirm-btn-no'); const close = () => { m.classList.remove('active'); c.replaceWith(c.cloneNode(true)); n.replaceWith(n.cloneNode(true)); }; document.getElementById('confirm-btn-yes').addEventListener('click', () => { onConfirm(); close(); }); document.getElementById('confirm-btn-no').addEventListener('click', close); }
@@ -1015,31 +395,42 @@ Mobile version (maybe in the future)
           document.getElementById("char-level").value = data.level || 1; document.getElementById("char-floor").value = data.floor || 1;
           document.getElementById("char-position").value = data.position || "Guide"; document.getElementById('backstory-textarea').value = data.backstory || "";
           document.getElementById('stat-multiplier').value = data.statMultiplier || 2.0;
-          Object.assign(state, { currency: data.currency || 0, affinities: data.affinities || { primary: [], secondary: [], tertiary: [] }, skillsByTier: data.skillsByTier || { 1: [], 2: [], 3: [], 4: [], 5: [] }, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s, 0])), equipment: data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], ownedBeasts: data.ownedBeasts || {}, proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
+          Object.assign(state, { currency: data.currency || 0, currentHP: data.currentHP, affinities: data.affinities || {primary:[],secondary:[],tertiary:[]}, skillsByTier: data.skillsByTier || {1:[],2:[],3:[],4:[],5:[]}, manualStatPoints: data.manualAdds || Object.fromEntries(stats.map(s => [s,0])), equipment: data.equipment || { weapon1: null, weapon2: null, armor: null, accessory1: null, accessory2: null, lighthouse1: null, lighthouse2: null, beast1: null, beast2: null }, selectedWeaponSlot: data.selectedWeaponSlot || null, ownedItems: data.ownedItems || [], specialItems: data.specialItems || [], ownedBeasts: data.ownedBeasts || {}, proficientCategories: data.proficientCategories || [], proficientSkills: data.proficientSkills || [] });
         } else { initializeState(); }
         fetchLibrariesAndUpdate();
       }).catch(err => console.error("Load failed:", err));
     }
-    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), currency: state.currency, affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, ownedBeasts: state.ownedBeasts, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
+    function getCurrentCharacterData() { return { name: document.getElementById("char-name").value, race: document.getElementById("char-race").value, position: document.getElementById("char-position").value, level: parseInt(document.getElementById("char-level").value), floor: parseInt(document.getElementById("char-floor").value), statMultiplier: parseFloat(document.getElementById("stat-multiplier").value), currency: state.currency, currentHP: state.currentHP, affinities: state.affinities, manualAdds: state.manualStatPoints, skillsByTier: state.skillsByTier, equipment: state.equipment, selectedWeaponSlot: state.selectedWeaponSlot, ownedItems: state.ownedItems, ownedBeasts: state.ownedBeasts, backstory: document.getElementById('backstory-textarea').value, specialItems: state.specialItems, proficientCategories: state.proficientCategories, proficientSkills: state.proficientSkills }; }
     function resetCharacter() { showConfirmation("Are you sure? This will permanently delete this character.", () => { const u = auth.currentUser; if (u) { db.collection("characters").doc(u.uid).delete().then(() => location.reload()).catch(e => console.error("Delete failed:", e)); } }); }
 
-    function recalculateAndRenderAll() { calculateBaseStats(); applyAllSkillEffects(); const l = parseInt(document.getElementById("char-level").value) || 1; const totalAllocated = Object.values(state.manualStatPoints).reduce((s, v) => s + v, 0); state.availableStatPoints = (l - 1) - totalAllocated; calculateUsedSkillPoints(); state.availableSkillPoints = (l - 1) - state.usedSkillPoints + state.bonusSkillPoints; renderAllUI(); }
-    function renderAllUI() {
-      document.getElementById("available-stat-points").value = state.availableStatPoints;
-      document.getElementById("available-skill-points").value = state.availableSkillPoints;
-      document.getElementById("currency-value").textContent = state.currency;
-      renderAffinityControls();
-      renderStats();
-      renderEquipment();
-      renderSkillTiers();
-      renderTopBarStats();
-      renderProficiencies();
-      const currentPosition = document.getElementById("char-position").value;
-      document.querySelectorAll('.equipment-grid .slot[data-position]').forEach(slot => {
-        slot.style.display = slot.dataset.position === currentPosition ? 'flex' : 'none';
-      });
+    function recalculateAndRenderAll() { 
+        calculateBaseStats(); 
+        applyAllSkillEffects(); 
+        const l = parseInt(document.getElementById("char-level").value) || 1; 
+        const totalAllocated = Object.values(state.manualStatPoints).reduce((s, v) => s + v, 0); 
+        state.availableStatPoints = (l - 1) - totalAllocated; 
+        calculateUsedSkillPoints(); 
+        calculateSpirit();
+        state.availableSkillPoints = (l - 1) - state.usedSkillPoints + state.bonusSkillPoints; 
+        renderAllUI(); 
     }
-
+    function renderAllUI() { 
+        document.getElementById("available-stat-points").value = state.availableStatPoints; 
+        document.getElementById("available-skill-points").value = state.availableSkillPoints;
+        document.getElementById("currency-value").textContent = state.currency;
+        renderAffinityControls(); 
+        renderStats(); 
+        renderEquipment(); 
+        renderSkillTiers(); 
+        renderTopBarStats(); 
+        renderProficiencies(); 
+        renderSpiritTank();
+        const currentPosition = document.getElementById("char-position").value;
+        document.querySelectorAll('.equipment-grid .slot[data-position]').forEach(slot => {
+            slot.style.display = slot.dataset.position === currentPosition ? 'flex' : 'none';
+        });
+    }
+    
     function renderStats() {
       const tbody = document.getElementById("stats-body"); tbody.innerHTML = "";
       const avg = stats.reduce((s, st) => s + (state.statValues[st] || 0), 0) / stats.length, max = parseFloat(document.getElementById("stat-multiplier").value) * avg;
@@ -1055,11 +446,11 @@ Mobile version (maybe in the future)
     }
 
     function renderEquipment() {
-      ["weapon1", "weapon2", "armor", "accessory1", "accessory2", "lighthouse1", "lighthouse2", "beast1", "beast2"].forEach(slotKey => {
+      ["weapon1","weapon2","armor","accessory1","accessory2","lighthouse1","lighthouse2","beast1","beast2"].forEach(slotKey => {
         const el = document.getElementById(`${slotKey}-slot`); if (!el) return;
         const item = state.equipment[slotKey]; el.innerHTML = "";
         if (item) { const i = document.createElement("img"); i.src = item.image || "https://placehold.co/100x100/1F2937/F9FAFB?text=?"; i.alt = item.name || slotKey; i.className = "item-image"; el.appendChild(i); }
-        const c = document.createElement("div"); c.className = "change-item-icon"; c.textContent = item ? '⇄' : '+';
+        const c = document.createElement("div"); c.className = "change-item-icon"; c.textContent = item ? '⇄' : '+'; 
         if (slotKey.includes("beast")) { c.onclick = e => { e.stopPropagation(); openBestiaryModal(slotKey); }; }
         else { c.onclick = e => { e.stopPropagation(); openEquipmentModal(slotKey); }; }
         el.appendChild(c);
@@ -1068,117 +459,226 @@ Mobile version (maybe in the future)
     }
 
     function renderTopBarStats() {
-      const c = document.getElementById("top-stats-bar"); if (!c) return;
-      const l = parseInt(document.getElementById("char-level").value) || 1;
-      const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0), str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0), wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
-      const penalty = Math.max(0, 2 * (parseInt(document.getElementById("char-floor").value) || 1) - se), speed = 6 + l - penalty + (state.skillBonuses['Movement Speed']?.add || 0), hp = (3 * se + 2 * str + 1.5 * wp + l * (2 + Math.floor(l / 25))) + (state.skillBonuses['HP']?.add || 0);
-      const hitDiceCount = l, hitDiceType = 4 + 2 * Math.floor(wp / 25), hitDiceMod = Math.floor((se - 10) / 2) * l;
-      let attack = 0, defense = 0; const selWep = state.selectedWeaponSlot ? state.equipment[state.selectedWeaponSlot] : null;
-      if (selWep) { const statVal = (state.statValues[selWep.stat] || 0) + (state.skillBonuses[selWep.stat]?.add || 0); attack = Math.floor(statVal / 5) + (selWep.modifier || 0); }
-      if (state.equipment.armor) { const statVal = (state.statValues[state.equipment.armor.stat] || 0) + (state.skillBonuses[state.equipment.armor.stat]?.add || 0); defense = Math.floor(statVal / 5) + (state.equipment.armor.modifier || 0); }
-      c.innerHTML = `<div class="top-stat"><span class="label">HP</span><span class="value">${Math.round(hp)}</span></div><div class="top-stat"><span class="label">Speed</span><span class="value">${speed}</span></div><div class="top-stat"><span class="label">Attack</span><span class="value">${attack}</span></div><div class="top-stat"><span class="label">Defense</span><span class="value">${defense}</span></div><div class="top-stat"><span class="label">Hit Dice</span><span class="value">${hitDiceCount}d${hitDiceType}+${hitDiceMod}</span></div>`;
+        const container = document.getElementById("top-stats-bar"); if (!container) return;
+        const level = parseInt(document.getElementById("char-level").value) || 1;
+        const se = (state.statValues["Shinsu Endurance"] || 0) + (state.skillBonuses["Shinsu Endurance"]?.add || 0);
+        const str = (state.statValues["Strength"] || 0) + (state.skillBonuses["Strength"]?.add || 0);
+        const wp = (state.statValues["Willpower"] || 0) + (state.skillBonuses["Willpower"]?.add || 0);
+        
+        const maxHP = Math.round((3*se + 2*str + 1.5*wp + level*(2+Math.floor(level/25))) + (state.skillBonuses['HP']?.add||0));
+        if (state.currentHP === undefined || state.currentHP > maxHP) state.currentHP = maxHP;
+
+        const position = document.getElementById("char-position").value;
+        const diceMap = { "Fisherman": 12, "Wave Controller": 10, "Spear Bearer": 10, "Anima": 8, "Light Bearer": 8, "Guide": 6 };
+        const hitDiceValue = diceMap[position] || 6;
+        const hitDiceCount = Math.floor(maxHP / 10);
+        const wpModifier = Math.floor((wp - 10) / 2);
+
+        const speed = 6 + level - Math.max(0, 2 * (parseInt(document.getElementById("char-floor").value)||1) - se) + (state.skillBonuses['Movement Speed']?.add || 0);
+        let attack = 0, defense = 0; const selWep = state.selectedWeaponSlot ? state.equipment[state.selectedWeaponSlot] : null;
+        if (selWep) { const statVal = (state.statValues[selWep.stat]||0)+(state.skillBonuses[selWep.stat]?.add||0); attack = Math.floor(statVal/5)+(selWep.modifier||0); }
+        if (state.equipment.armor) { const statVal = (state.statValues[state.equipment.armor.stat]||0)+(state.skillBonuses[state.equipment.armor.stat]?.add||0); defense = Math.floor(statVal/5)+(state.equipment.armor.modifier||0); }
+
+        container.innerHTML = `
+            <div class="top-stat-group" style="grid-column: 1 / -1;">
+                <span class="label">HEALTH</span>
+                <div class="value">${state.currentHP} / ${maxHP}</div>
+                <div id="hp-controls">
+                    <button onclick="adjustCurrentHP(-1)">-</button>
+                    <input type="number" id="current-hp-input" value="${state.currentHP}" onchange="setCurrentHP(this.value, ${maxHP})">
+                    <button onclick="adjustCurrentHP(1)">+</button>
+                </div>
+            </div>
+            <div class="top-stat-group"><span class="label">Hit Dice</span><span class="value">${hitDiceCount}d${hitDiceValue} + ${wpModifier}</span></div>
+            <div class="top-stat-group"><span class="label">Speed</span><span class="value">${speed}</span></div>
+            <div class="top-stat-group"><span class="label">Attack</span><span class="value">${attack}</span></div>
+            <div class="top-stat-group"><span class="label">Defense</span><span class="value">${defense}</span></div>
+        `;
+    }
+
+    function adjustCurrentHP(amount) {
+        const maxHP = parseInt(document.getElementById('top-stats-bar').querySelector('.value').textContent.split('/')[1].trim());
+        let newHP = state.currentHP + amount;
+        if (newHP > maxHP) newHP = maxHP;
+        if (newHP < 0) newHP = 0;
+        state.currentHP = newHP;
+        document.getElementById('current-hp-input').value = state.currentHP;
+        renderTopBarStats(); // Just to update the main display
+        queueAutoSave();
+    }
+    function setCurrentHP(value, max) {
+        let newHP = parseInt(value);
+        if (isNaN(newHP) || newHP < 0) newHP = 0;
+        if (newHP > max) newHP = max;
+        state.currentHP = newHP;
+        renderTopBarStats();
+        queueAutoSave();
     }
 
     function renderAffinityControls() {
       ["primary", "secondary", "tertiary"].forEach(type => {
         const cont = document.getElementById(`${type}-affinities`), sel = document.getElementById(`add-${type}`); cont.innerHTML = "";
         sel.innerHTML = "<option value=''>+ Add</option>" + stats.filter(s => !state.affinities.primary.includes(s) && !state.affinities.secondary.includes(s) && !state.affinities.tertiary.includes(s)).map(s => `<option value="${s}">${s}</option>`).join("");
-        (state.affinities[type] || []).forEach(stat => { const d = document.createElement("div"); d.innerHTML = `${stat} <span class="remove-affinity">×</span>`; d.querySelector('.remove-affinity').onclick = () => { state.affinities[type] = state.affinities[type].filter(s => s !== stat); handleInputChange(); }; cont.appendChild(d); });
-        sel.onchange = e => { const v = e.target.value; if (v && !(state.affinities[type] || []).includes(v)) { if (!state.affinities[type]) state.affinities[type] = []; state.affinities[type].push(v); handleInputChange(); } e.target.value = ''; };
+        (state.affinities[type]||[]).forEach(stat => { const d = document.createElement("div"); d.innerHTML = `${stat} <span class="remove-affinity">×</span>`; d.querySelector('.remove-affinity').onclick = () => { state.affinities[type] = state.affinities[type].filter(s => s !== stat); handleInputChange(); }; cont.appendChild(d); });
+        sel.onchange = e => { const v = e.target.value; if (v && !(state.affinities[type]||[]).includes(v)) { if (!state.affinities[type]) state.affinities[type]=[]; state.affinities[type].push(v); handleInputChange(); } e.target.value = ''; };
       });
     }
 
     function renderSkillTiers() {
-      const c = document.getElementById("skill-section"); c.innerHTML = "";
-      for (let t = 1; t <= 5; t++) {
-        const d = document.createElement("div"); d.className = "tier-section"; d.innerHTML = `<div class="tier-header"><h3>Tier ${t}</h3><button onclick="addSkillSlot(${t})">+ Slot</button></div><div class="skill-slots" id="tier-${t}-slots"></div>`;
-        const g = d.querySelector(`#tier-${t}-slots`);
-        (state.skillsByTier[t] || []).forEach((s, i) => { const slot = document.createElement("div"); slot.className = "skill-slot"; if (!s) { slot.classList.add("empty"); slot.onclick = () => openSkillLibrary(t, i); } else { slot.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick="openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})"><div class="skill-level-badge">${s.level || 0}</div><svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`; } g.appendChild(slot); });
-        c.appendChild(d);
-      }
+        const c = document.getElementById("skill-section"); c.innerHTML = "";
+        for (let t = 1; t <= 5; t++) {
+            const d = document.createElement("div"); d.className = "tier-section";
+            const hasSlots = state.skillsByTier[t] && state.skillsByTier[t].length > 0;
+            d.innerHTML = `<div class="tier-header"><h3>Tier ${t}</h3><div><button onclick="removeSkillSlot(${t})" ${!hasSlots ? 'disabled' : ''}>- Slot</button> <button onclick="addSkillSlot(${t})">+ Slot</button></div></div><div class="skill-slots" id="tier-${t}-slots"></div>`;
+            const g = d.querySelector(`#tier-${t}-slots`);
+            (state.skillsByTier[t]||[]).forEach((s, i) => { 
+                const slot = document.createElement("div"); 
+                slot.className = "skill-slot"; 
+                if (!s) { 
+                    slot.classList.add("empty"); 
+                    slot.onclick = () => openSkillLibrary(t, i); 
+                } else { 
+                    let chargesHTML = '';
+                    if (s.charges) {
+                        chargesHTML += '<div class="skill-charges">';
+                        for(let i = 0; i < s.charges; i++) chargesHTML += '<div class="charge-dot"></div>';
+                        chargesHTML += '</div>';
+                    }
+                    slot.innerHTML = `<img src="${s.icon}" alt="${s.name}"><div class="skill-level-badge">${s.level||0}</div><svg class="info-icon" onclick="event.stopPropagation(); openSkillInfoModal(state.skillsByTier[${t}][${i}], ${t}, ${i})" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>${chargesHTML}`; 
+                } 
+                g.appendChild(slot); 
+            });
+            c.appendChild(d);
+        }
     }
 
     function renderProficiencies() { document.getElementById('category-proficiencies-list').innerHTML = state.proficientCategories.length > 0 ? state.proficientCategories.map(c => `<div>${c}</div>`).join('') : `<small style="color: var(--text-secondary)">No proficiencies learned.</small>`; }
-
-    function calculateBaseStats() { const l = parseInt(document.getElementById("char-level").value) || 1, p = document.getElementById("char-position").value, cal_s = {}; stats.forEach(s => { let t = 1; for (let i = 1; i < l; i++) { const r = getGrowthRatesForLevel(p, i); if (state.affinities.primary.includes(s)) t += r.primary; if (state.affinities.secondary.includes(s)) t += r.secondary; if (state.affinities.tertiary.includes(s)) t += r.tertiary; } cal_s[s] = t + (state.manualStatPoints[s] || 0); }); state.statValues = cal_s; }
-    function calculateUsedSkillPoints() { let t = 0; const R = 0.8; for (const tier in state.skillsByTier) { for (const s of state.skillsByTier[tier]) { if (s && s.level > 0) { let costs = (state.proficientSkills.includes(s.id) && s.proficientVersion) ? s.proficientVersion.costPerLevel : s.costPerLevel; let cost = costs.slice(0, s.level).reduce((a, b) => a + b, 0); if (state.proficientCategories.includes(s.skillType)) cost *= R; t += cost; } } } state.usedSkillPoints = Math.round(t); }
-    function applyAllSkillEffects() { state.skillBonuses = {}; for (const tier in state.skillsByTier) { for (const s of state.skillsByTier[tier]) { if (!s || s.level === 0 || !s.effects) continue; const e = s.effects.find(ef => ef.level === s.level); if (e) { [{ s: 'stat', t: 'type', v: 'value' }, { s: 'stat2', t: 'type2', v: 'value2' }].forEach(m => { const stat = e[m.s], type = e[m.t], value = e[m.v]; if (!stat || !type || value === undefined) return; if (!state.skillBonuses[stat]) state.skillBonuses[stat] = { add: 0, mul: 1 }; if (type === 'add') state.skillBonuses[stat].add += value; if (type === 'mul') state.skillBonuses[stat].mul *= value; }); } } } }
+    
+    function calculateBaseStats() { const l = parseInt(document.getElementById("char-level").value)||1, p = document.getElementById("char-position").value, cal_s = {}; stats.forEach(s => { let t = 1; for (let i = 1; i < l; i++) { const r = getGrowthRatesForLevel(p, i); if (state.affinities.primary.includes(s)) t+=r.primary; if (state.affinities.secondary.includes(s)) t+=r.secondary; if (state.affinities.tertiary.includes(s)) t+=r.tertiary; } cal_s[s] = t + (state.manualStatPoints[s]||0); }); state.statValues = cal_s; }
+    function calculateUsedSkillPoints() { let t = 0; const R = 0.8; for (const tier in state.skillsByTier) { for (const s of state.skillsByTier[tier]) { if (s && s.level > 0) { let costs = (state.proficientSkills.includes(s.id) && s.proficientVersion) ? s.proficientVersion.costPerLevel : s.costPerLevel; let cost = costs.slice(0,s.level).reduce((a,b)=>a+b,0); if(state.proficientCategories.includes(s.skillType)) cost *= R; t+=cost; } } } state.usedSkillPoints = Math.round(t); }
+    function applyAllSkillEffects() { state.skillBonuses = {}; for(const tier in state.skillsByTier) { for(const s of state.skillsByTier[tier]) { if(!s||s.level===0||!s.effects) continue; const e = s.effects.find(ef => ef.level === s.level); if(e){ [{s:'stat',t:'type',v:'value'},{s:'stat2',t:'type2',v:'value2'}].forEach(m => { const stat = e[m.s], type = e[m.t], value = e[m.v]; if(!stat||!type||value===undefined) return; if(!state.skillBonuses[stat]) state.skillBonuses[stat] = {add:0,mul:1}; if(type==='add') state.skillBonuses[stat].add+=value; if(type==='mul') state.skillBonuses[stat].mul*=value; }); } } } }
+    function calculateSpirit() {
+        let usedSpirit = 0;
+        let spiritBonus = 0;
+        for (const tier in state.skillsByTier) {
+            for (const skill of state.skillsByTier[tier]) {
+                if (skill && skill.spiritCost) {
+                    usedSpirit += skill.spiritCost;
+                }
+            }
+        }
+        for (const item of Object.values(state.equipment).filter(Boolean)) {
+            if (item.spiritBonus) {
+                spiritBonus += item.spiritBonus;
+            }
+        }
+        state.maxSpirit = 50 + spiritBonus;
+        state.spirit = state.maxSpirit - usedSpirit;
+    }
+    function renderSpiritTank() {
+        const fluid = document.getElementById('spirit-fluid');
+        const tooltip = document.getElementById('spirit-tooltip');
+        const percentage = state.maxSpirit > 0 ? (state.spirit / state.maxSpirit) * 100 : 0;
+        fluid.style.height = `${percentage}%`;
+        tooltip.textContent = `${state.spirit} / ${state.maxSpirit}`;
+    }
 
     function getGrowthRatesForLevel(p, l) { return (getGrowthTable()[p] || []).find(r => l >= r.range[0] && l <= r.range[1]) || { p: 0, s: 0, t: 0 }; }
-    function getGrowthTable() { return { Guide: [{ range: [1, 10], primary: 1, secondary: .5, tertiary: .5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 2, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 2.5, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 3, secondary: 2.5, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }], Fisherman: [{ range: [1, 10], primary: 1, secondary: 1, tertiary: .5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 2, secondary: 2, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 3, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 4, secondary: 3, tertiary: 3 }], "Spear Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: .5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }], "Wave Controller": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: .5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }], "Light Bearer": [{ range: [1, 10], primary: 1, secondary: 1, tertiary: .5 }, { range: [11, 25], primary: 1.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 2, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 3, secondary: 1, tertiary: 1 }, { range: [81, 110], primary: 3, secondary: 2, tertiary: 1 }, { range: [111, 140], primary: 4, secondary: 2, tertiary: 2 }, { range: [141, 170], primary: 4, secondary: 3, tertiary: 2 }, { range: [171, Infinity], primary: 5, secondary: 3, tertiary: 2 }], Anima: [{ range: [1, 10], primary: 2, secondary: 1, tertiary: .5 }, { range: [11, 25], primary: 2.5, secondary: 1, tertiary: .5 }, { range: [26, 50], primary: 3, secondary: 1, tertiary: .5 }, { range: [51, 80], primary: 3.5, secondary: 1.5, tertiary: 1 }, { range: [81, 110], primary: 4, secondary: 1.5, tertiary: 1 }, { range: [111, 140], primary: 5, secondary: 2, tertiary: 1.5 }, { range: [141, 170], primary: 6, secondary: 2, tertiary: 1.5 }, { range: [171, Infinity], primary: 6, secondary: 2, tertiary: 2 }] }; }
-
-    function levelUp() { const e = document.getElementById("char-level"); e.value = parseInt(e.value) + 1; handleInputChange(); }
+    function getGrowthTable() { return {Guide:[{range:[1,10],primary:1,secondary:.5,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:1.5,secondary:1,tertiary:.5},{range:[51,80],primary:2,secondary:1.5,tertiary:1},{range:[81,110],primary:2.5,secondary:2,tertiary:1},{range:[111,140],primary:3,secondary:2,tertiary:1.5},{range:[141,170],primary:3,secondary:2.5,tertiary:2},{range:[171,Infinity],primary:4,secondary:3,tertiary:3}],Fisherman:[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:2,secondary:2,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:3,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:4,secondary:3,tertiary:3}],"Spear Bearer":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],"Wave Controller":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],"Light Bearer":[{range:[1,10],primary:1,secondary:1,tertiary:.5},{range:[11,25],primary:1.5,secondary:1,tertiary:.5},{range:[26,50],primary:2,secondary:1,tertiary:.5},{range:[51,80],primary:3,secondary:1,tertiary:1},{range:[81,110],primary:3,secondary:2,tertiary:1},{range:[111,140],primary:4,secondary:2,tertiary:2},{range:[141,170],primary:4,secondary:3,tertiary:2},{range:[171,Infinity],primary:5,secondary:3,tertiary:2}],Anima:[{range:[1,10],primary:2,secondary:1,tertiary:.5},{range:[11,25],primary:2.5,secondary:1,tertiary:.5},{range:[26,50],primary:3,secondary:1,tertiary:.5},{range:[51,80],primary:3.5,secondary:1.5,tertiary:1},{range:[81,110],primary:4,secondary:1.5,tertiary:1},{range:[111,140],primary:5,secondary:2,tertiary:1.5},{range:[141,170],primary:6,secondary:2,tertiary:1.5},{range:[171,Infinity],primary:6,secondary:2,tertiary:2}]};}
+    
+    function levelUp() { const e=document.getElementById("char-level"); e.value=parseInt(e.value)+1; handleInputChange(); }
     function addSkillPoint() { state.bonusSkillPoints++; handleInputChange(); }
     function addSkillSlot(t) { if (!state.skillsByTier[t]) state.skillsByTier[t] = []; state.skillsByTier[t].push(null); renderSkillTiers(); }
-
-    window.onload = () => { initializeState(); };
+    function removeSkillSlot(t) { if (state.skillsByTier[t] && state.skillsByTier[t].length > 0) { const removedSkill = state.skillsByTier[t].pop(); if (removedSkill) { showConfirmation("Removing this slot will unlearn the skill in it. Are you sure?", () => { handleInputChange(); renderSkillTiers(); }); } else { renderSkillTiers(); handleInputChange(); } } }
+    
+    window.onload = () => { initializeState(); setupThemeSwitcher(); };
     function initializeState() { state.statValues = Object.fromEntries(stats.map(s => [s, 1])); state.manualStatPoints = Object.fromEntries(stats.map(s => [s, 0])); }
     let settingsListener = null;
     function listenToGameSettings() { if (settingsListener) settingsListener(); settingsListener = db.collection("game_settings").doc("shop").onSnapshot(d => { state.gameSettings = d.exists ? d.data() : { isShopOpen: false, shopItems: [] }; document.getElementById('shop-btn').disabled = !state.gameSettings.isShopOpen; }); }
     async function fetchLibrariesAndUpdate() { await Promise.all([fetchEquipmentLibrary(), fetchSkillLibrary(), fetchBestiaryLibrary()]); recalculateAndRenderAll(); }
-    async function fetchSkillLibrary() { try { const s = await db.collection("skills").get(); state.skillLibrary = s.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.error("Err fetch skill lib:", e); } }
-    async function fetchEquipmentLibrary() { try { const s = await db.collection("items").get(); state.equipmentLibrary = s.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.error("Err fetch equip lib:", e); } }
-    async function fetchBestiaryLibrary() { try { const s = await db.collection("beasts").get(); state.bestiaryLibrary = s.docs.map(d => ({ id: d.id, ...d.data() })); } catch (e) { console.error("Err fetch bestiary lib:", e); } }
+    async function fetchSkillLibrary() { try { const s=await db.collection("skills").get(); state.skillLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch skill lib:", e); } }
+    async function fetchEquipmentLibrary() { try { const s=await db.collection("items").get(); state.equipmentLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch equip lib:", e); } }
+    async function fetchBestiaryLibrary() { try { const s=await db.collection("beasts").get(); state.bestiaryLibrary = s.docs.map(d=>({id:d.id,...d.data()})); } catch (e) { console.error("Err fetch bestiary lib:", e); } }
 
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-    function openSkillLibrary(t, i) { state.currentSkillEdit = { tier: t, index: i }; document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${t} Slot)`; renderSkillLibrary(); openModal("skill-library-modal"); }
-    function closeSkillLibrary() { closeModal('skill-library-modal'); }
-    function openEquipmentModal(sKey) { state.currentEquipmentEdit = sKey; const t = sKey.replace('-slot', '').replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()); document.getElementById("equipment-modal-title").textContent = `Equip to ${t}`; renderEquipmentLibrary(); openModal("equipment-library-modal"); }
-    function closeEquipmentModal() { closeModal('equipment-library-modal'); }
-    function openShopModal() { renderShop(); openModal('shop-modal'); } function closeShopModal() { closeModal('shop-modal'); }
-    function openAdminPanel() { renderAdminPanel(); openModal('admin-panel-modal'); } function closeAdminPanel() { closeModal('admin-panel-modal'); }
-    function openProficiencyModal() { renderProficiencyModal(); openModal('proficiency-modal'); } function closeProficiencyModal() { closeModal('proficiency-modal'); }
-    function openSpecialItemsModal() { renderSpecialItems(); openModal('special-items-modal'); } function closeSpecialItemsModal() { closeModal('special-items-modal'); }
-    function closeSkillInfoModal() { closeModal('skill-info-modal'); }
-    function openBestiaryModal(slotKey) { state.currentBeastEdit = slotKey; renderBestiaryLibrary(); openModal('bestiary-modal'); }
-    function closeBestiaryModal() { closeModal('bestiary-modal'); }
-
+    function openSkillLibrary(t, i) { state.currentSkillEdit = { tier:t, index:i }; document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${t} Slot)`; renderSkillLibrary(); openModal("skill-library-modal"); }
+    function openEquipmentModal(sKey) { state.currentEquipmentEdit = sKey; document.getElementById("equipment-modal-title").textContent = `Equipment Library`; renderEquipmentLibrary(); openModal("equipment-library-modal"); }
+    
     function openItemInfoModal(itemData) { document.getElementById('item-info-title').textContent = itemData.name; document.getElementById('item-info-modal-content').innerHTML = `<div style="text-align:center; padding-bottom: 1rem;"><img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;"></div><p><strong>Type:</strong> ${itemData.type}</p><p><strong>Stat:</strong> ${itemData.stat}</p><p><strong>Modifier:</strong> ${itemData.modifier}</p><p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; openModal('item-info-modal'); }
     function renderEquipmentLibrary() {
-      const g = document.getElementById("equipment-library-grid"), s = document.getElementById("equipment-search").value.toLowerCase(); g.innerHTML = "";
-      const type = state.currentEquipmentEdit.includes('weapon') ? 'weapon' : state.currentEquipmentEdit.includes('armor') ? 'armor' : state.currentEquipmentEdit.includes('lighthouse') ? 'lighthouse' : 'accessory';
-      state.equipmentLibrary.filter(i => i.type === type && i.name.toLowerCase().includes(s)).forEach(i => {
-        const c = document.createElement("div"); c.className = "item-card"; c.innerHTML = `<img src="${i.image || 'https://placehold.co/100x100/1F2937/F9FAFB?text=?'}" alt="${i.name}"><div class="item-name">${i.name}</div>`; c.onclick = () => selectEquipment(i); g.appendChild(c);
-      });
+        const grid = document.getElementById("equipment-library-grid");
+        const search = document.getElementById("equipment-search").value.toLowerCase();
+        grid.innerHTML = "";
+        const typeFilter = state.currentEquipmentEdit.includes('weapon') ? 'weapon' : state.currentEquipmentEdit.includes('armor') ? 'armor' : state.currentEquipmentEdit.includes('lighthouse') ? 'lighthouse' : 'accessory';
+        
+        state.equipmentLibrary
+            .filter(item => item.type === typeFilter && item.name.toLowerCase().includes(search))
+            .forEach(item => {
+                const card = document.createElement("div");
+                card.className = "item-card";
+                const isOwned = state.ownedItems.includes(item.id);
+                card.innerHTML = `
+                    <img src="${item.image || 'https://placehold.co/100x100/1F2937/F9FAFB?text=?'}" alt="${item.name}">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-card-buttons">
+                        ${isOwned ? `<button onclick="event.stopPropagation(); selectEquipment(state.equipmentLibrary.find(i=>i.id === '${item.id}'))">Equip</button>` : `<button onclick="event.stopPropagation(); acquireItem('${item.id}')">Acquire</button>`}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
     }
-    function selectEquipment(i) {
-      if (!state.currentEquipmentEdit) return; if (i.type === 'accessory') { const o = state.currentEquipmentEdit === 'accessory1' ? 'accessory2' : 'accessory1'; if (state.equipment[o] && state.equipment[o].id === i.id) { showNotification("Cannot equip same accessory twice.", "danger"); return; } }
-      equipItem(state.currentEquipmentEdit.replace('-slot', ''), i); closeEquipmentModal();
+
+    function acquireItem(itemId) {
+        if (!state.ownedItems.includes(itemId)) {
+            state.ownedItems.push(itemId);
+            handleInputChange();
+            showNotification("Item acquired!", "success");
+            renderEquipmentLibrary();
+        }
     }
-    function equipItem(s, i) { state.equipment[s] = i; if (i && i.type === 'weapon' && !state.selectedWeaponSlot) state.selectedWeaponSlot = s; if (!i && state.selectedWeaponSlot === s) state.selectedWeaponSlot = null; handleInputChange(); }
+    
+    function selectEquipment(item) {
+        if (!state.currentEquipmentEdit) return; 
+        if(item.type==='accessory'){ const otherSlotKey = state.currentEquipmentEdit === 'accessory1-slot' ? 'accessory2' : 'accessory1'; if(state.equipment[otherSlotKey] && state.equipment[otherSlotKey].id === item.id){ showNotification("Cannot equip same accessory twice.","danger"); return; } }
+        if(item.type==='weapon'){ const otherSlotKey = state.currentEquipmentEdit === 'weapon1-slot' ? 'weapon2' : 'weapon1'; if(state.equipment[otherSlotKey] && state.equipment[otherSlotKey].id === item.id){ showNotification("Cannot equip same weapon twice.","danger"); return; } }
+        equipItem(state.currentEquipmentEdit.replace('-slot', ''), item); 
+        closeModal('equipment-library-modal');
+    }
+
+    function equipItem(s, i) { state.equipment[s] = i; if (i&&i.type==='weapon'&&!state.selectedWeaponSlot) state.selectedWeaponSlot=s; if (!i&&state.selectedWeaponSlot===s) state.selectedWeaponSlot=null; handleInputChange(); }
     function renderSkillLibrary() {
       const g = document.getElementById("skill-library-grid"), search = document.getElementById("skill-search").value.toLowerCase(); g.innerHTML = ""; const { tier } = state.currentSkillEdit, pos = document.getElementById("char-position").value;
       state.skillLibrary.filter(s => s.positionTags.includes(pos) && getSkillTier(s, 1) <= tier && (s.name.toLowerCase().includes(search) || s.skillType?.toLowerCase().includes(search))).forEach(s => { const c = document.createElement("div"); c.className = "skill-card"; const json = JSON.stringify(s).replace(/'/g, "&apos;"); c.innerHTML = `<img src="${s.icon}" alt="${s.name}" onclick='selectSkill(${json})'><div class="skill-name">${s.name}</div>`; g.appendChild(c); });
     }
-    function selectSkill(d) { const { tier, index } = state.currentSkillEdit; if (tier !== null && index !== null) { state.skillsByTier[tier][index] = { ...d, level: 0 }; openSkillInfoModal(state.skillsByTier[tier][index], tier, index); closeSkillLibrary(); handleInputChange(); } }
+    function selectSkill(d) { const {tier, index} = state.currentSkillEdit; if (tier!==null&&index!==null) { state.skillsByTier[tier][index] = {...d, level: 0}; openSkillInfoModal(state.skillsByTier[tier][index], tier, index); closeModal('skill-library-modal'); handleInputChange(); } }
     function getSkillTier(s, l) { return s.tierByLevel ? [...s.tierByLevel].reverse().find(t => l >= t.level)?.tier || 1 : 1; }
-
+    
     function openSkillInfoModal(skillData, tier, index) {
-      const c = document.getElementById("skill-info-modal-content"); document.getElementById("skill-info-title").textContent = skillData.name; const p = state.proficientSkills.includes(skillData.id), s = state.skillsByTier[tier][index], nextLvl = (s.level || 0) + 1, canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level || 0] || 999) && getSkillTier(s, nextLvl) <= tier;
-      const controls = `<div class="controls" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level || 0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${skillData.id}',${tier},${index})">${p ? 'Un-Proficient' : 'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp ? 'disabled' : ''}>Lvl Up (${s.costPerLevel[s.level || 0] || 'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level || s.level === 0 ? 'disabled' : ''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
-      let table = ``; for (let i = 1; i <= skillData.maxLevel; i++) { const e = skillData.effects.find(ef => ef.level === i); let eTxt = e ? `${e.stat}: ${e.type === 'add' ? '+' : 'x'}${e.value}` : '-'; if (e && e.stat2) eTxt += `, ${e.stat2}: +${e.value2}`; table += `<tr ${s.level === i ? 'style="background-color:var(--accent-primary);"' : ''}><td>${i}</td><td>${skillData.costPerLevel[i - 1]}</td><td>${getSkillTier(skillData, i)}</td><td>${eTxt}</td></tr>`; }
+      const c = document.getElementById("skill-info-modal-content"); document.getElementById("skill-info-title").textContent=skillData.name; const p = state.proficientSkills.includes(skillData.id), s = state.skillsByTier[tier][index], nextLvl = (s.level||0)+1, canLvlUp = nextLvl <= s.maxLevel && state.availableSkillPoints >= (s.costPerLevel[s.level||0]||999) && getSkillTier(s, nextLvl) <= tier;
+      const controls = `<div class="controls" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)"><h3>Lvl: ${s.level||0}/${s.maxLevel}</h3><button onclick="toggleSkillProficiency('${skillData.id}',${tier},${index})">${p?'Un-Proficient':'Make Proficient'}</button><button onclick="levelUpSkill(${tier},${index})" ${!canLvlUp?'disabled':''}>Lvl Up (${s.costPerLevel[s.level||0]||'N/A'} SP)</button><button onclick="delevelSkill(${tier},${index})" ${!s.level||s.level===0?'disabled':''}>De-level</button><button onclick="unlearnSkill(${tier},${index})" class="btn-danger">Unlearn</button></div>`;
+      let table = ``; for (let i=1; i<=skillData.maxLevel; i++) { const e=skillData.effects.find(ef=>ef.level===i); let eTxt = e?`${e.stat}: ${e.type==='add'?'+':'x'}${e.value}`:'-'; if(e&&e.stat2) eTxt+=`, ${e.stat2}: +${e.value2}`; table+=`<tr ${s.level===i?'style="background-color:var(--highlight-color); color: var(--bg-primary);"':''}><td>${i}</td><td>${skillData.costPerLevel[i-1]}</td><td>${getSkillTier(skillData,i)}</td><td>${eTxt}</td></tr>`; }
       c.innerHTML = `<div style="display:grid; grid-template-columns:250px 1fr; gap:1.5rem;"><div><img src="${skillData.icon}" alt="${skillData.name}" style="width:100%; border-radius:8px;"><p style="font-size:0.9em; margin-top:1rem;">${skillData.description}</p>${controls}</div><div style="overflow-x:auto;"><table class="stats-table" style="font-size:0.9em;"><thead><tr><th>Lvl</th><th>Cost</th><th>Tier</th><th>Effect</th></tr></thead><tbody>${table}</tbody></table></div></div>`; openModal('skill-info-modal');
     }
-    function levelUpSkill(t, i) { const s = state.skillsByTier[t][i], c = s.costPerLevel[s.level || 0], nL = (s.level || 0) + 1; if (nL <= s.maxLevel && state.availableSkillPoints >= c && getSkillTier(s, nL) <= t) { s.level = nL; handleInputChange(); openSkillInfoModal(s, t, i); } }
-    function delevelSkill(t, i) { const s = state.skillsByTier[t][i]; if (s.level > 0) { s.level--; handleInputChange(); openSkillInfoModal(s, t, i); } }
-    function unlearnSkill(t, i) { state.skillsByTier[t][i] = null; closeSkillInfoModal(); handleInputChange(); }
-    function toggleSkillProficiency(id, t, i) { const idx = state.proficientSkills.indexOf(id); if (idx > -1) state.proficientSkills.splice(idx, 1); else state.proficientSkills.push(id); handleInputChange(); openSkillInfoModal(state.skillsByTier[t][i], t, i); }
-
+    function levelUpSkill(t, i) { const s=state.skillsByTier[t][i], c=s.costPerLevel[s.level||0], nL=(s.level||0)+1; if (nL<=s.maxLevel && state.availableSkillPoints>=c && getSkillTier(s,nL)<=t){ s.level=nL; handleInputChange(); openSkillInfoModal(s,t,i); } }
+    function delevelSkill(t, i) { const s=state.skillsByTier[t][i]; if(s.level>0){ s.level--; handleInputChange(); openSkillInfoModal(s,t,i); } }
+    function unlearnSkill(t, i) { state.skillsByTier[t][i]=null; closeModal('skill-info-modal'); handleInputChange(); }
+    function toggleSkillProficiency(id, t, i) { const idx=state.proficientSkills.indexOf(id); if(idx>-1) state.proficientSkills.splice(idx,1); else state.proficientSkills.push(id); handleInputChange(); openSkillInfoModal(state.skillsByTier[t][i], t, i); }
+    
     function renderSpecialItems() { const l = document.getElementById("special-items-list"); l.innerHTML = state.specialItems.length === 0 ? "<p>No special items.</p>" : state.specialItems.map((item, index) => `<div class="special-item" style="background-color:var(--bg-tertiary);padding:1rem;border-radius:var(--border-radius);margin-bottom:1rem;"><div class="special-item-header" style="display:flex;justify-content:space-between;align-items:center;font-weight:bold;"><span>${item.name}</span><div><button onclick="editSpecialItem(${index})">Edit</button><button onclick="deleteSpecialItem(${index})" class="btn-danger">Del</button></div></div><div style="margin-top:0.5rem;color:var(--text-secondary);white-space:pre-wrap;">${item.desc}</div></div>`).join(''); }
-    function addSpecialItem() { const n = document.getElementById("new-item-name"), d = document.getElementById("new-item-desc"); if (n.value.trim() === "") { showNotification("Item name required.", "danger"); return; } state.specialItems.push({ name: n.value, desc: d.value }); n.value = ""; d.value = ""; renderSpecialItems(); queueAutoSave(); }
-    function deleteSpecialItem(i) { showConfirmation(`Delete "${state.specialItems[i].name}"?`, () => { state.specialItems.splice(i, 1); renderSpecialItems(); queueAutoSave(); }); }
-    function editSpecialItem(i) { const item = state.specialItems[i], n = prompt("New name:", item.name); if (n === null || n.trim() === "") return; const d = prompt("New desc:", item.desc); if (d === null) return; item.name = n; item.desc = d; renderSpecialItems(); queueAutoSave(); }
+    function addSpecialItem() { const n=document.getElementById("new-item-name"), d=document.getElementById("new-item-desc"); if(n.value.trim()===""){showNotification("Item name required.","danger");return;} state.specialItems.push({name:n.value,desc:d.value}); n.value="";d.value=""; renderSpecialItems(); queueAutoSave(); }
+    function deleteSpecialItem(i) { showConfirmation(`Delete "${state.specialItems[i].name}"?`, () => { state.specialItems.splice(i,1); renderSpecialItems(); queueAutoSave(); }); }
+    function editSpecialItem(i) { const item=state.specialItems[i], n=prompt("New name:",item.name); if(n===null||n.trim()==="")return; const d=prompt("New desc:",item.desc); if(d===null)return; item.name=n; item.desc=d; renderSpecialItems(); queueAutoSave(); }
+    
+    function renderProficiencyModal() { const cats=[...new Set(state.skillLibrary.map(s=>s.skillType).filter(Boolean))]; document.getElementById('proficiency-grid').innerHTML = cats.map(c=>`<div class="item-card" onclick="toggleCategoryProficiency('${c}')" style="border-color:${state.proficientCategories.includes(c)?'var(--highlight-color)':'var(--border-color)'}"><strong>${c}</strong></div>`).join(''); }
+    function toggleCategoryProficiency(c) { const i=state.proficientCategories.indexOf(c); if(i>-1) state.proficientCategories.splice(i,1); else state.proficientCategories.push(c); handleInputChange(); renderProficiencyModal(); renderProficiencies(); }
 
-    function renderProficiencyModal() { const cats = [...new Set(state.skillLibrary.map(s => s.skillType).filter(Boolean))]; document.getElementById('proficiency-grid').innerHTML = cats.map(c => `<div class="item-card" onclick="toggleCategoryProficiency('${c}')" style="border-color:${state.proficientCategories.includes(c) ? 'var(--accent-gold)' : 'var(--border-color)'}"><strong>${c}</strong></div>`).join(''); }
-    function toggleCategoryProficiency(c) { const i = state.proficientCategories.indexOf(c); if (i > -1) state.proficientCategories.splice(i, 1); else state.proficientCategories.push(c); handleInputChange(); renderProficiencyModal(); renderProficiencies(); }
-
-    function renderShop() { const g = document.getElementById('shop-grid'); g.innerHTML = '<h4>Loading...</h4>'; const items = state.gameSettings.shopItems.map(itemData => { const libItem = state.equipmentLibrary.find(li => li.id === itemData.id); return { ...libItem, ...itemData }; }); if (items.length === 0) { g.innerHTML = '<h4>Shop is empty.</h4>'; return; } g.innerHTML = items.map(i => `<div class="shop-item"><img src="${i.image}" alt="${i.name}"><div class="shop-item-info"><strong>${i.name}</strong></div><button onclick="buyItem('${i.id}',${i.price})" ${state.currency < i.price ? 'disabled' : ''}>Buy (${i.price} P)</button></div>`).join(''); }
-    async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i => i.id === id); if (item && !item.isDiscovered) { await db.collection("items").doc(id).set({ isDiscovered: true }, { merge: true }); item.isDiscovered = true; } handleInputChange(); renderShop(); showNotification("Purchase successful!", "success"); } else { showNotification("Not enough points!", "danger"); } }
-
+    function renderShop() { const g=document.getElementById('shop-grid'); g.innerHTML='<h4>Loading...</h4>'; const items=(state.gameSettings.shopItems||[]).map(itemData=>{const libItem=state.equipmentLibrary.find(li=>li.id===itemData.id); return {...libItem, ...itemData}; }); if(items.length===0){g.innerHTML='<h4>Shop is empty.</h4>';return;} g.innerHTML=items.map(i=>`<div class="shop-item"><img src="${i.image}" alt="${i.name}"><div class="shop-item-info"><strong>${i.name}</strong></div><button onclick="buyItem('${i.id}',${i.price})" ${state.currency<i.price?'disabled':''}>Buy (${i.price} P)</button></div>`).join(''); }
+    async function buyItem(id, price) { if (state.currency >= price) { state.currency -= price; state.ownedItems.push(id); const item = state.equipmentLibrary.find(i=>i.id===id); if(item&&!item.isDiscovered){await db.collection("items").doc(id).set({isDiscovered:true}, {merge:true});item.isDiscovered=true;} handleInputChange(); renderShop(); showNotification("Purchase successful!","success");} else { showNotification("Not enough points!","danger"); } }
+    
     async function renderAdminPanel() {
-      const body = document.getElementById('admin-panel-body');
-      body.innerHTML = `
+        const body = document.getElementById('admin-panel-body');
+        body.innerHTML = `
             <div>
                 <button id="shop-status-btn" onclick="toggleShopStatus()" style="margin-bottom: 1rem;">Toggle Shop</button>
                 <h3>Shop Management</h3>
@@ -1189,131 +689,66 @@ Mobile version (maybe in the future)
                 <div id="admin-sale-grid">Loading items...</div>
             </div>`;
 
-      if (!state.gameSettings) return;
-      document.getElementById('shop-status-btn').textContent = `Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
-      document.getElementById('admin-shop-grid').innerHTML = state.equipmentLibrary.map(i => `<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${(state.gameSettings.shopItems || []).some(si => si.id === i.id) ? 'Remove' : 'Add'}</button></div>`).join('');
+        if(!state.gameSettings) return; 
+        document.getElementById('shop-status-btn').textContent=`Shop is ${state.gameSettings.isShopOpen ? 'Open' : 'Closed'}`;
+        document.getElementById('admin-shop-grid').innerHTML = state.equipmentLibrary.map(i => `<div class="admin-shop-item"><img src="${i.image}" alt="${i.name}"><strong>${i.name}</strong><button onclick="updateShopItem('${i.id}')">${(state.gameSettings.shopItems||[]).some(si => si.id === i.id) ? 'Remove' : 'Add'}</button></div>`).join('');
 
-      const salesSnapshot = await db.collection("itemsForSale").where("status", "==", "listed").get();
-      const saleGrid = document.getElementById('admin-sale-grid');
-      if (salesSnapshot.empty) {
-        saleGrid.innerHTML = "<p>No items are currently listed for sale.</p>";
-        return;
-      }
-      saleGrid.innerHTML = salesSnapshot.docs.map(doc => {
-        const saleData = doc.data();
-        return `<div class="item-card">
-                <strong>${saleData.itemName}</strong>
-                <p style="font-size:0.8em">Seller: ${saleData.sellerName}</p>
-                <button onclick="adminPurchaseItem('${doc.id}')" class="btn-gold">Purchase</button>
-            </div>`
-      }).join('');
+        const salesSnapshot = await db.collection("itemsForSale").where("status", "==", "listed").get();
+        const saleGrid = document.getElementById('admin-sale-grid');
+        if (salesSnapshot.empty) { saleGrid.innerHTML = "<p>No items are currently listed for sale.</p>"; return; }
+        saleGrid.innerHTML = salesSnapshot.docs.map(doc => { const d = doc.data(); return `<div class="item-card"><strong>${d.itemName}</strong><p style="font-size:0.8em">Seller: ${d.sellerName}</p><button onclick="adminPurchaseItem('${doc.id}')" class="btn-gold">Purchase</button></div>` }).join('');
     }
     async function toggleShopStatus() { await db.collection("game_settings").doc("shop").set({ isShopOpen: !state.gameSettings.isShopOpen }, { merge: true }); }
-    async function updateShopItem(id) { const items = [...(state.gameSettings.shopItems || [])]; const idx = items.findIndex(i => i.id === id); const libItem = state.equipmentLibrary.find(i => i.id === id); if (idx > -1) { items.splice(idx, 1); } else { const p = parseInt(prompt(`Price for ${libItem.name}:`, libItem.price || 100)); if (!isNaN(p)) { items.push({ id: id, price: p }); } } await db.collection("game_settings").doc("shop").set({ shopItems: items }, { merge: true }); }
+    async function updateShopItem(id) { const items=[...(state.gameSettings.shopItems||[])]; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").set({ shopItems:items }, { merge: true }); }
 
-    function openSellModal() {
-      renderSellableItems();
-      openModal('sell-modal');
-    }
+    function openSellModal() { renderSellableItems(); openModal('sell-modal'); }
     function renderSellableItems() {
-      const grid = document.getElementById('sell-grid');
-      const equippedIds = Object.values(state.equipment).filter(Boolean).map(item => item.id);
-      const sellableItems = state.ownedItems
-        .map(id => state.equipmentLibrary.find(item => item.id === id))
-        .filter(item => item && !equippedIds.includes(item.id));
-
-      if (sellableItems.length === 0) {
-        grid.innerHTML = "<p>You have no unequipped items to sell.</p>";
-        return;
-      }
-      grid.innerHTML = sellableItems.map(item => `
-            <div class="item-card">
-                <img src="${item.image}" alt="${item.name}">
-                <div><strong>${item.name}</strong></div>
-                <button onclick="listItemForSale('${item.id}')">List for Sale</button>
-            </div>
-        `).join('');
+        const grid = document.getElementById('sell-grid');
+        const equippedIds = Object.values(state.equipment).filter(Boolean).map(item => item.id);
+        const sellableItems = state.ownedItems.map(id => state.equipmentLibrary.find(item => item.id === id)).filter(item => item && !equippedIds.includes(item.id));
+        if (sellableItems.length === 0) { grid.innerHTML = "<p>You have no unequipped items to sell.</p>"; return; }
+        grid.innerHTML = sellableItems.map(item => `<div class="item-card"><img src="${item.image}" alt="${item.name}"><div><strong>${item.name}</strong></div><button onclick="listItemForSale('${item.id}')">List for Sale</button></div>`).join('');
     }
-
     async function listItemForSale(itemId) {
-      const user = auth.currentUser;
-      if (!user) return;
-      const item = state.equipmentLibrary.find(i => i.id === itemId);
-      if (!item) return;
-
-      showConfirmation(`Are you sure you want to list ${item.name} for sale? You will not be able to use it until the sale is complete or canceled.`, async () => {
-        try {
-          await db.collection("itemsForSale").add({
-            itemId: itemId,
-            itemName: item.name,
-            sellerUid: user.uid,
-            sellerName: user.displayName,
-            status: 'listed',
-            listedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          state.ownedItems = state.ownedItems.filter(id => id !== itemId);
-          handleInputChange();
-          closeModal('sell-modal');
-          showNotification(`${item.name} has been listed for sale.`, 'success');
-        } catch (error) {
-          console.error("Error listing item: ", error);
-          showNotification('Failed to list item.', 'danger');
-        }
-      });
-    }
-
-    async function adminPurchaseItem(saleId) {
-      const price = parseInt(prompt("Enter the purchase price in points:"));
-      if (isNaN(price) || price < 0) {
-        showNotification("Invalid price entered.", "danger");
-        return;
-      }
-
-      const saleDocRef = db.collection("itemsForSale").doc(saleId);
-      try {
-        await db.runTransaction(async (transaction) => {
-          const saleDoc = await transaction.get(saleDocRef);
-          if (!saleDoc.exists) throw "Sale document not found!";
-
-          const saleData = saleDoc.data();
-          const sellerCharRef = db.collection("characters").doc(saleData.sellerUid);
-          const sellerCharDoc = await transaction.get(sellerCharRef);
-          if (!sellerCharDoc.exists) throw "Seller character not found!";
-
-          const currentCurrency = sellerCharDoc.data().currency || 0;
-          transaction.update(sellerCharRef, { currency: currentCurrency + price });
-          transaction.update(saleDocRef, { status: 'sold', price: price, soldAt: firebase.firestore.FieldValue.serverTimestamp() });
+        const user = auth.currentUser; if (!user) return; const item = state.equipmentLibrary.find(i => i.id === itemId); if (!item) return;
+        showConfirmation(`List ${item.name} for sale? You won't be able to use it.`, async () => {
+            try { await db.collection("itemsForSale").add({ itemId: itemId, itemName: item.name, sellerUid: user.uid, sellerName: user.displayName, status: 'listed', listedAt: firebase.firestore.FieldValue.serverTimestamp() }); state.ownedItems = state.ownedItems.filter(id => id !== itemId); handleInputChange(); closeModal('sell-modal'); showNotification(`${item.name} listed for sale.`, 'success'); } catch (error) { console.error("Error listing item: ", error); showNotification('Failed to list item.', 'danger'); }
         });
-        showNotification("Item purchased successfully!", "success");
-        renderAdminPanel();
-      } catch (error) {
-        console.error("Transaction failed: ", error);
-        showNotification(`Purchase failed: ${error}`, "danger");
-      }
     }
-
-
-    function renderBestiaryLibrary() {
-      const grid = document.getElementById('bestiary-grid');
-      grid.innerHTML = "";
-      state.bestiaryLibrary.forEach(beast => {
-        const card = document.createElement('div');
-        card.className = 'item-card';
-        card.innerHTML = `<img src="${beast.image}" alt="${beast.name}"><div><strong>${beast.name}</strong></div>`;
-        card.onclick = () => selectBeast(beast);
-        grid.appendChild(card);
-      });
+    async function adminPurchaseItem(saleId) {
+        const price = parseInt(prompt("Enter the purchase price in points:")); if (isNaN(price) || price < 0) { showNotification("Invalid price.", "danger"); return; }
+        const saleDocRef = db.collection("itemsForSale").doc(saleId);
+        try {
+            await db.runTransaction(async (t) => {
+                const saleDoc = await t.get(saleDocRef); if (!saleDoc.exists) throw "Sale document not found!";
+                const d = saleDoc.data(), sellerRef = db.collection("characters").doc(d.sellerUid), sellerDoc = await t.get(sellerRef); if (!sellerDoc.exists) throw "Seller character not found!";
+                t.update(sellerRef, { currency: (sellerDoc.data().currency || 0) + price });
+                t.update(saleDocRef, { status: 'sold', price: price, soldAt: firebase.firestore.FieldValue.serverTimestamp() });
+            });
+            showNotification("Item purchased!", "success"); renderAdminPanel();
+        } catch (error) { console.error("Transaction failed: ", error); showNotification(`Purchase failed: ${error}`, "danger"); }
     }
-    function selectBeast(beast) {
-      if (!state.currentBeastEdit) return;
-      if (!state.ownedBeasts[beast.id]) {
-        state.ownedBeasts[beast.id] = { level: 1 };
-      }
-      state.equipment[state.currentBeastEdit.replace('-slot', '')] = beast;
-      handleInputChange();
-      closeBestiaryModal();
+    function adjustCurrency(isAdding) {
+        const input = document.getElementById('currency-adjust-amount');
+        const amount = parseInt(input.value);
+        if (isNaN(amount) || amount <= 0) { showNotification("Please enter a valid amount.", "danger"); return; }
+        state.currency += isAdding ? amount : -amount;
+        if (state.currency < 0) state.currency = 0;
+        input.value = "";
+        handleInputChange();
+    }
+    
+    function renderBestiaryLibrary() { const g=document.getElementById('bestiary-grid'); g.innerHTML=""; state.bestiaryLibrary.forEach(b=>{const c=document.createElement('div');c.className='item-card';c.innerHTML=`<img src="${b.image}" alt="${b.name}"><div><strong>${b.name}</strong></div>`; c.onclick=()=>selectBeast(b);g.appendChild(c);}); }
+    function selectBeast(b) { if(!state.currentBeastEdit)return; if(!state.ownedBeasts[b.id]) state.ownedBeasts[b.id]={level:1}; state.equipment[state.currentBeastEdit.replace('-slot','')] = b; handleInputChange(); closeModal('bestiary-modal'); }
+
+    function setupThemeSwitcher() {
+        const toggle = document.getElementById('theme-toggle');
+        const options = document.getElementById('theme-options');
+        toggle.addEventListener('click', () => { options.style.display = options.style.display === 'flex' ? 'none' : 'flex'; });
+        document.querySelectorAll('.theme-option').forEach(el => { el.addEventListener('click', (e) => { document.body.dataset.theme = e.target.dataset.theme; options.style.display = 'none'; }); });
+        document.addEventListener('click', (e) => { if (!toggle.contains(e.target) && !options.contains(e.target)) options.style.display = 'none'; });
     }
   </script>
 </body>
-
 </html>
+
