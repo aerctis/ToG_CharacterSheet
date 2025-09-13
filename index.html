@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+
 
 
 /* 
@@ -53,7 +56,6 @@ Maybe in the future:
 MSPaint on side
 Calculator(maybe)
 Mobile version (maybe in the future) */
-
 
 
     :root {
@@ -107,6 +109,36 @@ Mobile version (maybe in the future) */
         --highlight-color: var(--accent-gold);
     }
 
+    body[data-theme="royal-red"] {
+        --bg-primary: #190D0D;
+        --bg-secondary: #281414;
+        --bg-tertiary: #401B1B;
+        --border-color: #6B2D2D;
+        --text-primary: #FEE2E2;
+        --text-secondary: #FCA5A5;
+        --accent-gold: #EF4444;
+        --accent-gold-transparent: rgba(239, 68, 68, 0.1);
+        --accent-gold-hover: #F87171;
+        --danger-color: #F97316;
+        --success-color: #34D399;
+        --highlight-color: var(--accent-gold);
+    }
+
+    body[data-theme="forest-green"] {
+        --bg-primary: #0A110D;
+        --bg-secondary: #111E16;
+        --bg-tertiary: #1A2F22;
+        --border-color: #2F523D;
+        --text-primary: #D1FAE5;
+        --text-secondary: #A7F3D0;
+        --accent-gold: #34D399;
+        --accent-gold-transparent: rgba(52, 211, 153, 0.1);
+        --accent-gold-hover: #6EE7B7;
+        --danger-color: #F43F5E;
+        --success-color: #A3E635;
+        --highlight-color: var(--accent-gold);
+    }
+
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -137,8 +169,8 @@ Mobile version (maybe in the future) */
     .top-stat-group .value { font-size: 1.3em; font-weight: 700; color: var(--highlight-color); }
     #hp-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
     #hp-controls button { padding: 0.1rem 0.5rem; }
-    #current-hp-input { width: 60px; text-align: center; -moz-appearance: textfield; }
-    #current-hp-input::-webkit-outer-spin-button, #current-hp-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    #hp-adjust-amount { width: 60px; text-align: center; -moz-appearance: textfield; }
+    #hp-adjust-amount::-webkit-outer-spin-button, #hp-adjust-amount::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .affinities-container { display: flex; flex-direction: column; gap: 1rem; }
     .affinity-group { display: flex; align-items: center; gap: 1rem; }
     .affinity-group label { margin: 0; flex-shrink: 0; }
@@ -169,8 +201,8 @@ Mobile version (maybe in the future) */
     .skills-wrapper { display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; }
     .spirit-tank-container { position: relative; background-color: var(--bg-primary); border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow: hidden; cursor: pointer; }
     .spirit-tank-fluid { position: absolute; bottom: 0; left: 0; right: 0; background-color: var(--highlight-color); transition: height 0.5s ease-in-out; }
+    .spirit-tank-container .spirit-tooltip { position: absolute; top: 50%; left: 120%; transform: translateY(-50%) translateX(-10px); background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: var(--border-radius); opacity: 0; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; }
     .spirit-tank-container:hover .spirit-tooltip { opacity: 1; transform: translateY(-50%); }
-    .spirit-tooltip { position: absolute; top: 50%; left: 120%; transform: translateY(-50%) translateX(-10px); background-color: var(--bg-tertiary); color: var(--text-primary); padding: 0.5rem 1rem; border-radius: var(--border-radius); opacity: 0; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; pointer-events: none; z-index: 10; }
     .tier-section { margin-bottom: 1.5rem; }
     .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.5rem; }
     .skill-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; }
@@ -198,10 +230,10 @@ Mobile version (maybe in the future) */
     .item-card .item-name, .skill-card .skill-name { font-weight: bold; }
     .item-card-buttons { position: absolute; top: 5px; right: 5px; display: flex; flex-direction: column; gap: 4px; }
     .item-card-buttons button { padding: 4px; line-height: 1; font-size: 12px; }
-    #notification-toast { position: fixed; top: 20px; right: 20px; background-color: var(--highlight-color); color: white; padding: 1rem 1.5rem; border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; }
+    #notification-toast { position: fixed; top: 20px; right: 20px; background-color: var(--highlight-color); color: var(--bg-primary); padding: 1rem 1.5rem; border-radius: var(--border-radius); box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1001; opacity: 0; transform: translateY(-20px); transition: opacity 0.3s, transform 0.3s; font-weight: 600; }
     #notification-toast.show { opacity: 1; transform: translateY(0); }
-    #notification-toast.danger { background-color: var(--danger-color); }
-    #notification-toast.success { background-color: var(--success-color); }
+    #notification-toast.danger { background-color: var(--danger-color); color: var(--text-primary); }
+    #notification-toast.success { background-color: var(--success-color); color: var(--text-primary); }
     #confirmation-modal .modal-content { max-width: 400px; }
     #confirmation-modal .modal-body { margin-bottom: 1.5rem; }
     #confirmation-modal .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; }
@@ -229,6 +261,8 @@ Mobile version (maybe in the future) */
             <div class="theme-option" data-theme="dark-gold" style="background: #F59E0B;"></div>
             <div class="theme-option" data-theme="crimson-night" style="background: #D946EF;"></div>
             <div class="theme-option" data-theme="arcane-blue" style="background: #38BDF8;"></div>
+            <div class="theme-option" data-theme="royal-red" style="background: #EF4444;"></div>
+            <div class="theme-option" data-theme="forest-green" style="background: #34D399;"></div>
         </div>
     </div>
     <div class="container">
@@ -338,9 +372,9 @@ Mobile version (maybe in the future) */
     <div id="notification-toast"></div>
     <div id="confirmation-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Confirm Action</h3></div><div class="modal-body" id="confirmation-message"></div><div class="modal-footer"><button id="confirm-btn-no">Cancel</button><button id="confirm-btn-yes" class="btn-danger">Confirm</button></div></div></div>
     <div id="item-info-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="item-info-title">Item Details</h3><button onclick="closeModal('item-info-modal')">Close</button></div><div class="modal-body" id="item-info-modal-content"></div></div></div>
-    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Skill Library</h3><button onclick="closeModal('skill-library-modal')">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
+    <div id="skill-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="skill-library-title">Skill Library</h3><button onclick="closeModal('skill-library-modal')">Close</button></div><div class="modal-body"><input type="text" id="skill-search" class="library-search" placeholder="Search skills..."><div class="modal-grid" id="skill-library-grid"></div></div></div></div>
     <div id="equipment-library-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3 id="equipment-modal-title">Equipment Library</h3><button onclick="closeModal('equipment-library-modal')">Close</button></div><div class="modal-body"><input type="text" id="equipment-search" class="library-search" placeholder="Search equipment..."><div class="modal-grid" id="equipment-library-grid"></div></div></div></div>
-    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1000px;"><div class="modal-header"><h3>Skill Details</h3><button onclick="closeModal('skill-info-modal')">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
+    <div id="skill-info-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1000px;"><div class="modal-header"><h3 id="skill-info-title">Skill Details</h3><button onclick="closeModal('skill-info-modal')">Close</button></div><div class="modal-body" id="skill-info-modal-content"></div></div></div>
     <div id="special-items-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Special Items</h3><button onclick="closeModal('special-items-modal')">Close</button></div><div class="modal-body"><div id="special-items-list"></div><div class="add-item-form" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;"><h4>Add New Item</h4><label for="new-item-name">Item Name</label><input type="text" id="new-item-name" placeholder="E.g., Black March"><label for="new-item-desc">Description</label><textarea id="new-item-desc" placeholder="Details about the item..."></textarea><button onclick="addSpecialItem()" style="margin-top: 1rem;">Add Item</button></div></div></div></div>
     <div id="shop-modal" class="modal-backdrop"><div class="modal-content"><div class="modal-header"><h3>Shop</h3><button onclick="closeModal('shop-modal')">Close</button></div><div class="modal-body"><div class="modal-grid" id="shop-grid"></div></div></div></div>
     <div id="admin-panel-modal" class="modal-backdrop"><div class="modal-content" style="max-width: 1200px;"><div class="modal-header"><h3>Admin Panel</h3><button onclick="closeModal('admin-panel-modal')">Close</button></div><div class="modal-body" id="admin-panel-body"></div></div></div>
@@ -484,9 +518,9 @@ Mobile version (maybe in the future) */
                 <span class="label">HEALTH</span>
                 <div class="value">${state.currentHP} / ${maxHP}</div>
                 <div id="hp-controls">
-                    <button onclick="adjustCurrentHP(-1)">-</button>
-                    <input type="number" id="current-hp-input" value="${state.currentHP}" onchange="setCurrentHP(this.value, ${maxHP})">
-                    <button onclick="adjustCurrentHP(1)">+</button>
+                    <button onclick="adjustCurrentHP(false)">-</button>
+                    <input type="number" id="hp-adjust-amount" placeholder="Amt">
+                    <button onclick="adjustCurrentHP(true)">+</button>
                 </div>
             </div>
             <div class="top-stat-group"><span class="label">Hit Dice</span><span class="value">${hitDiceCount}d${hitDiceValue} + ${wpModifier}</span></div>
@@ -496,25 +530,20 @@ Mobile version (maybe in the future) */
         `;
     }
 
-    function adjustCurrentHP(amount) {
+    function adjustCurrentHP(isHealing) {
+        const input = document.getElementById('hp-adjust-amount');
+        const amount = parseInt(input.value);
+        if (isNaN(amount) || amount <= 0) { showNotification("Please enter a valid amount.", "danger"); return; }
         const maxHP = parseInt(document.getElementById('top-stats-bar').querySelector('.value').textContent.split('/')[1].trim());
-        let newHP = state.currentHP + amount;
+        let newHP = state.currentHP + (isHealing ? amount : -amount);
         if (newHP > maxHP) newHP = maxHP;
         if (newHP < 0) newHP = 0;
         state.currentHP = newHP;
-        document.getElementById('current-hp-input').value = state.currentHP;
-        renderTopBarStats(); // Just to update the main display
-        queueAutoSave();
-    }
-    function setCurrentHP(value, max) {
-        let newHP = parseInt(value);
-        if (isNaN(newHP) || newHP < 0) newHP = 0;
-        if (newHP > max) newHP = max;
-        state.currentHP = newHP;
+        input.value = "";
         renderTopBarStats();
         queueAutoSave();
     }
-
+    
     function renderAffinityControls() {
       ["primary", "secondary", "tertiary"].forEach(type => {
         const cont = document.getElementById(`${type}-affinities`), sel = document.getElementById(`add-${type}`); cont.innerHTML = "";
@@ -589,7 +618,7 @@ Mobile version (maybe in the future) */
     function levelUp() { const e=document.getElementById("char-level"); e.value=parseInt(e.value)+1; handleInputChange(); }
     function addSkillPoint() { state.bonusSkillPoints++; handleInputChange(); }
     function addSkillSlot(t) { if (!state.skillsByTier[t]) state.skillsByTier[t] = []; state.skillsByTier[t].push(null); renderSkillTiers(); }
-    function removeSkillSlot(t) { if (state.skillsByTier[t] && state.skillsByTier[t].length > 0) { const removedSkill = state.skillsByTier[t].pop(); if (removedSkill) { showConfirmation("Removing this slot will unlearn the skill in it. Are you sure?", () => { handleInputChange(); renderSkillTiers(); }); } else { renderSkillTiers(); handleInputChange(); } } }
+    function removeSkillSlot(t) { if (state.skillsByTier[t] && state.skillsByTier[t].length > 0) { const lastIndex = state.skillsByTier[t].length - 1; const skillInSlot = state.skillsByTier[t][lastIndex]; if (skillInSlot) { showConfirmation("This slot contains a skill. Removing it will unlearn the skill and refund points. Continue?", () => { state.skillsByTier[t].pop(); handleInputChange(); renderSkillTiers(); }); } else { state.skillsByTier[t].pop(); renderSkillTiers(); handleInputChange(); } } }
     
     window.onload = () => { initializeState(); setupThemeSwitcher(); };
     function initializeState() { state.statValues = Object.fromEntries(stats.map(s => [s, 1])); state.manualStatPoints = Object.fromEntries(stats.map(s => [s, 0])); }
@@ -604,6 +633,12 @@ Mobile version (maybe in the future) */
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     function openSkillLibrary(t, i) { state.currentSkillEdit = { tier:t, index:i }; document.getElementById("skill-library-title").textContent = `Skill Library (Tier ${t} Slot)`; renderSkillLibrary(); openModal("skill-library-modal"); }
     function openEquipmentModal(sKey) { state.currentEquipmentEdit = sKey; document.getElementById("equipment-modal-title").textContent = `Equipment Library`; renderEquipmentLibrary(); openModal("equipment-library-modal"); }
+    function openShopModal() { renderShop(); openModal('shop-modal'); }
+    function openAdminPanel() { renderAdminPanel(); openModal('admin-panel-modal'); }
+    function openProficiencyModal() { renderProficiencyModal(); openModal('proficiency-modal'); }
+    function openSpecialItemsModal() { renderSpecialItems(); openModal('special-items-modal'); }
+    function openBestiaryModal(slotKey) { state.currentBeastEdit = slotKey; renderBestiaryLibrary(); openModal('bestiary-modal'); }
+    function openSellModal() { renderSellableItems(); openModal('sell-modal'); }
     
     function openItemInfoModal(itemData) { document.getElementById('item-info-title').textContent = itemData.name; document.getElementById('item-info-modal-content').innerHTML = `<div style="text-align:center; padding-bottom: 1rem;"><img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;"></div><p><strong>Type:</strong> ${itemData.type}</p><p><strong>Stat:</strong> ${itemData.stat}</p><p><strong>Modifier:</strong> ${itemData.modifier}</p><p><strong>Effect:</strong> ${itemData.specialEffect || 'None'}</p>`; openModal('item-info-modal'); }
     function renderEquipmentLibrary() {
@@ -701,7 +736,6 @@ Mobile version (maybe in the future) */
     async function toggleShopStatus() { await db.collection("game_settings").doc("shop").set({ isShopOpen: !state.gameSettings.isShopOpen }, { merge: true }); }
     async function updateShopItem(id) { const items=[...(state.gameSettings.shopItems||[])]; const idx=items.findIndex(i=>i.id===id); const libItem=state.equipmentLibrary.find(i=>i.id===id); if(idx>-1){items.splice(idx,1);}else{const p=parseInt(prompt(`Price for ${libItem.name}:`,libItem.price||100));if(!isNaN(p)){items.push({id:id,price:p});}} await db.collection("game_settings").doc("shop").set({ shopItems:items }, { merge: true }); }
 
-    function openSellModal() { renderSellableItems(); openModal('sell-modal'); }
     function renderSellableItems() {
         const grid = document.getElementById('sell-grid');
         const equippedIds = Object.values(state.equipment).filter(Boolean).map(item => item.id);
