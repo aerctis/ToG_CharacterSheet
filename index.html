@@ -208,6 +208,7 @@
                 <button onclick="saveCustomTheme()">Save Theme</button>
                 <input type="file" id="bg-upload" accept="image/*" style="display: none;">
                 <button onclick="document.getElementById('bg-upload').click()">Upload BG</button>
+                <button onclick="resetBackground()">Reset BG</button>
             </div>
         </div>
     </div>
@@ -596,11 +597,12 @@
     function openBestiaryModal(slotKey) { state.currentBeastEdit = slotKey; renderBestiaryLibrary(); openModal('bestiary-modal'); }
     function openSellModal() { renderSellableItems(); openModal('sell-modal'); }
     
-    function openItemInfoModal(itemData) {
+    function openItemInfoModal(itemData, parentModalId = null) {
+        if (parentModalId) closeModal(parentModalId);
         document.getElementById('item-info-title').textContent = itemData.name;
         let content = `
             <div style="text-align:center; padding-bottom: 1rem;">
-                <img src="${itemData.image || 'https://placehold.co/150x150/1F2937/F9FAFB?text=?'}" style="max-width: 150px; border-radius: 8px;">
+                <img src="${itemData.image || '[https://placehold.co/150x150/1F2937/F9FAFB?text=](https://placehold.co/150x150/1F2937/F9FAFB?text=)?'}" style="max-width: 150px; border-radius: 8px;">
             </div>
             <p><strong>Type:</strong> ${itemData.type}</p>
             ${itemData.stat ? `<p><strong>Stat:</strong> ${itemData.stat}</p>` : ''}
@@ -632,10 +634,10 @@
                 card.className = "item-card";
                 const isOwned = state.ownedItems.includes(item.id);
                 card.innerHTML = `
-                    <img src="${item.image || 'https://placehold.co/100x100/1F2937/F9FAFB?text=?'}" alt="${item.name}">
+                    <img src="${item.image || '[https://placehold.co/100x100/1F2937/F9FAFB?text=](https://placehold.co/100x100/1F2937/F9FAFB?text=)?'}" alt="${item.name}">
                     <div class="item-name">${item.name}</div>
                     <div class="item-card-buttons">
-                        <button onclick="event.stopPropagation(); openItemInfoModal(state.equipmentLibrary.find(i=>i.id === '${item.id}'))">Info</button>
+                        <button onclick="event.stopPropagation(); openItemInfoModal(state.equipmentLibrary.find(i=>i.id === '${item.id}'), 'equipment-library-modal')">Info</button>
                         ${isOwned ? `<button onclick="event.stopPropagation(); selectEquipment(state.equipmentLibrary.find(i=>i.id === '${item.id}'))">Equip</button>` : `<button onclick="event.stopPropagation(); acquireItem('${item.id}')">Acquire</button>`}
                     </div>
                 `;
@@ -779,6 +781,7 @@
     function setupThemeSwitcher() {
         const toggle = document.getElementById('theme-toggle');
         const options = document.getElementById('theme-options');
+        if (!toggle || !options) return;
         toggle.addEventListener('click', () => { options.style.display = options.style.display === 'flex' ? 'none' : 'flex'; });
         document.querySelectorAll('.theme-option').forEach(el => { el.addEventListener('click', (e) => { applyTheme(e.target.dataset.theme); options.style.display = 'none'; }); });
         document.addEventListener('click', (e) => { if (!toggle.contains(e.target) && !options.contains(e.target)) options.style.display = 'none'; });
@@ -803,7 +806,10 @@
         });
         renderCustomThemes();
     }
-    function applyTheme(themeName, themeData) { 
+    function applyTheme(themeName, themeData = null) {
+        const colorVars = ['--highlight-color', '--level-up-bg', '--accent-gold', '--bg-primary', '--bg-secondary', '--bg-tertiary'];
+        colorVars.forEach(v => document.body.style.removeProperty(v));
+        
         if(themeData) {
             Object.entries(themeData.vars).forEach(([key, value]) => {
                 document.body.style.setProperty(key, value);
@@ -830,16 +836,24 @@
     }
     function renderCustomThemes() {
         const container = document.getElementById('custom-theme-options');
+        if(!container) return;
         container.innerHTML = '';
         state.customThemes.forEach(theme => {
             const option = document.createElement('div');
             option.className = 'theme-option';
+            option.title = theme.name;
             option.style.background = `linear-gradient(45deg, ${theme.vars['--bg-secondary']}, ${theme.vars['--highlight-color']})`;
             option.onclick = () => applyTheme(null, theme);
             container.appendChild(option);
         });
     }
+    function resetBackground() {
+        state.bgImage = null;
+        document.body.style.setProperty('--background-image', 'none');
+        queueAutoSave();
+        showNotification("Background reset.", "success");
+    }
   </script>
 </body>
-<!-- hi -->
 </html>
+
